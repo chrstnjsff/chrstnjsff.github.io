@@ -1,0 +1,22 @@
+---
+interface Props {
+  metric?: string;
+}
+const { metric } = Astro.props;
+---
+
+<li class="flex gap-3 text-[14.5px] leading-relaxed text-muted">
+  <span class="mt-[0.62em] h-px w-3 shrink-0 bg-line/25"></span>
+  <span>
+    <slot />{
+      metric && (
+        <>
+          {" "}
+          <strong class="tnum font-mono text-[13px] font-medium not-italic text-ink">
+            {metric}
+          </strong>
+        </>
+      )
+    }
+  </span>
+</li>

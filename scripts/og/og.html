@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/_fonts.css">
+<style>
+  @font-face { font-family:"Geist Pixel"; src:url("/fonts/GeistPixel-Square.woff2") format("woff2"); font-display:block; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    background:#fff;color:#0a0a0a;
+    font-family:"Geist Variable",ui-sans-serif,system-ui,sans-serif;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:76px 84px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .kicker{font-family:"Geist Mono Variable",ui-monospace,monospace;font-size:17px;letter-spacing:.18em;text-transform:uppercase;color:#6d6d72}
+  h1{font-family:"Geist Pixel",monospace;font-size:74px;line-height:1;letter-spacing:-.02em;margin-top:30px}
+  .role{font-size:27px;color:#6d6d72;margin-top:26px}
+  .role em{font-family:"Source Serif 4 Variable",Georgia,serif;font-style:italic;color:#0a0a0a}
+  .rule{height:1px;background:rgba(10,10,10,.12);margin-bottom:26px}
+  .stats{display:flex;gap:56px;font-family:"Geist Mono Variable",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  .stats b{display:block;font-size:25px;font-weight:500;letter-spacing:-.01em}
+  .stats span{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6d6d72;margin-top:8px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#e0584f;margin-right:11px;vertical-align:middle}
+</style>
+</head>
+<body>
+  <div>
+    <p class="kicker"><span class="dot"></span>Metro Manila, PH · UTC+8</p>
+    <h1>Christian Josef Aquino</h1>
+    <p class="role">Senior DevOps Engineer — I keep production <em>quietly, relentlessly boring</em>.</p>
+  </div>
+  <div>
+    <div class="rule"></div>
+    <div class="stats">
+      <div><b>7+</b><span>years</span></div>
+      <div><b>99.95%</b><span>uptime</span></div>
+      <div><b>&minus;40%</b><span>mttr</span></div>
+      <div><b>3.6M+</b><span>users served</span></div>
+      <div><b>Kubernetes</b><span>terraform · gitops</span></div>
+    </div>
+  </div>
+</body>
+</html>

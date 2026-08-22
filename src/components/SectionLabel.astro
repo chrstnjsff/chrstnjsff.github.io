@@ -1,0 +1,15 @@
+---
+interface Props {
+  n: string;
+  name: string;
+  id?: string;
+}
+const { n, name, id } = Astro.props;
+---
+
+<h2
+  id={id}
+  class="reveal font-pixel text-[13px] tracking-tight text-muted scroll-mt-24"
+>
+  {n} <span class="mx-1 opacity-40" aria-hidden="true">—</span> {name}
+</h2>

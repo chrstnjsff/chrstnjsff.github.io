@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* Dark mode driven by a class on <html>, set pre-paint in Base.astro */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------
+   Palette — ink on paper. RGB triplets so Tailwind can apply
+   opacity modifiers (e.g. text-ink/60).
+   --------------------------------------------------------------- */
+:root {
+  --bg: 255 255 255;
+  --ink: 10 10 10;
+  --muted: 109 109 114;
+  --line: 10 10 10;
+  --accent: 224 88 79;
+  --sel-bg: #0a0a0a;
+  --sel-fg: #ffffff;
+}
+
+.dark {
+  --bg: 12 12 15;
+  --ink: 244 244 245;
+  --muted: 150 150 158;
+  --line: 244 244 245;
+  --sel-bg: #fafafa;
+  --sel-fg: #0a0a0a;
+}
+
+@theme inline {
+  --color-bg: rgb(var(--bg));
+  --color-ink: rgb(var(--ink));
+  --color-muted: rgb(var(--muted));
+  --color-line: rgb(var(--line));
+  --color-accent: rgb(var(--accent));
+
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+  --font-pixel: "Geist Pixel", "Geist Mono Variable", ui-monospace, monospace;
+}
+
+@font-face {
+  font-family: "Geist Pixel";
+  src: url("/fonts/GeistPixel-Square.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* ---------------------------------------------------------------
+   Base
+   --------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  /* offset anchor targets for the sticky nav */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-synthesis-weight: none;
+}
+
+::selection {
+  background: var(--sel-bg);
+  color: var(--sel-fg);
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Tabular figures for all the metrics — keeps columns of numbers steady */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------
+   Scroll reveal — CSS only, toggled by one IntersectionObserver
+   --------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+.d1 { transition-delay: 60ms; }
+.d2 { transition-delay: 120ms; }
+.d3 { transition-delay: 180ms; }
+.d4 { transition-delay: 240ms; }
+.d5 { transition-delay: 300ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Link underline that grows from the left on hover
+   --------------------------------------------------------------- */
+.link-ul {
+  background-image: linear-gradient(rgb(var(--accent)), rgb(var(--accent)));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+}
+
+.link-ul:hover {
+  background-size: 100% 1px;
+  color: rgb(var(--accent));
+}
