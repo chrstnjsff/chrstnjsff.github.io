@@ -5,8 +5,10 @@ interface Props {
   /** Optional right-hand action, mirroring the reference's "all posts →". */
   actionLabel?: string;
   actionHref?: string;
+  /** External actions open in a new tab and use ↗ instead of →. */
+  external?: boolean;
 }
-const { n, name, actionLabel, actionHref } = Astro.props;
+const { n, name, actionLabel, actionHref, external = false } = Astro.props;
 ---
 
 <div class="reveal mb-8 flex items-baseline justify-between gap-4">
@@ -17,9 +19,11 @@ const { n, name, actionLabel, actionHref } = Astro.props;
     actionLabel && actionHref && (
       <a
         href={actionHref}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener" : undefined}
         class="shrink-0 font-mono text-[11px] uppercase tracking-wider text-muted hover:text-ink"
       >
-        {actionLabel} →
+        {actionLabel} {external ? "↗" : "→"}
       </a>
     )
   }

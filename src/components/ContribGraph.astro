@@ -1,0 +1,93 @@
+---
+// GitHub contribution calendar rendered as a halftone dot field.
+// Data comes from github.com's public contributions fragment at build
+// time — no token, no client-side third-party requests. The deploy
+// workflow rebuilds on a daily cron so the graph stays current.
+interface Day {
+  row: number;
+  col: number;
+  level: number;
+}
+
+const USER = "chrstnjsff";
+
+let days: Day[] = [];
+let total = 0;
+let cols = 0;
+
+try {
+  const res = await fetch(`https://github.com/users/${USER}/contributions`);
+  if (res.ok) {
+    const html = await res.text();
+
+    // Day cells: id encodes the grid position, data-level the intensity.
+    const cellRe =
+      /id="contribution-day-component-(\d+)-(\d+)"[^>]*data-level="(\d)"|data-level="(\d)"[^>]*id="contribution-day-component-(\d+)-(\d+)"/g;
+    for (const m of html.matchAll(cellRe)) {
+      const row = Number(m[1] ?? m[5]);
+      const col = Number(m[2] ?? m[6]);
+      const level = Number(m[3] ?? m[4]);
+      days.push({ row, col, level });
+      if (col + 1 > cols) cols = col + 1;
+    }
+
+    // Per-day counts live in the tooltips; the year total is their sum.
+    for (const m of html.matchAll(/>(\d+) contributions? on /g)) {
+      total += Number(m[1]);
+    }
+  }
+} catch {
+  days = [];
+}
+
+const ok = days.length > 180;
+
+const PITCH = 13;
+const RADII = [1.4, 2.6, 3.5, 4.4, 5.4];
+const OPACITY = [0.16, 0.5, 0.7, 0.85, 1];
+const width = cols * PITCH;
+const height = 7 * PITCH;
+const totalLabel = total.toLocaleString("en-US");
+---
+
+{
+  ok ? (
+    <div>
+      <div class="reveal d1 overflow-x-auto pb-2">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          class="block h-auto w-full text-ink"
+          style={`min-width: ${width}px`}
+          role="img"
+          aria-label={`GitHub contribution graph: ${totalLabel} contributions in the last year`}
+        >
+          {days.map((d) => (
+            <circle
+              cx={d.col * PITCH + PITCH / 2}
+              cy={d.row * PITCH + PITCH / 2}
+              r={RADII[d.level]}
+              fill="currentColor"
+              fill-opacity={OPACITY[d.level]}
+            />
+          ))}
+        </svg>
+      </div>
+      <p class="reveal d2 mt-5 font-mono text-[13px] uppercase tracking-wider text-muted">
+        {totalLabel} contributions in the last year
+      </p>
+    </div>
+  ) : (
+    <p class="reveal d1 font-mono text-[13px] text-muted">
+      Contribution data is taking a nap —{" "}
+      <a
+        href={`https://github.com/${USER}`}
+        target="_blank"
+        rel="noopener"
+        class="link-ul text-ink"
+      >
+        see the live graph on GitHub
+      </a>
+      .
+    </p>
+  )
+}

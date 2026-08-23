@@ -4,6 +4,7 @@ import SectionLabel from "../components/SectionLabel.astro";
 import Portrait from "../components/Portrait.astro";
 import Role from "../components/Role.astro";
 import Bullet from "../components/Bullet.astro";
+import ContribGraph from "../components/ContribGraph.astro";
 
 const title = "Christian Josef Aquino — Senior DevOps Engineer";
 const description =
@@ -535,9 +536,22 @@ const gear = [
       </div>
     </section>
 
+    <!-- ============================= GITHUB ============================= -->
+    <section id="github" class="relative scroll-mt-20 py-14">
+      <SectionLabel
+        n="08"
+        name="github"
+        actionLabel="@chrstnjsff"
+        actionHref="https://github.com/chrstnjsff"
+        external
+      />
+
+      <ContribGraph />
+    </section>
+
     <!-- ============================= CONTACT ============================= -->
     <section id="contact" class="relative scroll-mt-20 py-14">
-      <SectionLabel n="08" name="contact" />
+      <SectionLabel n="09" name="contact" />
 
       <h3 class="reveal d1 font-pixel text-xl leading-none">say hello</h3>
 

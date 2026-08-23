@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    # Daily rebuild (21:00 UTC / 5am PHT) keeps the contribution graph fresh.
+    - cron: "0 21 * * *"
   workflow_dispatch:
 
 permissions:
