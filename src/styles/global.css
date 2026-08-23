@@ -206,3 +206,106 @@ body {
   background-color: rgb(var(--ink) / 0.07);
   color: rgb(var(--ink));
 }
+
+/* ---------------------------------------------------------------
+   Theme switching — a soft cross-fade via the View Transitions API
+   (the toggle script wraps the class change in startViewTransition).
+   --------------------------------------------------------------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fallback for browsers without view transitions: ease the colors */
+html.theme-fade,
+html.theme-fade body,
+html.theme-fade * {
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease,
+    fill 0.35s ease,
+    stroke 0.35s ease !important;
+}
+
+/* ---------------------------------------------------------------
+   Sidebar scrollspy — the section in view lights its link and grows
+   a small dash, like a cursor in a margin.
+   --------------------------------------------------------------- */
+[data-nav-link] {
+  position: relative;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+[data-nav-link]::before {
+  content: "";
+  position: absolute;
+  left: -1.15rem;
+  top: 50%;
+  height: 1px;
+  width: 0.6rem;
+  background: rgb(var(--accent));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-nav-link][aria-current="true"] {
+  color: rgb(var(--ink));
+  transform: translateX(0.35rem);
+}
+
+[data-nav-link][aria-current="true"]::before {
+  transform: scaleX(1);
+}
+
+/* ---------------------------------------------------------------
+   Quiet scrollbar
+   --------------------------------------------------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--muted) / 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgb(var(--muted) / 0.35);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted) / 0.6);
+}
+
+/* ---------------------------------------------------------------
+   Card micro-lift — used by certification/resource/gear cards
+   --------------------------------------------------------------- */
+.card-lift {
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.25s ease,
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px -12px rgb(var(--line) / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-lift:hover {
+    transform: none;
+  }
+  [data-nav-link][aria-current="true"] {
+    transform: none;
+  }
+}

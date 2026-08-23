@@ -179,7 +179,21 @@ const person = {
           try {
             localStorage.setItem("theme", pref);
           } catch (e) {}
-          apply(pref);
+          var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          if (document.startViewTransition && !reduce) {
+            document.startViewTransition(function () {
+              apply(pref);
+            });
+          } else if (!reduce) {
+            var root = document.documentElement;
+            root.classList.add("theme-fade");
+            apply(pref);
+            setTimeout(function () {
+              root.classList.remove("theme-fade");
+            }, 400);
+          } else {
+            apply(pref);
+          }
         };
 
         document.querySelectorAll("[data-theme-opt]").forEach(function (b) {
@@ -258,6 +272,43 @@ const person = {
 
         items.forEach(function (el) {
           io.observe(el);
+        });
+      })();
+      // ---- sidebar scrollspy ------------------------------------------
+      (function () {
+        var links = document.querySelectorAll("[data-nav-link]");
+        if (!links.length || !("IntersectionObserver" in window)) return;
+
+        var map = {};
+        links.forEach(function (a) {
+          var id = (a.getAttribute("href") || "").slice(1);
+          if (id) (map[id] = map[id] || []).push(a);
+        });
+
+        var current = null;
+        function activate(id) {
+          if (id === current) return;
+          current = id;
+          links.forEach(function (a) {
+            a.removeAttribute("aria-current");
+          });
+          (map[id] || []).forEach(function (a) {
+            a.setAttribute("aria-current", "true");
+          });
+        }
+
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) activate(entry.target.id);
+            });
+          },
+          { rootMargin: "-35% 0px -55% 0px", threshold: 0 }
+        );
+
+        Object.keys(map).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) io.observe(el);
         });
       })();
     </script>
