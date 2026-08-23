@@ -2,14 +2,25 @@
 interface Props {
   n: string;
   name: string;
-  id?: string;
+  /** Optional right-hand action, mirroring the reference's "all posts →". */
+  actionLabel?: string;
+  actionHref?: string;
 }
-const { n, name, id } = Astro.props;
+const { n, name, actionLabel, actionHref } = Astro.props;
 ---
 
-<h2
-  id={id}
-  class="reveal font-pixel text-[13px] tracking-tight text-muted scroll-mt-24"
->
-  {n} <span class="mx-1 opacity-40" aria-hidden="true">—</span> {name}
-</h2>
+<div class="reveal mb-8 flex items-baseline justify-between gap-4">
+  <h2 class="font-pixel text-sm text-muted">
+    {n} <span class="opacity-60" aria-hidden="true">—</span> {name}
+  </h2>
+  {
+    actionLabel && actionHref && (
+      <a
+        href={actionHref}
+        class="shrink-0 font-mono text-[11px] uppercase tracking-wider text-muted hover:text-ink"
+      >
+        {actionLabel} →
+      </a>
+    )
+  }
+</div>

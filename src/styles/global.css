@@ -136,3 +136,73 @@ body {
   background-size: 100% 1px;
   color: rgb(var(--accent));
 }
+
+/* ---------------------------------------------------------------
+   Halftone dot texture — background grid, section accents, and the
+   portrait treatment all share one radial-gradient tile.
+   --------------------------------------------------------------- */
+:root {
+  --halftone: rgba(10, 10, 10, 0.9);
+}
+
+.dark {
+  --halftone: rgba(244, 244, 245, 0.42);
+}
+
+.halftone {
+  background-image: radial-gradient(
+    circle at center,
+    var(--halftone) 1px,
+    transparent 1.6px
+  );
+  background-size: 6px 6px;
+}
+
+.halftone-fine {
+  background-image: radial-gradient(
+    circle at center,
+    var(--halftone) 0.8px,
+    transparent 1.3px
+  );
+  background-size: 4px 4px;
+}
+
+/* Soft circular falloff, used on the decorative section accents */
+.mask-circle {
+  -webkit-mask-image: radial-gradient(circle at center, #000 35%, transparent 72%);
+  mask-image: radial-gradient(circle at center, #000 35%, transparent 72%);
+}
+
+/* Fades the portrait texture out toward the bottom edge */
+.mask-portrait {
+  -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+}
+
+/* ---------------------------------------------------------------
+   Three-state theme switcher (system / light / dark)
+   --------------------------------------------------------------- */
+.theme-opt {
+  display: inline-flex;
+  height: 30px;
+  width: 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: rgb(var(--muted));
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.theme-opt svg {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.theme-opt:hover {
+  color: rgb(var(--ink));
+}
+
+.theme-opt[aria-pressed="true"] {
+  background-color: rgb(var(--ink) / 0.07);
+  color: rgb(var(--ink));
+}

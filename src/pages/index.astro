@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import SectionLabel from "../components/SectionLabel.astro";
+import Portrait from "../components/Portrait.astro";
 import Role from "../components/Role.astro";
 import Bullet from "../components/Bullet.astro";
 
@@ -8,34 +9,20 @@ const title = "Christian Josef Aquino — Senior DevOps Engineer";
 const description =
   "Senior DevOps engineer in Metro Manila with 7+ years building and operating production cloud infrastructure on AWS, GCP, and Azure. Kubernetes, Terraform/OpenTofu, GitOps, and observability.";
 
-const nav = [
-  { href: "#about", label: "about" },
-  { href: "#experience", label: "experience" },
-  { href: "#stack", label: "stack" },
-  { href: "#contact", label: "contact" },
-];
-
 const stats = [
-  { v: "7+", l: "years" },
+  { v: "7+ yrs", l: "experience" },
   { v: "99.95%", l: "uptime" },
   { v: "−40%", l: "mttr" },
   { v: "3.6M+", l: "users served" },
-  { v: "−65%", l: "provisioning time" },
 ];
 
 const stack = [
-  {
-    k: "Cloud",
-    v: ["AWS", "Google Cloud", "Azure"],
-  },
+  { k: "Cloud", v: ["AWS", "Google Cloud", "Azure"] },
   {
     k: "Containers & Orchestration",
     v: ["Kubernetes — EKS · GKE · AKS", "Docker", "Helm", "Karpenter"],
   },
-  {
-    k: "Infrastructure as Code",
-    v: ["Terraform", "OpenTofu", "Pulumi"],
-  },
+  { k: "Infrastructure as Code", v: ["Terraform", "OpenTofu", "Pulumi"] },
   {
     k: "CI/CD & GitOps",
     v: ["GitLab CI/CD", "ArgoCD", "Jenkins", "GitHub Actions", "SonarQube"],
@@ -44,150 +31,85 @@ const stack = [
     k: "Observability & Reliability",
     v: ["Grafana", "Prometheus", "SLA / SLO", "Incident response", "RCA"],
   },
-  {
-    k: "Scripting & Systems",
-    v: ["Python", "Bash", "PowerShell", "Linux"],
-  },
+  { k: "Scripting & Systems", v: ["Python", "Bash", "PowerShell", "Linux"] },
 ];
 ---
 
 <Base title={title} description={description}>
-  <!-- ============================= NAV ============================= -->
-  <header
-    class="sticky top-0 z-40 border-b border-line/10 bg-bg/80 backdrop-blur-md"
-  >
-    <nav
-      class="mx-auto flex h-14 max-w-3xl items-center justify-between px-6"
-      aria-label="Primary"
-    >
-      <a
-        href="#top"
-        class="font-mono text-[12px] lowercase tracking-tight text-ink transition-opacity hover:opacity-60"
-      >
-        christian aquino
-      </a>
-
-      <div class="flex items-center gap-5">
-        <ul class="hidden items-center gap-5 sm:flex">
-          {
-            nav.map((item) => (
-              <li>
-                <a
-                  href={item.href}
-                  class="font-mono text-[12px] lowercase text-muted transition-colors hover:text-ink"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-
-        <button
-          id="theme-toggle"
-          type="button"
-          aria-label="Switch theme"
-          class="grid h-7 w-7 place-items-center rounded-full border border-line/15 text-muted transition-colors hover:border-line/30 hover:text-ink"
-        >
-          <svg
-            class="h-3.5 w-3.5 dark:hidden"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="4"></circle>
-            <path
-              d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
-            ></path>
-          </svg>
-          <svg
-            class="hidden h-3.5 w-3.5 dark:block"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
-          </svg>
-        </button>
-      </div>
-    </nav>
-  </header>
-
-  <main id="main" class="mx-auto max-w-3xl px-6">
+  <div class="mx-auto max-w-4xl px-6 sm:px-10 lg:px-14">
     <!-- ============================= HERO ============================= -->
-    <section id="top" class="pb-20 pt-20 sm:pb-28 sm:pt-28">
-      <p
-        class="reveal font-mono text-[11px] uppercase tracking-[0.18em] text-muted"
-      >
-        Metro Manila, PH · UTC+8
-      </p>
+    <section id="top" class="relative pb-4 pt-14 sm:pt-20">
+      <div class="grid gap-9 sm:grid-cols-[18rem_1fr] sm:items-start sm:gap-10">
+        <Portrait />
 
-      <h1
-        class="reveal d1 mt-5 font-pixel text-[2rem] leading-[1.05] tracking-tight text-ink sm:text-[2.6rem]"
-      >
-        Christian Josef Aquino
-      </h1>
+        <div>
+          <h1
+            class="reveal d1 font-pixel text-3xl leading-none tracking-tight sm:text-[2.6rem]"
+          >
+            Christian Josef Aquino
+          </h1>
 
-      <p
-        class="reveal d2 mt-5 max-w-xl text-[17px] leading-relaxed text-muted"
-      >
-        Senior DevOps engineer. I build the cloud infrastructure underneath
-        production systems and keep it{" "}
-        <span class="font-serif italic text-ink">quietly, relentlessly boring</span>{" "}
-        — the kind of boring that comes from good automation, real
-        observability, and incident practice.
-      </p>
+          <p class="reveal d2 mt-6 max-w-md text-[15px] leading-relaxed text-muted">
+            I'm a senior DevOps engineer. I build the cloud infrastructure
+            underneath production systems — Kubernetes, Terraform, and the
+            pipelines that ship to them.
+          </p>
 
-      <p class="reveal d3 mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[12px] text-muted">
-        <span class="relative flex h-1.5 w-1.5">
-          <span
-            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60"
-          ></span>
-          <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent"
-          ></span>
-        </span>
-        <span class="text-ink">Senior DevOps Engineer</span>
-        <span>at</span>
-        <span class="text-ink">Iron Mountain Philippines</span>
-      </p>
+          <p class="reveal d3 mt-4 max-w-md text-[15px] leading-relaxed text-muted">
+            Right now I keep a mission-critical platform{" "}
+            <span class="font-serif italic text-ink">quietly, relentlessly boring</span>{" "}
+            across AWS, GCP, and Azure. Good automation, real observability, and
+            incident practice do most of that work.
+          </p>
 
-      <!-- stat strip -->
-      <dl
-        class="reveal d4 mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-line/10 pt-8 sm:grid-cols-5 sm:gap-x-4"
-      >
-        {
-          stats.map((s) => (
-            <div>
-              <dt class="sr-only">{s.l}</dt>
-              <dd class="tnum font-mono text-[19px] leading-none tracking-tight text-ink">
-                {s.v}
-              </dd>
-              <dd class="mt-2 font-mono text-[10px] uppercase leading-tight tracking-[0.12em] text-muted">
-                {s.l}
-              </dd>
+          <div
+            class="reveal d4 mt-7 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[12px] text-muted"
+          >
+            <a
+              href="https://github.com/chrstnjsff"
+              target="_blank"
+              rel="me noopener"
+              class="hover:text-ink">github ↗</a
+            >
+            <a href="mailto:chrstnjsff@gmail.com" class="hover:text-ink">email ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= STATS ============================= -->
+    <section
+      class="reveal mt-10 grid grid-cols-2 divide-x divide-y divide-line/12 border-t border-line/12 sm:grid-cols-4 sm:divide-y-0"
+      aria-label="Key figures"
+    >
+      {
+        stats.map((s, i) => (
+          <div class={`py-6 pr-5 sm:px-5 ${i === 0 ? "sm:pl-0" : ""}`}>
+            <div class="tnum font-pixel text-lg leading-none">{s.v}</div>
+            <div class="mt-2 font-mono text-[11px] uppercase tracking-wider text-muted">
+              {s.l}
             </div>
-          ))
-        }
-      </dl>
+          </div>
+        ))
+      }
     </section>
 
     <!-- ============================= ABOUT ============================= -->
-    <section class="border-t border-line/10 py-16 sm:py-20">
-      <SectionLabel n="01" name="about" id="about" />
+    <section id="about" class="relative scroll-mt-20 py-14">
+      <div
+        aria-hidden="true"
+        class="halftone mask-circle pointer-events-none absolute -left-10 bottom-6 hidden h-32 w-32 opacity-20 lg:block"
+      >
+      </div>
 
-      <div class="reveal d1 mt-8 max-w-xl space-y-4 text-[15px] leading-relaxed text-muted">
+      <SectionLabel n="01" name="about" />
+
+      <div class="reveal d1 max-w-xl space-y-4 text-[15px] leading-relaxed text-muted">
         <p>
           Seven-plus years designing, implementing, and operating production
-          cloud infrastructure and networked systems across AWS, GCP, and
-          Azure. My work sits where infrastructure as code, Kubernetes, and
-          delivery pipelines meet — and where they break.
+          cloud infrastructure and networked systems across AWS, GCP, and Azure.
+          My work sits where infrastructure as code, Kubernetes, and delivery
+          pipelines meet — and where they break.
         </p>
         <p>
           Day to day that means multi-cluster Kubernetes administration across
@@ -212,10 +134,10 @@ const stack = [
     </section>
 
     <!-- ============================= EXPERIENCE ============================= -->
-    <section class="border-t border-line/10 py-16 sm:py-20">
-      <SectionLabel n="02" name="experience" id="experience" />
+    <section id="experience" class="relative scroll-mt-20 py-14">
+      <SectionLabel n="02" name="experience" />
 
-      <div class="mt-8">
+      <div>
         <Role
           company="Iron Mountain Philippines"
           role="Senior DevOps Engineer"
@@ -328,20 +250,32 @@ const stack = [
     </section>
 
     <!-- ============================= STACK ============================= -->
-    <section class="border-t border-line/10 py-16 sm:py-20">
-      <SectionLabel n="03" name="stack" id="stack" />
+    <section id="stack" class="relative scroll-mt-20 py-14">
+      <div
+        aria-hidden="true"
+        class="halftone mask-circle pointer-events-none absolute -right-12 top-10 hidden h-36 w-36 opacity-20 lg:block"
+      >
+      </div>
 
-      <dl class="mt-8 space-y-6">
+      <SectionLabel n="03" name="stack" />
+
+      <dl class="divide-y divide-line/12 border-y border-line/12">
         {
           stack.map((group, i) => (
-            <div class={`reveal ${i < 5 ? `d${i + 1}` : "d5"} sm:grid sm:grid-cols-[13rem_1fr] sm:gap-6`}>
+            <div
+              class={`reveal ${i < 5 ? `d${i + 1}` : "d5"} py-4 sm:grid sm:grid-cols-[13rem_1fr] sm:gap-6`}
+            >
               <dt class="font-mono text-[11px] uppercase tracking-wider text-muted">
                 {group.k}
               </dt>
               <dd class="mt-1.5 text-[14.5px] leading-relaxed text-ink sm:mt-0">
                 {group.v.map((item, j) => (
                   <>
-                    {j > 0 && <span class="mx-2 text-muted opacity-40" aria-hidden="true">·</span>}
+                    {j > 0 && (
+                      <span class="mx-2 text-muted opacity-40" aria-hidden="true">
+                        ·
+                      </span>
+                    )}
                     <span>{item}</span>
                   </>
                 ))}
@@ -353,19 +287,17 @@ const stack = [
     </section>
 
     <!-- ============================= CONTACT ============================= -->
-    <section class="border-t border-line/10 py-16 sm:py-24">
-      <SectionLabel n="04" name="contact" id="contact" />
+    <section id="contact" class="relative scroll-mt-20 py-14">
+      <SectionLabel n="04" name="contact" />
 
-      <h3 class="reveal d1 mt-8 font-pixel text-[1.6rem] leading-none text-ink">
-        say hello
-      </h3>
+      <h3 class="reveal d1 font-pixel text-xl leading-none">say hello</h3>
 
       <p class="reveal d2 mt-5 max-w-md text-[15px] leading-relaxed text-muted">
         Open to conversations about platform engineering, reliability work, and
         anything involving Kubernetes at an awkward hour.
       </p>
 
-      <ul class="reveal d3 mt-8 space-y-3">
+      <ul class="reveal d3 mt-7 space-y-3">
         <li>
           <a
             href="mailto:chrstnjsff@gmail.com"
@@ -377,6 +309,7 @@ const stack = [
         <li>
           <a
             href="https://github.com/chrstnjsff"
+            target="_blank"
             rel="me noopener"
             class="link-ul font-mono text-[14px] text-ink"
           >
@@ -385,15 +318,15 @@ const stack = [
         </li>
       </ul>
     </section>
-  </main>
 
-  <!-- ============================= FOOTER ============================= -->
-  <footer class="border-t border-line/10">
-    <div
-      class="mx-auto flex max-w-3xl flex-col gap-2 px-6 py-8 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between"
-    >
-      <p>© 2026 Christian Josef Aquino</p>
-      <p>Built with Astro · deployed via GitHub Actions</p>
-    </div>
-  </footer>
+    <!-- ============================= FOOTER ============================= -->
+    <footer class="border-t border-line/12 py-8">
+      <div
+        class="flex flex-col gap-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between"
+      >
+        <p>© 2026 Christian Josef Aquino</p>
+        <p>Built with Astro · deployed via GitHub Actions</p>
+      </div>
+    </footer>
+  </div>
 </Base>
