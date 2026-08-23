@@ -5,11 +5,11 @@
 
 ```sh
 swift scripts/portrait/halftone.swift <photo.jpg> public/portrait.png \
-  6     `# dot pitch in px` \
+  7     `# dot pitch in px` \
   0     `# screen angle, degrees` \
-  1.08  `# contrast` \
-  0.07  `# brightness` \
-  0.78  `# gamma (lower = brighter midtones)` \
+  1.02  `# contrast` \
+  0.10  `# brightness` \
+  0.68  `# gamma (lower = brighter midtones)` \
   768   `# output size in px (dot pitch scales with it: 6 at 768)`
 ```
 
