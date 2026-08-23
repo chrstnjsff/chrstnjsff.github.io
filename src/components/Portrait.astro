@@ -1,10 +1,13 @@
 ---
-// Drop a photo at public/portrait.png (square, ideally already 1-bit dithered
-// black & white) and it renders in place of the monogram placeholder.
-// Everything else about the frame stays the same.
+// public/portrait.png is a pre-dithered halftone cutout (black dots on
+// transparency) generated from a photo — see scripts/og/README.md sibling
+// note in scripts/portrait/. dark:invert flips the dots white on dark.
 import { existsSync } from "node:fs";
+import { join } from "node:path";
 
-const hasPhoto = existsSync(new URL("../../public/portrait.png", import.meta.url));
+// resolve from the project root — import.meta.url points into the build
+// output during `astro build`, so it cannot anchor this check
+const hasPhoto = existsSync(join(process.cwd(), "public/portrait.png"));
 ---
 
 <div class="reveal relative aspect-square w-full max-w-[18rem] select-none">
@@ -13,9 +16,10 @@ const hasPhoto = existsSync(new URL("../../public/portrait.png", import.meta.url
       <img
         src="/portrait.png"
         alt="Christian Josef Aquino"
-        width="576"
-        height="576"
-        class="mask-portrait h-full w-full object-cover contrast-125 grayscale dark:invert"
+        width="768"
+        height="768"
+        fetchpriority="high"
+        class="mask-portrait h-full w-full object-contain object-bottom dark:invert"
       />
     ) : (
       <div

@@ -33,6 +33,125 @@ const stack = [
   },
   { k: "Scripting & Systems", v: ["Python", "Bash", "PowerShell", "Linux"] },
 ];
+
+const certs = [
+  {
+    issuer: "HashiCorp",
+    title: "HashiCorp Certified: Terraform Associate",
+    href: "https://developer.hashicorp.com/certifications/infrastructure-automation",
+  },
+  {
+    issuer: "Amazon Web Services",
+    title: "AWS Certified Cloud Practitioner",
+    href: "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+  },
+];
+
+const resources = [
+  {
+    group: "DevOps & Platform",
+    items: [
+      {
+        title: "Google SRE Book",
+        desc: "The reliability engineering canon, free to read",
+        href: "https://sre.google/books/",
+        domain: "sre.google",
+      },
+      {
+        title: "Kubernetes the Hard Way",
+        desc: "Kubernetes from first principles, no scripts",
+        href: "https://github.com/kelseyhightower/kubernetes-the-hard-way",
+        domain: "github.com",
+      },
+      {
+        title: "CNCF Landscape",
+        desc: "The map of the cloud-native ecosystem",
+        href: "https://landscape.cncf.io/",
+        domain: "landscape.cncf.io",
+      },
+      {
+        title: "DevOps Roadmap",
+        desc: "The learning path, kept current",
+        href: "https://roadmap.sh/devops",
+        domain: "roadmap.sh",
+      },
+      {
+        title: "Terraform Registry",
+        desc: "Providers and modules worth stealing from",
+        href: "https://registry.terraform.io/",
+        domain: "registry.terraform.io",
+      },
+    ],
+  },
+  {
+    group: "LLMs & AI Engineering",
+    items: [
+      {
+        title: "Anthropic Docs",
+        desc: "Building with Claude — API, agents, MCP",
+        href: "https://docs.anthropic.com/",
+        domain: "docs.anthropic.com",
+      },
+      {
+        title: "Anthropic Cookbook",
+        desc: "Working patterns for LLM applications",
+        href: "https://github.com/anthropics/anthropic-cookbook",
+        domain: "github.com",
+      },
+      {
+        title: "Simon Willison's Weblog",
+        desc: "The running commentary on the LLM era",
+        href: "https://simonwillison.net/",
+        domain: "simonwillison.net",
+      },
+      {
+        title: "Prompt Engineering Guide",
+        desc: "Techniques, papers, and model quirks",
+        href: "https://www.promptingguide.ai/",
+        domain: "promptingguide.ai",
+      },
+      {
+        title: "Hugging Face",
+        desc: "Models, datasets, and spaces",
+        href: "https://huggingface.co/",
+        domain: "huggingface.co",
+      },
+      {
+        title: "Ollama",
+        desc: "Run open models on your own machine",
+        href: "https://ollama.com/",
+        domain: "ollama.com",
+      },
+    ],
+  },
+];
+
+const gear = [
+  {
+    name: "MacBook Pro — M5 Pro",
+    note: "daily driver",
+    href: "https://www.apple.com/macbook-pro/",
+    domain: "apple.com",
+  },
+  {
+    name: "NuPhy keyboard",
+    note: "low-profile mechanical",
+    href: "https://nuphy.com/",
+    domain: "nuphy.com",
+  },
+  {
+    name: "Shokz bone-conduction headphones",
+    note: "on-call, ears open",
+    href: "https://shokz.com/",
+    domain: "shokz.com",
+  },
+  {
+    name: "Apple Watch Series 11",
+    note: "pages reach me anywhere",
+    href: "https://www.apple.com/watch/",
+    domain: "apple.com",
+  },
+];
 ---
 
 <Base title={title} description={description}>
@@ -286,9 +405,139 @@ const stack = [
       </dl>
     </section>
 
+    <!-- ============================= CERTIFICATIONS ============================= -->
+    <section id="certifications" class="relative scroll-mt-20 py-14">
+      <SectionLabel n="04" name="certifications" />
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {
+          certs.map((c, i) => (
+            <a
+              href={c.href}
+              target="_blank"
+              rel="noopener"
+              class={`reveal ${i === 1 ? "d1" : ""} group relative overflow-hidden border border-line/15 p-5 transition-colors hover:border-line/40`}
+            >
+              <div
+                aria-hidden="true"
+                class="halftone mask-circle pointer-events-none absolute -right-6 -top-6 h-24 w-24 opacity-[0.12]"
+              />
+              <p class="font-mono text-[10px] uppercase tracking-wider text-muted">
+                {c.issuer}
+              </p>
+              <h3 class="relative mt-3 text-[13px] font-semibold leading-snug text-ink">
+                {c.title}
+              </h3>
+              <p class="mt-4 font-mono text-[11px] text-muted group-hover:text-ink">
+                about this cert ↗
+              </p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ============================= RECOMMENDATIONS ============================= -->
+    <section id="recommendations" class="relative scroll-mt-20 py-14">
+      <SectionLabel n="05" name="recommendations" />
+
+      <figure class="reveal d1 max-w-xl border-l-2 border-line/20 pl-6">
+        <blockquote class="font-serif text-[16px] italic leading-relaxed text-ink">
+          “Cj is a fast learner and easy to work with. Even I am a senior to
+          him, he also helped me with difficulties at work. He is very
+          cooperative and hardworking.”
+        </blockquote>
+        <figcaption class="mt-4">
+          <p class="text-[13px] font-medium text-ink">Danica Capistrano</p>
+          <p class="mt-1 font-mono text-[11px] uppercase tracking-wider text-muted">
+            Support Analyst 2 · Koerber Supply Chain Software
+          </p>
+          <p class="mt-1 font-mono text-[11px] text-muted">
+            senior colleague · May 2021 · via LinkedIn
+          </p>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- ============================= RESOURCES ============================= -->
+    <section id="resources" class="relative scroll-mt-20 py-14">
+      <div
+        aria-hidden="true"
+        class="halftone mask-circle pointer-events-none absolute -left-10 top-16 hidden h-32 w-32 opacity-20 lg:block"
+      >
+      </div>
+
+      <SectionLabel n="06" name="resources" />
+
+      <div class="space-y-8">
+        {
+          resources.map((section) => (
+            <div>
+              <h3 class="reveal font-mono text-[11px] uppercase tracking-wider text-muted">
+                {section.group}
+              </h3>
+              <div class="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {section.items.map((r, i) => (
+                  <a
+                    href={r.href}
+                    target="_blank"
+                    rel="noopener"
+                    class={`reveal ${i < 4 ? `d${i + 1}` : "d4"} group border border-dashed border-line/20 px-4 py-3.5 transition-colors hover:border-line/50`}
+                  >
+                    <div class="flex items-baseline justify-between gap-3">
+                      <h4 class="text-[13px] font-medium text-ink">{r.title}</h4>
+                      <span
+                        class="shrink-0 font-mono text-[11px] text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
+                        aria-hidden="true"
+                      >
+                        ↗
+                      </span>
+                    </div>
+                    <p class="mt-1 text-[12.5px] leading-relaxed text-muted">{r.desc}</p>
+                    <p class="mt-2 font-mono text-[10px] tracking-wide text-muted opacity-70">
+                      {r.domain}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ============================= GEAR ============================= -->
+    <section id="gear" class="relative scroll-mt-20 py-14">
+      <SectionLabel n="07" name="gear" />
+
+      <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {
+          gear.map((g, i) => (
+            <a
+              href={g.href}
+              target="_blank"
+              rel="noopener"
+              class={`reveal ${i < 4 ? `d${i + 1}` : ""} group flex items-baseline justify-between gap-4 border border-line/15 px-4 py-3.5 transition-colors hover:border-line/40`}
+            >
+              <div>
+                <h3 class="text-[13px] font-medium text-ink">{g.name}</h3>
+                <p class="mt-1 font-mono text-[11px] text-muted">{g.note}</p>
+              </div>
+              <span
+                class="shrink-0 font-mono text-[11px] text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
+                aria-hidden="true"
+              >
+                ↗
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
     <!-- ============================= CONTACT ============================= -->
     <section id="contact" class="relative scroll-mt-20 py-14">
-      <SectionLabel n="04" name="contact" />
+      <SectionLabel n="08" name="contact" />
 
       <h3 class="reveal d1 font-pixel text-xl leading-none">say hello</h3>
 
