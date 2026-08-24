@@ -14,10 +14,10 @@ const description =
 const built = new Date().toISOString().slice(0, 10);
 
 const stats = [
-  { v: "7+ yrs", l: "experience" },
-  { v: "99.95%", l: "uptime" },
-  { v: "−40%", l: "mttr" },
-  { v: "3.6M+", l: "users served" },
+  { v: "7+", l: "years of experience" },
+  { v: "99.95%", l: "platform uptime sustained" },
+  { v: "40%", l: "faster incident recovery" },
+  { v: "3.6M+", l: "users on platforms I run" },
 ];
 
 const stack = [
@@ -206,18 +206,18 @@ const gear = [
         <Portrait class="w-28 shrink-0 sm:w-40" />
       </div>
 
-      <!-- tmux-style status strip -->
+      <!-- career highlights -->
       <div
-        class="reveal d5 mt-12 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-y border-line/12 py-3 font-mono text-[12px]"
+        class="reveal d5 mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-line/12 py-6 sm:grid-cols-4"
         role="group"
-        aria-label="Key figures"
+        aria-label="Career highlights"
       >
         {
           stats.map((s) => (
-            <span class="tnum whitespace-nowrap text-muted">
-              [{s.l}{" "}
-              <span class="font-pixel text-[12px] text-ink">{s.v}</span>]
-            </span>
+            <div>
+              <div class="text-xl font-semibold tracking-tight text-ink">{s.v}</div>
+              <div class="mt-1 text-[12px] leading-snug text-muted">{s.l}</div>
+            </div>
           ))
         }
       </div>

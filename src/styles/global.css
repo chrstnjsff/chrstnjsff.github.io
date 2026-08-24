@@ -248,25 +248,25 @@ html.theme-fade * {
 }
 
 /* ---------------------------------------------------------------
-   Top-bar scrollspy — the section in view underlines its link with
-   an accent hairline that draws in from the left.
+   Sidebar scrollspy — the section in view lights its link and grows
+   a small dash, like a cursor in a margin.
    --------------------------------------------------------------- */
 [data-nav-link] {
   position: relative;
-  transition: color 0.25s ease;
+  transition: color 0.25s ease, transform 0.25s ease;
 }
 
-[data-nav-link]::after {
+[data-nav-link]::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3px;
+  left: -1.15rem;
+  top: 50%;
   height: 1px;
+  width: 0.6rem;
   background: rgb(var(--accent));
   transform: scaleX(0);
   transform-origin: left center;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-nav-link]:hover {
@@ -275,9 +275,10 @@ html.theme-fade * {
 
 [data-nav-link][aria-current="true"] {
   color: rgb(var(--ink));
+  transform: translateX(0.35rem);
 }
 
-[data-nav-link][aria-current="true"]::after {
+[data-nav-link][aria-current="true"]::before {
   transform: scaleX(1);
 }
 
@@ -381,6 +382,9 @@ html.theme-fade * {
 
 @media (prefers-reduced-motion: reduce) {
   .card-lift:hover {
+    transform: none;
+  }
+  [data-nav-link][aria-current="true"] {
     transform: none;
   }
 }
