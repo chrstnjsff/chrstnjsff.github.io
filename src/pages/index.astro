@@ -11,8 +11,6 @@ const title = "Christian Josef Aquino — Senior DevOps Engineer";
 const description =
   "Senior DevOps engineer in Metro Manila with 7+ years building and operating production cloud infrastructure on AWS, GCP, and Azure. Kubernetes, Terraform/OpenTofu, GitOps, and observability.";
 
-const built = new Date().toISOString().slice(0, 10);
-
 const stats = [
   { v: "7+", l: "years of experience" },
   { v: "99.95%", l: "platform uptime sustained" },
@@ -159,7 +157,7 @@ const gear = [
 ---
 
 <Base title={title} description={description}>
-  <div class="mx-auto max-w-2xl px-6">
+  <div class="mx-auto max-w-2xl px-6 pb-16">
     <!-- ============================= HERO ============================= -->
     <section id="top" class="relative pb-4 pt-14 sm:pt-20">
       <div
@@ -542,56 +540,5 @@ const gear = [
       <FlappyGame />
     </section>
 
-    <!-- ============================= CONTACT ============================= -->
-    <section id="contact" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="contact" />
-
-      <h3 class="reveal d1 text-lg font-semibold tracking-tight">say hello</h3>
-
-      <p class="reveal d2 mt-4 max-w-md text-[15px] leading-relaxed text-muted">
-        Open to conversations about platform engineering, reliability work, and
-        anything involving Kubernetes at an awkward hour.
-      </p>
-
-      <ul class="reveal d3 mt-7 space-y-3">
-        <li>
-          <a
-            href="mailto:chrstnjsff@gmail.com"
-            class="link-ul font-mono text-[14px] text-ink"
-          >
-            chrstnjsff@gmail.com
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://github.com/chrstnjsff"
-            target="_blank"
-            rel="me noopener"
-            class="link-ul font-mono text-[14px] text-ink"
-          >
-            github.com/chrstnjsff
-          </a>
-        </li>
-      </ul>
-    </section>
-
-    <!-- ============================= FOOTER ============================= -->
-    <footer class="border-t border-line/12 py-10">
-      <div
-        class="flex flex-col gap-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between"
-      >
-        <p class="tnum">last deploy: {built} · built with astro</p>
-        <p class="flex gap-4">
-          <a
-            href="https://github.com/chrstnjsff"
-            target="_blank"
-            rel="me noopener"
-            class="hover:text-ink">github ↗</a
-          >
-          <a href="mailto:chrstnjsff@gmail.com" class="hover:text-ink">email ↗</a>
-        </p>
-      </div>
-      <p class="mt-2 font-mono text-[11px] text-muted">© 2026 Christian Josef Aquino</p>
-    </footer>
   </div>
 </Base>
