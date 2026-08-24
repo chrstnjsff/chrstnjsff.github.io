@@ -52,8 +52,8 @@
    --------------------------------------------------------------- */
 html {
   scroll-behavior: smooth;
-  /* offset anchor targets for the sticky nav */
-  scroll-padding-top: 5rem;
+  /* offset anchor targets for the sticky top bar */
+  scroll-padding-top: 4.5rem;
 }
 
 body {
@@ -82,19 +82,22 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Scroll reveal — CSS only, toggled by one IntersectionObserver
+   Scroll reveal — blur-to-sharp, toggled by one IntersectionObserver
    --------------------------------------------------------------- */
 .reveal {
   opacity: 0;
   transform: translateY(12px);
+  filter: blur(6px);
   transition:
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reveal.in {
   opacity: 1;
   transform: none;
+  filter: none;
 }
 
 .d1 { transition-delay: 60ms; }
@@ -110,6 +113,7 @@ body {
   .reveal {
     opacity: 1;
     transform: none;
+    filter: none;
     transition: none;
   }
   *,
@@ -138,8 +142,28 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Halftone dot texture — background grid, section accents, and the
-   portrait treatment all share one radial-gradient tile.
+   Blinking block cursor — the hero role line's heartbeat
+   --------------------------------------------------------------- */
+.cursor-blink {
+  display: inline-block;
+  animation: cursor-blink 1.1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-blink {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Halftone dot texture — background grid, the portrait treatment,
+   and the game all share this dot language.
    --------------------------------------------------------------- */
 :root {
   --halftone: rgba(10, 10, 10, 0.9);
@@ -165,12 +189,6 @@ body {
     transparent 1.3px
   );
   background-size: 4px 4px;
-}
-
-/* Soft circular falloff, used on the decorative section accents */
-.mask-circle {
-  -webkit-mask-image: radial-gradient(circle at center, #000 35%, transparent 72%);
-  mask-image: radial-gradient(circle at center, #000 35%, transparent 72%);
 }
 
 /* Fades the portrait texture out toward the bottom edge */
@@ -230,34 +248,46 @@ html.theme-fade * {
 }
 
 /* ---------------------------------------------------------------
-   Sidebar scrollspy — the section in view lights its link and grows
-   a small dash, like a cursor in a margin.
+   Top-bar scrollspy — the section in view underlines its link with
+   an accent hairline that draws in from the left.
    --------------------------------------------------------------- */
 [data-nav-link] {
   position: relative;
-  transition: color 0.25s ease, transform 0.25s ease;
+  transition: color 0.25s ease;
 }
 
-[data-nav-link]::before {
+[data-nav-link]::after {
   content: "";
   position: absolute;
-  left: -1.15rem;
-  top: 50%;
+  left: 0;
+  right: 0;
+  bottom: -3px;
   height: 1px;
-  width: 0.6rem;
   background: rgb(var(--accent));
   transform: scaleX(0);
   transform-origin: left center;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-nav-link]:hover {
+  color: rgb(var(--ink));
 }
 
 [data-nav-link][aria-current="true"] {
   color: rgb(var(--ink));
-  transform: translateX(0.35rem);
 }
 
-[data-nav-link][aria-current="true"]::before {
+[data-nav-link][aria-current="true"]::after {
   transform: scaleX(1);
+}
+
+/* ---------------------------------------------------------------
+   Scroll progress — a 1px accent hairline pinned to the very top.
+   Width is driven by a passive scroll listener in Base.astro.
+   --------------------------------------------------------------- */
+#scroll-progress {
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 
 /* ---------------------------------------------------------------
@@ -287,6 +317,54 @@ html.theme-fade * {
 }
 
 /* ---------------------------------------------------------------
+   Cards — solid hairline border with crop-mark corner ticks,
+   like registration marks on a print proof.
+   --------------------------------------------------------------- */
+.card-tick {
+  position: relative;
+  border: 1px solid rgb(var(--line) / 0.15);
+  transition: border-color 0.25s ease;
+}
+
+.card-tick:hover {
+  border-color: rgb(var(--line) / 0.45);
+}
+
+.card-tick::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  --tick: rgb(var(--line) / 0.6);
+  background-image:
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick));
+  background-repeat: no-repeat;
+  background-size:
+    7px 1px, 1px 7px,
+    7px 1px, 1px 7px,
+    7px 1px, 1px 7px,
+    7px 1px, 1px 7px;
+  background-position:
+    top left, top left,
+    top right, top right,
+    bottom left, bottom left,
+    bottom right, bottom right;
+  opacity: 0.55;
+  transition: opacity 0.25s ease;
+}
+
+.card-tick:hover::before {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------
    Card micro-lift — used by certification/resource/gear cards
    --------------------------------------------------------------- */
 .card-lift {
@@ -303,9 +381,6 @@ html.theme-fade * {
 
 @media (prefers-reduced-motion: reduce) {
   .card-lift:hover {
-    transform: none;
-  }
-  [data-nav-link][aria-current="true"] {
     transform: none;
   }
 }

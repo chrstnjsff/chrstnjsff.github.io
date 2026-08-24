@@ -7,10 +7,15 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
+interface Props {
+  class?: string;
+}
+const { class: className = "w-full max-w-[18rem]" } = Astro.props;
+
 const hasPhoto = existsSync(join(process.cwd(), "public/portrait.png"));
 ---
 
-<div class="reveal relative aspect-square w-full max-w-[18rem] select-none">
+<div class={`reveal relative aspect-square select-none ${className}`}>
   {
     hasPhoto ? (
       <div class="relative h-full w-full overflow-hidden dark:bg-ink">

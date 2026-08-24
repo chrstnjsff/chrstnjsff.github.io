@@ -5,10 +5,13 @@ import Portrait from "../components/Portrait.astro";
 import Role from "../components/Role.astro";
 import Bullet from "../components/Bullet.astro";
 import ContribGraph from "../components/ContribGraph.astro";
+import FlappyGame from "../components/FlappyGame.astro";
 
 const title = "Christian Josef Aquino — Senior DevOps Engineer";
 const description =
   "Senior DevOps engineer in Metro Manila with 7+ years building and operating production cloud infrastructure on AWS, GCP, and Azure. Kubernetes, Terraform/OpenTofu, GitOps, and observability.";
+
+const built = new Date().toISOString().slice(0, 10);
 
 const stats = [
   { v: "7+ yrs", l: "experience" },
@@ -156,26 +159,31 @@ const gear = [
 ---
 
 <Base title={title} description={description}>
-  <div class="mx-auto max-w-4xl px-6 sm:px-10 lg:px-14">
+  <div class="mx-auto max-w-2xl px-6">
     <!-- ============================= HERO ============================= -->
     <section id="top" class="relative pb-4 pt-14 sm:pt-20">
-      <div class="grid gap-9 sm:grid-cols-[18rem_1fr] sm:items-start sm:gap-10">
-        <Portrait />
-
-        <div>
+      <div
+        class="flex flex-col-reverse gap-8 sm:flex-row sm:items-start sm:justify-between sm:gap-10"
+      >
+        <div class="max-w-md">
           <h1
-            class="reveal d1 font-pixel text-3xl leading-none tracking-tight sm:text-[2.6rem]"
+            class="reveal d1 text-[2.1rem] font-semibold leading-[1.06] tracking-tight sm:text-[2.6rem]"
           >
             Christian Josef Aquino
           </h1>
 
-          <p class="reveal d2 mt-6 max-w-md text-[15px] leading-relaxed text-muted">
+          <p class="reveal d2 mt-4 font-mono text-[13px] text-muted">
+            senior devops engineer · metro manila{" "}
+            <span class="cursor-blink" aria-hidden="true">▮</span>
+          </p>
+
+          <p class="reveal d3 mt-6 text-[15px] leading-relaxed text-muted">
             I'm a senior DevOps engineer. I build the cloud infrastructure
             underneath production systems — Kubernetes, Terraform, and the
             pipelines that ship to them.
           </p>
 
-          <p class="reveal d3 mt-4 max-w-md text-[15px] leading-relaxed text-muted">
+          <p class="reveal d3 mt-4 text-[15px] leading-relaxed text-muted">
             Right now I keep a mission-critical platform{" "}
             <span class="font-serif italic text-ink">quietly, relentlessly boring</span>{" "}
             across AWS, GCP, and Azure. Good automation, real observability, and
@@ -183,7 +191,7 @@ const gear = [
           </p>
 
           <div
-            class="reveal d4 mt-7 flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[12px] text-muted"
+            class="reveal d4 mt-7 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[12px] text-muted"
           >
             <a
               href="https://github.com/chrstnjsff"
@@ -194,37 +202,32 @@ const gear = [
             <a href="mailto:chrstnjsff@gmail.com" class="hover:text-ink">email ↗</a>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ============================= STATS ============================= -->
-    <section
-      class="reveal mt-10 grid grid-cols-2 divide-x divide-y divide-line/12 border-t border-line/12 sm:grid-cols-4 sm:divide-y-0"
-      aria-label="Key figures"
-    >
-      {
-        stats.map((s, i) => (
-          <div class={`py-6 pr-5 sm:px-5 ${i === 0 ? "sm:pl-0" : ""}`}>
-            <div class="tnum font-pixel text-lg leading-none">{s.v}</div>
-            <div class="mt-2 font-mono text-[11px] uppercase tracking-wider text-muted">
-              {s.l}
-            </div>
-          </div>
-        ))
-      }
+        <Portrait class="w-28 shrink-0 sm:w-40" />
+      </div>
+
+      <!-- tmux-style status strip -->
+      <div
+        class="reveal d5 mt-12 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-y border-line/12 py-3 font-mono text-[12px]"
+        role="group"
+        aria-label="Key figures"
+      >
+        {
+          stats.map((s) => (
+            <span class="tnum whitespace-nowrap text-muted">
+              [{s.l}{" "}
+              <span class="font-pixel text-[12px] text-ink">{s.v}</span>]
+            </span>
+          ))
+        }
+      </div>
     </section>
 
     <!-- ============================= ABOUT ============================= -->
-    <section id="about" class="relative scroll-mt-20 py-14">
-      <div
-        aria-hidden="true"
-        class="halftone mask-circle pointer-events-none absolute -left-10 bottom-6 hidden h-32 w-32 opacity-20 lg:block"
-      >
-      </div>
+    <section id="about" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="about" />
 
-      <SectionLabel n="01" name="about" />
-
-      <div class="reveal d1 max-w-xl space-y-4 text-[15px] leading-relaxed text-muted">
+      <div class="reveal d1 space-y-4 text-[15px] leading-relaxed text-muted">
         <p>
           Seven-plus years designing, implementing, and operating production
           cloud infrastructure and networked systems across AWS, GCP, and Azure.
@@ -254,8 +257,8 @@ const gear = [
     </section>
 
     <!-- ============================= EXPERIENCE ============================= -->
-    <section id="experience" class="relative scroll-mt-20 py-14">
-      <SectionLabel n="02" name="experience" />
+    <section id="experience" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="experience" />
 
       <div>
         <Role
@@ -370,14 +373,8 @@ const gear = [
     </section>
 
     <!-- ============================= STACK ============================= -->
-    <section id="stack" class="relative scroll-mt-20 py-14">
-      <div
-        aria-hidden="true"
-        class="halftone mask-circle pointer-events-none absolute -right-12 top-10 hidden h-36 w-36 opacity-20 lg:block"
-      >
-      </div>
-
-      <SectionLabel n="03" name="stack" />
+    <section id="stack" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="stack" />
 
       <dl class="divide-y divide-line/12 border-y border-line/12">
         {
@@ -407,8 +404,8 @@ const gear = [
     </section>
 
     <!-- ============================= CERTIFICATIONS ============================= -->
-    <section id="certifications" class="relative scroll-mt-20 py-14">
-      <SectionLabel n="04" name="certifications" />
+    <section id="certifications" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="certifications" />
 
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {
@@ -417,16 +414,12 @@ const gear = [
               href={c.href}
               target="_blank"
               rel="noopener"
-              class={`reveal ${i === 1 ? "d1" : ""} group relative overflow-hidden card-lift border border-line/15 p-5 hover:border-line/40`}
+              class={`reveal ${i === 1 ? "d1" : ""} group card-tick card-lift p-5`}
             >
-              <div
-                aria-hidden="true"
-                class="halftone mask-circle pointer-events-none absolute -right-6 -top-6 h-24 w-24 opacity-[0.12]"
-              />
               <p class="font-mono text-[10px] uppercase tracking-wider text-muted">
                 {c.issuer}
               </p>
-              <h3 class="relative mt-3 text-[13px] font-semibold leading-snug text-ink">
+              <h3 class="mt-3 text-[13px] font-semibold leading-snug text-ink">
                 {c.title}
               </h3>
               <p class="mt-4 font-mono text-[11px] text-muted group-hover:text-ink">
@@ -439,8 +432,8 @@ const gear = [
     </section>
 
     <!-- ============================= RECOMMENDATIONS ============================= -->
-    <section id="recommendations" class="relative scroll-mt-20 py-14">
-      <SectionLabel n="05" name="recommendations" />
+    <section id="recommendations" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="recommendations" />
 
       <figure class="reveal d1 max-w-xl border-l-2 border-line/20 pl-6">
         <blockquote class="font-serif text-[16px] italic leading-relaxed text-ink">
@@ -461,14 +454,8 @@ const gear = [
     </section>
 
     <!-- ============================= RESOURCES ============================= -->
-    <section id="resources" class="relative scroll-mt-20 py-14">
-      <div
-        aria-hidden="true"
-        class="halftone mask-circle pointer-events-none absolute -left-10 top-16 hidden h-32 w-32 opacity-20 lg:block"
-      >
-      </div>
-
-      <SectionLabel n="06" name="resources" />
+    <section id="resources" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="resources" />
 
       <div class="space-y-8">
         {
@@ -483,7 +470,7 @@ const gear = [
                     href={r.href}
                     target="_blank"
                     rel="noopener"
-                    class={`reveal ${i < 4 ? `d${i + 1}` : "d4"} group card-lift border border-dashed border-line/20 px-4 py-3.5 hover:border-line/50`}
+                    class={`reveal ${i < 4 ? `d${i + 1}` : "d4"} group card-tick card-lift px-4 py-3.5`}
                   >
                     <div class="flex items-baseline justify-between gap-3">
                       <h4 class="text-[13px] font-medium text-ink">{r.title}</h4>
@@ -508,8 +495,8 @@ const gear = [
     </section>
 
     <!-- ============================= GEAR ============================= -->
-    <section id="gear" class="relative scroll-mt-20 py-14">
-      <SectionLabel n="07" name="gear" />
+    <section id="gear" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="gear" />
 
       <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
         {
@@ -518,7 +505,7 @@ const gear = [
               href={g.href}
               target="_blank"
               rel="noopener"
-              class={`reveal ${i < 4 ? `d${i + 1}` : ""} group flex items-baseline justify-between gap-4 card-lift border border-line/15 px-4 py-3.5 hover:border-line/40`}
+              class={`reveal ${i < 4 ? `d${i + 1}` : ""} group card-tick card-lift flex items-baseline justify-between gap-4 px-4 py-3.5`}
             >
               <div>
                 <h3 class="text-[13px] font-medium text-ink">{g.name}</h3>
@@ -537,9 +524,8 @@ const gear = [
     </section>
 
     <!-- ============================= GITHUB ============================= -->
-    <section id="github" class="relative scroll-mt-20 py-14">
+    <section id="github" class="relative scroll-mt-16 py-14">
       <SectionLabel
-        n="08"
         name="github"
         actionLabel="@chrstnjsff"
         actionHref="https://github.com/chrstnjsff"
@@ -549,13 +535,20 @@ const gear = [
       <ContribGraph />
     </section>
 
+    <!-- ============================= PLAY ============================= -->
+    <section id="play" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="play" />
+
+      <FlappyGame />
+    </section>
+
     <!-- ============================= CONTACT ============================= -->
-    <section id="contact" class="relative scroll-mt-20 py-14">
-      <SectionLabel n="09" name="contact" />
+    <section id="contact" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="contact" />
 
-      <h3 class="reveal d1 font-pixel text-xl leading-none">say hello</h3>
+      <h3 class="reveal d1 text-lg font-semibold tracking-tight">say hello</h3>
 
-      <p class="reveal d2 mt-5 max-w-md text-[15px] leading-relaxed text-muted">
+      <p class="reveal d2 mt-4 max-w-md text-[15px] leading-relaxed text-muted">
         Open to conversations about platform engineering, reliability work, and
         anything involving Kubernetes at an awkward hour.
       </p>
@@ -583,13 +576,22 @@ const gear = [
     </section>
 
     <!-- ============================= FOOTER ============================= -->
-    <footer class="border-t border-line/12 py-8">
+    <footer class="border-t border-line/12 py-10">
       <div
         class="flex flex-col gap-2 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between"
       >
-        <p>© 2026 Christian Josef Aquino</p>
-        <p>Built with Astro · deployed via GitHub Actions</p>
+        <p class="tnum">last deploy: {built} · built with astro</p>
+        <p class="flex gap-4">
+          <a
+            href="https://github.com/chrstnjsff"
+            target="_blank"
+            rel="me noopener"
+            class="hover:text-ink">github ↗</a
+          >
+          <a href="mailto:chrstnjsff@gmail.com" class="hover:text-ink">email ↗</a>
+        </p>
       </div>
+      <p class="mt-2 font-mono text-[11px] text-muted">© 2026 Christian Josef Aquino</p>
     </footer>
   </div>
 </Base>

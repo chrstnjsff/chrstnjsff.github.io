@@ -1,27 +1,27 @@
 ---
 interface Props {
-  n: string;
   name: string;
-  /** Optional right-hand action, mirroring the reference's "all posts →". */
+  /** Optional right-hand action, e.g. "@chrstnjsff" on the github section. */
   actionLabel?: string;
   actionHref?: string;
   /** External actions open in a new tab and use ↗ instead of →. */
   external?: boolean;
 }
-const { n, name, actionLabel, actionHref, external = false } = Astro.props;
+const { name, actionLabel, actionHref, external = false } = Astro.props;
 ---
 
-<div class="reveal mb-8 flex items-baseline justify-between gap-4">
-  <h2 class="font-pixel text-sm text-muted">
-    {n} <span class="opacity-60" aria-hidden="true">—</span> {name}
+<div class="reveal mb-8 flex items-center gap-4">
+  <h2 class="shrink-0 font-mono text-[12px] lowercase tracking-wide text-muted">
+    <span aria-hidden="true">~/</span>{name}
   </h2>
+  <div class="h-px min-w-6 flex-1 bg-line/10" aria-hidden="true"></div>
   {
     actionLabel && actionHref && (
       <a
         href={actionHref}
         target={external ? "_blank" : undefined}
         rel={external ? "noopener" : undefined}
-        class="shrink-0 font-mono text-[11px] uppercase tracking-wider text-muted hover:text-ink"
+        class="shrink-0 font-mono text-[11px] tracking-wide text-muted hover:text-ink"
       >
         {actionLabel} {external ? "↗" : "→"}
       </a>
