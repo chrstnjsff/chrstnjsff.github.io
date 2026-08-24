@@ -21,7 +21,7 @@ const { name, actionLabel, actionHref, external = false } = Astro.props;
         href={actionHref}
         target={external ? "_blank" : undefined}
         rel={external ? "noopener" : undefined}
-        class="shrink-0 font-mono text-[11px] tracking-wide text-muted hover:text-ink"
+        class="shrink-0 py-2 -my-2 font-mono text-[12px] tracking-wide text-muted hover:text-ink"
       >
         {actionLabel} {external ? "↗" : "→"}
       </a>
