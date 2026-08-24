@@ -1,5 +1,6 @@
 ---
 import ThemeSwitch from "./ThemeSwitch.astro";
+import Logo from "./Logo.astro";
 
 interface Props {
   /** Rendered inside the mobile overlay instead of the fixed rail. */
@@ -19,8 +20,12 @@ const sections = [
 ];
 ---
 
-<a href="#top" class="shrink-0 font-pixel text-[22px] leading-none hover:opacity-60">
-  CJA
+<a
+  href="#top"
+  class="shrink-0 leading-none hover:opacity-60"
+  aria-label="Christian Josef Aquino — back to top"
+>
+  <Logo size={32} />
 </a>
 
 <div class="mt-9 flex flex-1 flex-col gap-4 overflow-y-auto font-mono text-[13px]">

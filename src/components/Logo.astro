@@ -1,0 +1,25 @@
+---
+// Console — the C as a bracket pair holding the site's block cursor.
+// Drawn on a 4-unit grid inside a 64-unit box, so every edge lands on a
+// device pixel at 16 / 32 / 48px (and at multiples of 8 on retina).
+// Inherits colour via currentColor, so it themes with everything else.
+interface Props {
+  /** Rendered size in px. Prefer multiples of 8 to stay pixel-crisp. */
+  size?: number;
+  class?: string;
+}
+const { size = 32, class: className = "" } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 64 64"
+  width={size}
+  height={size}
+  fill="currentColor"
+  aria-hidden="true"
+  class={className}
+>
+  <path d="M4 4h12v8h-4v40h4v8H4z"></path>
+  <path d="M60 4H48v8h4v40h-4v8h12z"></path>
+  <path d="M24 20h16v24H24z"></path>
+</svg>

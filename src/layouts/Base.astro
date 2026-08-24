@@ -4,6 +4,7 @@ import "@fontsource-variable/geist-mono";
 import "@fontsource-variable/source-serif-4";
 import "../styles/global.css";
 import Sidebar from "../components/Sidebar.astro";
+import Logo from "../components/Logo.astro";
 
 interface Props {
   title: string;
@@ -125,7 +126,9 @@ const person = {
     <div
       class="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-line/12 bg-bg/85 px-5 backdrop-blur-md lg:hidden"
     >
-      <a href="#top" class="font-pixel text-[16px] leading-none">CJA</a>
+      <a href="#top" class="leading-none" aria-label="Christian Josef Aquino — back to top">
+        <Logo size={24} />
+      </a>
       <button
         type="button"
         id="mobile-nav-open"
