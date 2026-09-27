@@ -4,24 +4,34 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------------------------------------------------------------
-   Palette — ink on paper. RGB triplets so Tailwind can apply
+   Palette: ink on paper. RGB triplets so Tailwind can apply
    opacity modifiers (e.g. text-ink/60).
    --------------------------------------------------------------- */
 :root {
+  /* native scrollbars, form controls and autofill follow the theme */
+  color-scheme: light;
   --bg: 255 255 255;
   --ink: 10 10 10;
   --muted: 109 109 114;
   --line: 10 10 10;
   --accent: 224 88 79;
+  /* accent dark enough for text on paper: 5.4:1 on white (AA) */
+  --accent-text: 190 60 52;
+  --danger: 185 28 28;
+  --success: 21 128 61;
   --sel-bg: #0a0a0a;
   --sel-fg: #ffffff;
 }
 
 .dark {
+  color-scheme: dark;
   --bg: 12 12 15;
   --ink: 244 244 245;
   --muted: 150 150 158;
   --line: 244 244 245;
+  --accent-text: 224 88 79;
+  --danger: 248 113 113;
+  --success: 74 222 128;
   --sel-bg: #fafafa;
   --sel-fg: #0a0a0a;
 }
@@ -32,11 +42,42 @@
   --color-muted: rgb(var(--muted));
   --color-line: rgb(var(--line));
   --color-accent: rgb(var(--accent));
+  --color-accent-text: rgb(var(--accent-text));
+  --color-danger: rgb(var(--danger));
+  --color-success: rgb(var(--success));
+  --color-surface: rgb(var(--ink) / 0.035);
 
   --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
   --font-serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
   --font-pixel: "Geist Pixel", "Geist Mono Variable", ui-monospace, monospace;
+}
+
+/* ---------------------------------------------------------------
+   Type scale - one ramp, each step paired with its line height,
+   modelled on the Apple text styles (caption through large title).
+   --------------------------------------------------------------- */
+@theme {
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
+  --text-footnote: 0.8125rem;
+  --text-footnote--line-height: 1.55;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.65;
+  --text-callout: 1rem;
+  --text-callout--line-height: 1.6;
+  --text-headline: 1.0625rem;
+  --text-headline--line-height: 1.45;
+  --text-title3: 1.25rem;
+  --text-title3--line-height: 1.3;
+  --text-title2: 1.6rem;
+  --text-title2--line-height: 1.2;
+  --text-title1: 2.1rem;
+  --text-title1--line-height: 1.08;
+  --text-large: 2.6rem;
+  --text-large--line-height: 1.06;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @font-face {
@@ -65,6 +106,18 @@ body {
   font-synthesis-weight: none;
 }
 
+/* Apple-style tracking: display sizes tighten, text sizes stay open */
+@layer base {
+  h1,
+  h2 {
+    letter-spacing: -0.02em;
+  }
+  h3,
+  h4 {
+    letter-spacing: -0.01em;
+  }
+}
+
 ::selection {
   background: var(--sel-bg);
   color: var(--sel-fg);
@@ -76,28 +129,27 @@ body {
   border-radius: 1px;
 }
 
-/* Tabular figures for all the metrics — keeps columns of numbers steady */
+/* Tabular figures for all the metrics keep columns of numbers steady */
 .tnum {
   font-variant-numeric: tabular-nums;
 }
 
 /* ---------------------------------------------------------------
-   Scroll reveal — blur-to-sharp, toggled by one IntersectionObserver
+   Scroll reveal: blur-to-sharp, toggled by one IntersectionObserver
    --------------------------------------------------------------- */
+/* Hidden only once JS is known to run (the head script adds .js),
+   so the page never renders blank without JavaScript. */
 .reveal {
-  opacity: 0;
-  transform: translateY(12px);
-  filter: blur(6px);
   transition:
     opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.reveal.in {
-  opacity: 1;
-  transform: none;
-  filter: none;
+.js .reveal:not(.in) {
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(6px);
 }
 
 .d1 { transition-delay: 60ms; }
@@ -110,7 +162,8 @@ body {
   html {
     scroll-behavior: auto;
   }
-  .reveal {
+  .reveal,
+  .js .reveal:not(.in) {
     opacity: 1;
     transform: none;
     filter: none;
@@ -138,11 +191,64 @@ body {
 
 .link-ul:hover {
   background-size: 100% 1px;
-  color: rgb(var(--accent));
+  color: rgb(var(--accent-text));
 }
 
 /* ---------------------------------------------------------------
-   Blinking block cursor — the hero role line's heartbeat
+   Press feedback - controls settle slightly under the finger.
+   Uses the individual `scale` property so it composes with the
+   translate of .card-lift instead of replacing it.
+   --------------------------------------------------------------- */
+.press {
+  transition: scale 120ms var(--ease-out-soft);
+}
+
+.press:active {
+  scale: 0.97;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press:active {
+    scale: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Bar material - translucent where the platform can blur behind it,
+   solid when blur is missing or the reader asked for less
+   transparency or more contrast.
+   --------------------------------------------------------------- */
+.material-bar {
+  background-color: rgb(var(--bg));
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .material-bar {
+    background-color: rgb(var(--bg) / 0.82);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    backdrop-filter: saturate(180%) blur(16px);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .material-bar {
+    background-color: rgb(var(--bg));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .material-bar {
+    background-color: rgb(var(--bg));
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: rgb(var(--line) / 0.45);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Blinking block cursor: the hero role line's heartbeat
    --------------------------------------------------------------- */
 .cursor-blink {
   display: inline-block;
@@ -162,8 +268,7 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Halftone dot texture — background grid, the portrait treatment,
-   and the game all share this dot language.
+   Halftone dot texture: the faint background grid behind every page.
    --------------------------------------------------------------- */
 :root {
   --halftone: rgba(10, 10, 10, 0.9);
@@ -182,20 +287,6 @@ body {
   background-size: 6px 6px;
 }
 
-.halftone-fine {
-  background-image: radial-gradient(
-    circle at center,
-    var(--halftone) 0.8px,
-    transparent 1.3px
-  );
-  background-size: 4px 4px;
-}
-
-/* Fades the portrait texture out toward the bottom edge */
-.mask-portrait {
-  -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
-}
 
 /* ---------------------------------------------------------------
    Three-state theme switcher (system / light / dark)
@@ -220,13 +311,21 @@ body {
   color: rgb(var(--ink));
 }
 
+/* 44pt minimum hit area on touch screens */
+@media (pointer: coarse) {
+  .theme-opt {
+    height: 44px;
+    width: 44px;
+  }
+}
+
 .theme-opt[aria-pressed="true"] {
   background-color: rgb(var(--ink) / 0.07);
   color: rgb(var(--ink));
 }
 
 /* ---------------------------------------------------------------
-   Theme switching — a soft cross-fade via the View Transitions API
+   Theme switching: a soft cross-fade via the View Transitions API
    (the toggle script wraps the class change in startViewTransition).
    --------------------------------------------------------------- */
 ::view-transition-old(root),
@@ -248,8 +347,8 @@ html.theme-fade * {
 }
 
 /* ---------------------------------------------------------------
-   Sidebar scrollspy — the section in view lights its link and grows
-   a small dash, like a cursor in a margin.
+   Sidebar links - the current page, or the section in view, lights
+   its link and grows a small dash, like a cursor in a margin.
    --------------------------------------------------------------- */
 [data-nav-link] {
   position: relative;
@@ -273,17 +372,17 @@ html.theme-fade * {
   color: rgb(var(--ink));
 }
 
-[data-nav-link][aria-current="true"] {
+[data-nav-link][aria-current] {
   color: rgb(var(--ink));
   transform: translateX(0.35rem);
 }
 
-[data-nav-link][aria-current="true"]::before {
+[data-nav-link][aria-current]::before {
   transform: scaleX(1);
 }
 
 /* ---------------------------------------------------------------
-   Scroll progress — a 1px accent hairline pinned to the very top.
+   Scroll progress: a 1px accent hairline pinned to the very top.
    Width is driven by a passive scroll listener in Base.astro.
    --------------------------------------------------------------- */
 #scroll-progress {
@@ -318,7 +417,7 @@ html.theme-fade * {
 }
 
 /* ---------------------------------------------------------------
-   Cards — solid hairline border with crop-mark corner ticks,
+   Cards: solid hairline border with crop-mark corner ticks,
    like registration marks on a print proof.
    --------------------------------------------------------------- */
 .card-tick {
@@ -366,7 +465,7 @@ html.theme-fade * {
 }
 
 /* ---------------------------------------------------------------
-   Card micro-lift — used by certification/resource/gear cards
+   Card micro-lift: used by certification/resource/gear cards
    --------------------------------------------------------------- */
 .card-lift {
   transition:
@@ -384,7 +483,386 @@ html.theme-fade * {
   .card-lift:hover {
     transform: none;
   }
-  [data-nav-link][aria-current="true"] {
+  [data-nav-link][aria-current] {
     transform: none;
   }
+}
+
+/* ---------------------------------------------------------------
+   Prose: Markdown bodies of the how-to guides.
+   --------------------------------------------------------------- */
+@layer components {
+  .prose {
+    font-size: var(--text-body);
+    line-height: 1.7;
+    color: rgb(var(--muted));
+  }
+
+  .prose > * + * {
+    margin-top: 1rem;
+  }
+
+  .prose strong {
+    font-weight: 600;
+    color: rgb(var(--ink));
+  }
+
+  .prose a {
+    color: rgb(var(--ink));
+    text-decoration: underline;
+    text-decoration-color: rgb(var(--line) / 0.3);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.2s;
+  }
+
+  .prose a:hover {
+    text-decoration-color: rgb(var(--accent));
+  }
+
+  .prose h3 {
+    margin-top: 1.75rem;
+    font-size: var(--text-headline);
+    font-weight: 600;
+    color: rgb(var(--ink));
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: 1.25rem;
+  }
+
+  .prose ul {
+    list-style: disc;
+  }
+
+  .prose ol {
+    list-style: decimal;
+  }
+
+  .prose li + li {
+    margin-top: 0.4rem;
+  }
+
+  .prose li::marker {
+    color: rgb(var(--muted) / 0.7);
+  }
+
+  .prose :not(pre) > code {
+    border: 1px solid rgb(var(--line) / 0.12);
+    background: rgb(var(--ink) / 0.035);
+    padding: 0.08em 0.35em;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: rgb(var(--ink));
+    overflow-wrap: anywhere;
+  }
+
+  .prose kbd {
+    border: 1px solid rgb(var(--line) / 0.2);
+    border-bottom-width: 2px;
+    padding: 0 0.35em;
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    color: rgb(var(--ink));
+    white-space: nowrap;
+  }
+
+  .prose blockquote {
+    border-left: 2px solid rgb(var(--accent) / 0.7);
+    background: rgb(var(--ink) / 0.035);
+    padding: 0.75rem 1rem;
+    color: rgb(var(--ink));
+  }
+
+  .prose table {
+    width: 100%;
+    font-size: var(--text-footnote);
+    border-collapse: collapse;
+  }
+
+  .prose th,
+  .prose td {
+    border-bottom: 1px solid rgb(var(--line) / 0.12);
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .prose th {
+    font-weight: 600;
+    color: rgb(var(--ink));
+  }
+}
+
+/* ---------------------------------------------------------------
+   Code frames: a titled bar and a copy button around each block,
+   built at compile time by src/lib/code-frame.mjs. Shiki emits both
+   themes as CSS variables; the .dark class picks one.
+   --------------------------------------------------------------- */
+.code-frame {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgb(var(--line) / 0.14);
+  background: rgb(var(--ink) / 0.025);
+}
+
+.code-frame-bar {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgb(var(--line) / 0.1);
+  padding-left: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: rgb(var(--muted));
+}
+
+.code-frame-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.code-copy {
+  display: inline-flex;
+  min-height: 2.75rem;
+  min-width: 4.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.875rem;
+  color: rgb(var(--muted));
+  transition: color 0.2s, scale 120ms var(--ease-out-soft);
+}
+
+.code-copy:hover {
+  color: rgb(var(--ink));
+}
+
+.code-copy:active {
+  scale: 0.97;
+}
+
+.code-copy[hidden] {
+  display: none;
+}
+
+.code-frame pre {
+  margin: 0;
+  padding: 0.875rem;
+  font-size: var(--text-footnote);
+  line-height: 1.6;
+  tab-size: 2;
+  background: transparent !important;
+}
+
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+}
+
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+}
+
+/* ---------------------------------------------------------------
+   Disclosure: collapsible guide steps on native <details>.
+   The open/close eases where ::details-content is supported, and
+   animates height where interpolate-size is (Chromium); elsewhere
+   it simply fades or snaps. Reduced motion zeroes it globally.
+   --------------------------------------------------------------- */
+.disclosure > summary {
+  list-style: none;
+  transition: background-color 0.2s;
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary:hover,
+.disclosure > summary:active {
+  background-color: rgb(var(--ink) / 0.03);
+}
+
+.disclosure-chevron {
+  transition: rotate 240ms var(--ease-out-soft);
+}
+
+.disclosure[open] .disclosure-chevron {
+  rotate: 180deg;
+}
+
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+}
+
+@supports selector(::details-content) {
+  .disclosure::details-content {
+    block-size: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      content-visibility 240ms allow-discrete,
+      block-size 240ms var(--ease-out-soft),
+      opacity 240ms var(--ease-out-soft);
+  }
+
+  .disclosure[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Buttons: square, mono, at least 44px tall.
+   --------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0 1.125rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-footnote);
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    opacity 0.2s,
+    scale 120ms var(--ease-out-soft);
+}
+
+.btn-primary {
+  border-color: rgb(var(--ink));
+  background-color: rgb(var(--ink));
+  color: rgb(var(--bg));
+}
+
+.btn-primary:hover {
+  opacity: 0.86;
+}
+
+.btn-secondary {
+  border-color: rgb(var(--line) / 0.4);
+  background-color: rgb(var(--bg));
+  color: rgb(var(--ink));
+}
+
+.btn-secondary:hover {
+  border-color: rgb(var(--ink));
+}
+
+.btn[aria-disabled="true"] {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+/* ---------------------------------------------------------------
+   Form fields: 16px text so iOS never zooms on focus, 44px targets,
+   an accent focus ring, and a red edge plus message when invalid.
+   --------------------------------------------------------------- */
+.field-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: var(--text-footnote);
+  font-weight: 500;
+  color: rgb(var(--ink));
+}
+
+.field-input {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  border: 1px solid rgb(var(--line) / 0.2);
+  background-color: rgb(var(--ink) / 0.025);
+  padding: 0.625rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgb(var(--ink));
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.field-input:hover {
+  border-color: rgb(var(--line) / 0.38);
+}
+
+.field-input:focus-visible {
+  outline: none;
+  border-color: rgb(var(--accent));
+  box-shadow: 0 0 0 3px rgb(var(--accent) / 0.2);
+}
+
+.field-input[aria-invalid="true"] {
+  border-color: rgb(var(--danger));
+}
+
+.field-select {
+  appearance: none;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.dark .field-select option {
+  background-color: rgb(var(--bg));
+}
+
+.field-textarea {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+.field-error {
+  margin-top: 0.4rem;
+  font-size: var(--text-footnote);
+  color: rgb(var(--danger));
+}
+
+.contact-alert {
+  border-left: 2px solid rgb(var(--danger));
+  background-color: rgb(var(--danger) / 0.06);
+  padding: 0.75rem 1rem;
+  font-size: var(--text-footnote);
+  color: rgb(var(--ink));
+}
+
+.contact-alert:empty {
+  display: none;
+}
+
+@media (prefers-contrast: more) {
+  .field-input {
+    border-color: rgb(var(--line) / 0.6);
+  }
+}
+
+/* Outcome chip that closes an experience bullet */
+.metric-chip {
+  display: inline-block;
+  margin-top: 0.15rem;
+  border: 1px solid rgb(var(--line) / 0.15);
+  background-color: rgb(var(--ink) / 0.03);
+  padding: 0 0.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.6;
+  color: rgb(var(--ink));
+  white-space: nowrap;
 }

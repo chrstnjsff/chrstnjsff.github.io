@@ -1,85 +1,116 @@
 ---
 import ThemeSwitch from "./ThemeSwitch.astro";
 import Logo from "./Logo.astro";
+import Icon from "./Icon.astro";
+import { SITE, NAV_PAGES, type NavItem } from "../config/site";
 
 interface Props {
-  /** Rendered inside the mobile overlay instead of the fixed rail. */
+  /** Rendered inside the mobile menu instead of the fixed rail. */
   mobile?: boolean;
+  /** In-page links: home sections, or the steps of a guide. */
+  outline?: { title: string; items: NavItem[] };
 }
-const { mobile = false } = Astro.props;
+const { mobile = false, outline } = Astro.props;
 
-const sections = [
-  { href: "#about", label: "About" },
-  { href: "#experience", label: "Experience" },
-  { href: "#stack", label: "Stack" },
-  { href: "#certifications", label: "Certifications" },
-  { href: "#recommendations", label: "Recommendations" },
-  { href: "#resources", label: "Resources" },
-  { href: "#gear", label: "Gear" },
-  { href: "#play", label: "Play" },
-];
+const path = Astro.url.pathname;
+const isHome = path === "/";
+const isCurrentPage = (href: string) =>
+  href === "/" ? isHome : path.startsWith(href);
+
+// The rail is compact; the mobile menu gets full 44px rows.
+const linkClass = mobile
+  ? "inline-flex min-h-11 w-fit items-center gap-2.5 text-callout text-muted hover:text-ink"
+  : "inline-flex w-fit items-center gap-2.5 py-1.5 -my-1.5 text-muted hover:text-ink";
+const listGap = mobile ? "gap-0" : "gap-2.5";
 ---
 
-<a
-  href="#top"
-  class="shrink-0 p-2 -m-2 leading-none hover:opacity-60"
-  aria-label="Christian Josef Aquino — back to top"
->
-  <Logo size={19} />
-</a>
-
-<div class="mt-9 flex flex-1 flex-col gap-4 overflow-y-auto font-mono text-[13px]">
-  <!-- profiles -->
-  <div class="flex flex-col gap-2.5">
+{
+  !mobile && (
     <a
-      href="https://github.com/chrstnjsff"
-      target="_blank"
-      rel="me noopener"
-      class="inline-flex w-fit items-center gap-2.5 py-1.5 -my-1.5 text-muted hover:text-ink"
+      href={isHome ? "#top" : "/"}
+      class="press -m-2 shrink-0 p-2 leading-none hover:opacity-60"
+      aria-label={isHome ? `${SITE.name}, back to top` : `${SITE.name}, home`}
     >
-      <svg viewBox="0 0 24 24" fill="none" class="h-[1.15em] w-[1.15em] shrink-0" aria-hidden="true">
-        <path
-          d="M12 3a9 9 0 00-2.85 17.54c.45.08.61-.2.61-.43v-1.5c-2.5.55-3.04-1.2-3.04-1.2-.41-1.05-1-1.33-1-1.33-.82-.56.06-.55.06-.55.9.06 1.38.93 1.38.93.8 1.38 2.1.98 2.62.75.08-.58.31-.98.57-1.2-2-.23-4.1-1-4.1-4.45 0-.98.35-1.79.93-2.42-.1-.23-.4-1.15.08-2.4 0 0 .75-.24 2.47.92a8.6 8.6 0 014.5 0c1.72-1.16 2.47-.92 2.47-.92.48 1.25.18 2.17.09 2.4.58.63.92 1.44.92 2.42 0 3.46-2.1 4.22-4.1 4.44.32.28.6.83.6 1.67v2.48c0 .24.16.52.62.43A9 9 0 0012 3z"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linejoin="round"></path>
-      </svg>
-      GitHub
+      <Logo size={19} />
     </a>
-  </div>
+  )
+}
 
-  <div class="h-px bg-line/12"></div>
-
-  <!-- page sections -->
-  <div class="flex flex-col gap-2.5">
+<!-- The rail scrolls its link list; the mobile menu scrolls as one panel. -->
+<div
+  class={`${mobile ? "" : "mt-9 -ml-5 min-h-0 flex-1 overflow-y-auto pl-5"} flex flex-col gap-5 font-mono text-footnote`}
+>
+  <!-- pages -->
+  <ul class={`flex flex-col ${listGap}`}>
     {
-      sections.map((s) => (
-        <a
-          href={s.href}
-          data-nav-link
-          class="inline-flex w-fit items-center gap-2.5 py-1.5 -my-1.5 text-muted hover:text-ink"
-        >
-          {s.label}
-        </a>
+      NAV_PAGES.map((p) => (
+        <li>
+          <a
+            href={p.href}
+            data-nav-link
+            aria-current={isCurrentPage(p.href) ? "page" : undefined}
+            class={linkClass}
+          >
+            {p.label}
+          </a>
+        </li>
       ))
     }
-  </div>
+  </ul>
+
+  {
+    outline && outline.items.length > 0 && (
+      <>
+        <div class="h-px shrink-0 bg-line/12" aria-hidden="true" />
+        <div>
+          <p class="mb-3 text-caption uppercase tracking-wider text-muted">{outline.title}</p>
+          <ul class={`flex flex-col ${listGap}`}>
+            {outline.items.map((item) => (
+              <li>
+                <a href={item.href} data-nav-link data-spy class={linkClass}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </>
+    )
+  }
 </div>
 
 <div class="mt-6 shrink-0">
   <ThemeSwitch idSuffix={mobile ? "-m" : ""} />
 
-  <p class="mt-6 text-[12px] leading-relaxed text-muted">
+  <div class="mt-5 flex items-center gap-5 font-mono text-footnote">
+    <a
+      href={SITE.githubUrl}
+      target="_blank"
+      rel="me noopener"
+      class={`${mobile ? "min-h-11" : "py-1.5 -my-1.5"} inline-flex items-center gap-2 text-muted hover:text-ink`}
+    >
+      <Icon name="github" />
+      GitHub
+    </a>
+    <a
+      href={SITE.linkedinUrl}
+      target="_blank"
+      rel="me noopener"
+      class={`${mobile ? "min-h-11" : "py-1.5 -my-1.5"} inline-flex items-center gap-2 text-muted hover:text-ink`}
+    >
+      <Icon name="linkedin" />
+      LinkedIn
+    </a>
+  </div>
+
+  <p class="mt-5 text-caption text-muted">
     For work, infrastructure problems &amp; everything else, reach me at
   </p>
   <a
-    href="mailto:chrstnjsff@gmail.com"
-    class="mt-1.5 inline-flex w-fit items-center gap-2 py-1.5 -my-1.5 font-mono text-[13px] text-ink hover:text-muted"
+    href={`mailto:${SITE.email}`}
+    class={`${mobile ? "min-h-11" : "mt-1.5 py-1.5 -my-1.5"} inline-flex w-fit items-center gap-2 font-mono text-footnote text-ink hover:text-muted`}
   >
-    <svg viewBox="0 0 24 24" fill="none" class="h-[1.15em] w-[1.15em] shrink-0" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"></rect>
-      <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-    </svg>
-    chrstnjsff@gmail.com
+    <Icon name="mail" />
+    {SITE.email}
   </a>
 </div>

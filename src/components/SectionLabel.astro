@@ -11,7 +11,7 @@ const { name, actionLabel, actionHref, external = false } = Astro.props;
 ---
 
 <div class="reveal mb-8 flex items-center gap-4">
-  <h2 class="shrink-0 font-mono text-[12px] lowercase tracking-wide text-muted">
+  <h2 class="shrink-0 font-mono text-caption lowercase tracking-wide text-muted">
     <span aria-hidden="true">~/</span>{name}
   </h2>
   <div class="h-px min-w-6 flex-1 bg-line/10" aria-hidden="true"></div>
@@ -21,7 +21,7 @@ const { name, actionLabel, actionHref, external = false } = Astro.props;
         href={actionHref}
         target={external ? "_blank" : undefined}
         rel={external ? "noopener" : undefined}
-        class="shrink-0 py-2 -my-2 font-mono text-[12px] tracking-wide text-muted hover:text-ink"
+        class="-my-3 shrink-0 py-3 font-mono text-caption tracking-wide text-muted hover:text-ink"
       >
         {actionLabel} {external ? "↗" : "→"}
       </a>

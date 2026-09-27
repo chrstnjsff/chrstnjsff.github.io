@@ -1,0 +1,36 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config/site";
+---
+
+<Base
+  title={`Page not found · ${SITE.name}`}
+  description="This page does not exist. Head back home or browse the guides."
+  noindex
+>
+  <div class="mx-auto max-w-2xl px-6 pb-16">
+    <header class="pb-10 pt-14 sm:pt-20">
+      <p class="reveal font-mono text-caption text-muted">
+        <span aria-hidden="true">&gt; </span>cd <span data-missing-path>/404</span>
+      </p>
+      <p class="reveal d1 mt-2 font-mono text-caption text-danger">no such file or directory</p>
+      <h1 class="reveal d1 mt-6 text-title1 font-semibold text-ink sm:text-large">Page not found</h1>
+      <p class="reveal d2 mt-4 max-w-xl text-callout text-muted">
+        The page you asked for does not exist, or it moved. Try one of these instead.
+      </p>
+      <div class="reveal d3 mt-8 flex flex-wrap gap-3">
+        <a href="/" class="btn btn-primary press">Back to home</a>
+        <a href="/how-to/" class="btn btn-secondary press">Browse the guides</a>
+        <a href="/contact/" class="btn btn-secondary press">Contact</a>
+      </div>
+    </header>
+  </div>
+</Base>
+
+<script is:inline>
+  // One static 404.html serves every missing URL; show the one requested.
+  (function () {
+    var el = document.querySelector("[data-missing-path]");
+    if (el) el.textContent = decodeURI(location.pathname);
+  })();
+</script>

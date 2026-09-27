@@ -1,0 +1,35 @@
+---
+import Base from "../../layouts/Base.astro";
+import GuideCard from "../../components/howto/GuideCard.astro";
+import { getGuides } from "../../lib/howto";
+import { SITE } from "../../config/site";
+
+const guides = await getGuides();
+
+const title = `How-to guides · ${SITE.name}`;
+const description =
+  "Step-by-step setup guides with copy-paste commands: a Ghostty terminal on macOS, tmux with the gruvbox theme, and Claude Code.";
+---
+
+<Base title={title} description={description}>
+  <div class="mx-auto max-w-2xl px-6 pb-16">
+    <header class="pb-10 pt-14 sm:pt-20">
+      <p class="reveal font-mono text-caption text-muted" aria-hidden="true">~/how-to</p>
+      <h1 class="reveal d1 mt-5 text-title1 font-semibold text-ink sm:text-large">How-to guides</h1>
+      <p class="reveal d2 mt-4 max-w-xl text-callout text-muted">
+        The setups I use every day, written as exact commands you can paste straight into your
+        terminal. Each guide lists the versions it was verified with, so you know how fresh it is.
+      </p>
+    </header>
+
+    <ol class="space-y-3">
+      {
+        guides.map((guide, i) => (
+          <li>
+            <GuideCard guide={guide} index={i} delay={i ? `d${Math.min(i, 5)}` : ""} />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</Base>

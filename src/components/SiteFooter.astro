@@ -1,0 +1,38 @@
+---
+// Quiet closing line on every page: navigation only. Contact details
+// already live in the sidebar and on /contact/.
+import { SITE, NAV_PAGES } from "../config/site";
+
+// Built daily by the deploy cron, so the year stays current.
+const year = new Date().getFullYear();
+---
+
+<footer class="mx-auto w-full max-w-2xl px-6 pb-10">
+  <div
+    class="flex flex-col gap-3 border-t border-line/12 pt-5 font-mono text-caption text-muted sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p>© {year} {SITE.name}</p>
+    <nav aria-label="Footer">
+      <ul class="-ml-2 flex flex-wrap sm:-mr-2 sm:ml-0">
+        {
+          NAV_PAGES.map((p) => (
+            <li>
+              <a href={p.href} class="inline-flex min-h-11 items-center px-2 hover:text-ink">
+                {p.label}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a
+            href={SITE.resumePath}
+            download={SITE.resumeFilename}
+            class="inline-flex min-h-11 items-center px-2 hover:text-ink"
+          >
+            Resume
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</footer>

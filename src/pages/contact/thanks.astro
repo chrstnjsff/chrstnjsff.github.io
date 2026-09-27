@@ -1,0 +1,27 @@
+---
+// Landing page for the no-JavaScript form path: Web3Forms redirects
+// here after a successful submission. Kept out of search and the sitemap.
+import Base from "../../layouts/Base.astro";
+import { SITE } from "../../config/site";
+---
+
+<Base
+  title={`Message sent · ${SITE.name}`}
+  description="Your message was sent. Thanks for getting in touch."
+  noindex
+>
+  <div class="mx-auto max-w-2xl px-6 pb-16">
+    <header class="pb-10 pt-14 sm:pt-20">
+      <p class="reveal font-mono text-caption uppercase tracking-wider text-success">Sent</p>
+      <h1 class="reveal d1 mt-5 text-title1 font-semibold text-ink sm:text-large">Message sent</h1>
+      <p class="reveal d2 mt-4 max-w-xl text-callout text-muted">
+        Thanks for reaching out. Your message is on its way, and I'll reply to the email address you
+        gave.
+      </p>
+      <div class="reveal d3 mt-8 flex flex-wrap gap-3">
+        <a href="/" class="btn btn-primary press">Back to home</a>
+        <a href="/how-to/" class="btn btn-secondary press">Browse the guides</a>
+      </div>
+    </header>
+  </div>
+</Base>

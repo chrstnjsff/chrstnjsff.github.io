@@ -1,15 +1,60 @@
 ---
 import Base from "../layouts/Base.astro";
 import SectionLabel from "../components/SectionLabel.astro";
-import Portrait from "../components/Portrait.astro";
 import Role from "../components/Role.astro";
 import Bullet from "../components/Bullet.astro";
 import ContribGraph from "../components/ContribGraph.astro";
-import FlappyGame from "../components/FlappyGame.astro";
+import Icon from "../components/Icon.astro";
+import GuideCard from "../components/howto/GuideCard.astro";
+import { getGuides } from "../lib/howto";
+import { SITE } from "../config/site";
 
-const title = "Christian Josef Aquino — Senior DevOps Engineer";
+const title = `${SITE.name} · ${SITE.role}`;
 const description =
   "Senior DevOps engineer in Mandaluyong, Metro Manila with 7+ years building and operating production cloud infrastructure on AWS, GCP, and Azure. Kubernetes, Terraform/OpenTofu, GitOps, and observability.";
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: SITE.name,
+  jobTitle: SITE.role,
+  url: `${SITE.url}/`,
+  email: `mailto:${SITE.email}`,
+  worksFor: { "@type": "Organization", name: "Iron Mountain" },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: SITE.location.locality,
+    addressRegion: SITE.location.region,
+    addressCountry: SITE.location.country,
+  },
+  sameAs: [SITE.githubUrl, SITE.linkedinUrl],
+  knowsAbout: [
+    "Kubernetes",
+    "Terraform",
+    "OpenTofu",
+    "Amazon Web Services",
+    "Google Cloud Platform",
+    "Microsoft Azure",
+    "Site Reliability Engineering",
+    "CI/CD",
+    "GitOps",
+  ],
+};
+
+const outline = {
+  title: "On this page",
+  items: [
+    { href: "#about", label: "About" },
+    { href: "#experience", label: "Experience" },
+    { href: "#work", label: "Selected work" },
+    { href: "#stack", label: "Stack" },
+    { href: "#certifications", label: "Certifications" },
+    { href: "#guides", label: "Guides" },
+    { href: "#reviews", label: "Reviews" },
+    { href: "#resources", label: "Resources" },
+    { href: "#gear", label: "Gear" },
+  ],
+};
 
 const stats = [
   { v: "7+", l: "years of experience" },
@@ -18,11 +63,45 @@ const stats = [
   { v: "3.6M+", l: "users on platforms I run" },
 ];
 
+// Case studies, built only from facts and figures on the resume.
+const work = [
+  {
+    org: "Iron Mountain",
+    period: "2025 – present",
+    title: "Keeping a mission-critical platform up through every upgrade",
+    challenge:
+      "The ICM application runs on Kubernetes across EKS, GKE, and AKS, and it has to stay available while clusters are upgraded and scaled.",
+    approach:
+      "Zero-downtime version upgrades, Karpenter node autoscaling, and capacity planning, with Grafana dashboards, alert rules, and SLA/SLO monitoring behind P1/P2 incident response and root cause analysis.",
+    results: ["99.95% uptime", "MTTR −40%"],
+  },
+  {
+    org: "One Team Anywhere",
+    period: "2024 – 2025",
+    title: "GitOps delivery with observability built in",
+    challenge:
+      "AWS and GCP workloads needed faster, safer releases and an alert-driven view of production health.",
+    approach:
+      "Infrastructure in Terraform, Pulumi, and OpenTofu; EKS and GKE with autoscaling and ArgoCD GitOps delivery; a Prometheus and Grafana framework with alerting and on-call escalation.",
+    results: ["40% faster deploys", "99.99% availability", "99.9% SLA"],
+  },
+  {
+    org: "Stratpoint",
+    period: "2022 – 2024",
+    title: "Self-service AWS for application teams",
+    challenge:
+      "Onboarding new projects and provisioning AWS resources was slow, and deployments differed from one environment to the next.",
+    approach:
+      "Helped design and build an internal developer platform for self-service provisioning, backed by reusable Terraform modules for 10+ AWS services including EKS, RDS, S3, and IAM.",
+    results: ["onboarding −60%", "provisioning −65%"],
+  },
+];
+
 const stack = [
   { k: "Cloud", v: ["AWS", "Google Cloud", "Azure"] },
   {
     k: "Containers & Orchestration",
-    v: ["Kubernetes — EKS · GKE · AKS", "Docker", "Helm", "Karpenter"],
+    v: ["Kubernetes (EKS · GKE · AKS)", "Docker", "Helm", "Karpenter"],
   },
   { k: "Infrastructure as Code", v: ["Terraform", "OpenTofu", "Pulumi"] },
   {
@@ -46,6 +125,18 @@ const certs = [
     issuer: "Amazon Web Services",
     title: "AWS Certified Cloud Practitioner",
     href: "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+  },
+];
+
+// Only recommendations the author wrote or approved. Brackets mark the
+// one editorial insertion, per quoting convention.
+const reviews = [
+  {
+    quote:
+      "Cj is a fast learner and easy to work with. Even [though] I am a senior to him, he also helped me with difficulties at work. He is very cooperative and hardworking.",
+    name: "Danica Capistrano",
+    role: "Support Analyst 2 · Koerber Supply Chain Software",
+    context: "senior colleague · May 2021 · via LinkedIn",
   },
 ];
 
@@ -90,7 +181,7 @@ const resources = [
     items: [
       {
         title: "Anthropic Docs",
-        desc: "Building with Claude — API, agents, MCP",
+        desc: "Building with Claude: API, agents, MCP",
         href: "https://docs.anthropic.com/",
         domain: "docs.anthropic.com",
       },
@@ -130,7 +221,7 @@ const resources = [
 
 const gear = [
   {
-    name: "MacBook Pro — M5 Pro",
+    name: "MacBook Pro (M5 Pro)",
     note: "daily driver",
     href: "https://www.apple.com/macbook-pro/",
     domain: "apple.com",
@@ -154,75 +245,89 @@ const gear = [
     domain: "apple.com",
   },
 ];
+
+const guides = await getGuides();
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} ogType="profile" jsonLd={[person]} outline={outline}>
   <div class="mx-auto max-w-2xl px-6 pb-16">
     <!-- ============================= HERO ============================= -->
     <section id="top" class="relative pb-4 pt-14 sm:pt-20">
-      <div
-        class="flex flex-col-reverse gap-8 sm:flex-row sm:items-start sm:justify-between sm:gap-10"
-      >
-        <div class="max-w-md">
-          <h1
-            class="reveal d1 text-[2.1rem] font-semibold leading-[1.06] tracking-tight sm:text-[2.6rem]"
-          >
-            Christian Josef Aquino
-          </h1>
+      <div class="max-w-xl">
+        <p
+          class="reveal inline-flex items-center gap-2 border border-line/15 px-2.5 py-1 font-mono text-caption text-muted"
+        >
+          <span class="relative flex h-1.5 w-1.5" aria-hidden="true">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60"></span>
+            <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent"></span>
+          </span>
+          Currently at Iron Mountain
+        </p>
 
-          <p class="reveal d2 mt-4 font-mono text-[13px] text-muted">
-            senior devops engineer · mandaluyong, metro manila{" "}
-            <span class="cursor-blink" aria-hidden="true">▮</span>
-          </p>
+        <h1 class="reveal d1 mt-5 text-title1 font-semibold text-ink sm:text-large">
+          {SITE.name}
+        </h1>
 
-          <p class="reveal d3 mt-6 text-[15px] leading-relaxed text-muted">
-            I'm a senior DevOps engineer. I build the cloud infrastructure
-            underneath production systems — Kubernetes, Terraform, and the
-            pipelines that ship to them.
-          </p>
+        <p class="reveal d2 mt-4 font-mono text-footnote text-muted">
+          senior devops engineer · mandaluyong, metro manila{" "}
+          <span class="cursor-blink" aria-hidden="true">▮</span>
+        </p>
 
-          <p class="reveal d3 mt-4 text-[15px] leading-relaxed text-muted">
-            Right now I keep a mission-critical platform{" "}
-            <span class="font-serif italic text-ink">quietly, relentlessly boring</span>{" "}
-            across AWS, GCP, and Azure. Good automation, real observability, and
-            incident practice do most of that work.
-          </p>
+        <p class="reveal d3 mt-6 text-body text-muted">
+          I'm a senior DevOps engineer. I build the cloud infrastructure underneath production
+          systems: Kubernetes, Terraform, and the pipelines that ship to them.
+        </p>
 
-          <div
-            class="reveal d4 mt-7 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[12px] text-muted"
-          >
-            <a
-              href="/resume.pdf"
-              download="Christian-Josef-Aquino-Resume.pdf"
-              class="card-lift inline-flex items-center gap-2 border border-line/40 bg-bg px-3.5 py-2 text-ink hover:border-ink"
-            >
-              download resume
-              <span aria-hidden="true">↓</span>
-            </a>
-            <a
-              href="https://github.com/chrstnjsff"
-              target="_blank"
-              rel="me noopener"
-              class="py-2 -my-2 hover:text-ink">github ↗</a
-            >
-            <a href="mailto:chrstnjsff@gmail.com" class="py-2 -my-2 hover:text-ink">email ↗</a>
-          </div>
+        <p class="reveal d3 mt-4 text-body text-muted">
+          Right now I keep a mission-critical platform{" "}
+          <span class="font-serif italic text-ink">quietly, relentlessly boring</span>{" "}
+          across AWS, GCP, and Azure. Good automation, real observability, and incident practice
+          do most of that work.
+        </p>
+
+        <div class="reveal d4 mt-7 flex flex-wrap items-center gap-3">
+          <a href={SITE.resumePath} download={SITE.resumeFilename} class="btn btn-primary press">
+            Download resume
+            <span aria-hidden="true">↓</span>
+          </a>
+          <a href="/contact/" class="btn btn-secondary press">
+            Get in touch
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
-
-        <Portrait class="w-28 shrink-0 sm:w-40" />
+        <div class="reveal d4 mt-2 flex flex-wrap items-center gap-x-5 font-mono text-footnote text-muted">
+          <a
+            href={SITE.githubUrl}
+            target="_blank"
+            rel="me noopener"
+            class="inline-flex min-h-11 items-center gap-2 hover:text-ink"
+          >
+            <Icon name="github" />
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            href={SITE.linkedinUrl}
+            target="_blank"
+            rel="me noopener"
+            class="inline-flex min-h-11 items-center gap-2 hover:text-ink"
+          >
+            <Icon name="linkedin" />
+            LinkedIn <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
 
       <!-- career highlights -->
       <div
-        class="reveal d5 mt-12 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-line/12 py-6 sm:grid-cols-4"
+        class="reveal d5 mt-10 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-line/12 py-6 sm:grid-cols-4"
         role="group"
         aria-label="Career highlights"
       >
         {
           stats.map((s) => (
             <div>
-              <div class="text-xl font-semibold tracking-tight text-ink">{s.v}</div>
-              <div class="mt-1 text-[12px] leading-snug text-muted">{s.l}</div>
+              <div class="tnum text-title3 font-semibold tracking-tight text-ink">{s.v}</div>
+              <div class="mt-1 text-caption text-muted">{s.l}</div>
             </div>
           ))
         }
@@ -233,31 +338,26 @@ const gear = [
     <section id="about" class="relative scroll-mt-16 py-14">
       <SectionLabel name="about" />
 
-      <div class="reveal d1 space-y-4 text-[15px] leading-relaxed text-muted">
+      <div class="reveal d1 space-y-4 text-body text-muted">
         <p>
-          Seven-plus years designing, implementing, and operating production
-          cloud infrastructure and networked systems across AWS, GCP, and Azure.
-          My work sits where infrastructure as code, Kubernetes, and delivery
-          pipelines meet — and where they break.
+          Seven-plus years designing, implementing, and operating production cloud infrastructure
+          and networked systems across AWS, GCP, and Azure. My work sits where infrastructure as
+          code, Kubernetes, and delivery pipelines meet, and where they break.
         </p>
         <p>
-          Day to day that means multi-cluster Kubernetes administration across
-          EKS, GKE, and AKS; reusable Terraform and OpenTofu modules that keep
-          staging and production honest; GitLab CI/CD and ArgoCD pipelines; and
-          Prometheus and Grafana instrumentation that turns{" "}
+          Day to day that means multi-cluster Kubernetes administration across EKS, GKE, and AKS;
+          reusable Terraform and OpenTofu modules that keep staging and production honest; GitLab
+          CI/CD and ArgoCD pipelines; and Prometheus and Grafana instrumentation that turns{" "}
           <span class="font-serif italic text-ink">something feels slow</span>{" "}
           into a named root cause.
         </p>
         <p>
-          I lead P1 and P2 incident response, run root cause analysis, plan
-          capacity, and close security gaps in infrastructure repositories and
-          pipelines.
+          I lead P1 and P2 incident response, run root cause analysis, plan capacity, and close
+          security gaps in infrastructure repositories and pipelines.
         </p>
       </div>
 
-      <p
-        class="reveal d2 mt-8 font-mono text-[12px] uppercase tracking-wider text-muted"
-      >
+      <p class="reveal d2 mt-8 font-mono text-caption uppercase tracking-wider text-muted">
         BS Information Technology · Jose Rizal University · 2017
       </p>
     </section>
@@ -270,111 +370,141 @@ const gear = [
         <Role
           company="Iron Mountain Philippines"
           role="Senior DevOps Engineer"
-          period="Oct 2025 — Present"
+          period="Oct 2025 – Present"
           location="Taguig City"
           current={true}
         >
           <Bullet metric="35% faster provisioning">
-            Design and maintain multi-cloud infrastructure across AWS, GCP, and
-            Azure with custom OpenTofu modules, holding parity between staging
-            and production —
+            Design and maintain multi-cloud infrastructure across AWS, GCP, and Azure with custom
+            OpenTofu modules, holding parity between staging and production.
           </Bullet>
           <Bullet metric="99.95% uptime">
-            Administer and upgrade multi-cluster Kubernetes environments (EKS,
-            GKE, AKS): zero-downtime version upgrades, Karpenter node
-            autoscaling, and capacity planning for the mission-critical ICM
-            application —
+            Administer and upgrade multi-cluster Kubernetes environments (EKS, GKE, AKS):
+            zero-downtime version upgrades, Karpenter node autoscaling, and capacity planning for
+            the mission-critical ICM application.
           </Bullet>
           <Bullet metric="MTTR −40%">
-            Lead P1/P2 incident response and root cause analysis, backed by
-            Grafana dashboards, alert rules, and SLA/SLO monitoring —
+            Lead P1/P2 incident response and root cause analysis, backed by Grafana dashboards,
+            alert rules, and SLA/SLO monitoring.
           </Bullet>
           <Bullet>
-            Build GitLab CI/CD pipelines for infrastructure and application
-            delivery, and remediate exposed secrets across infrastructure
-            repositories and pipelines.
+            Build GitLab CI/CD pipelines for infrastructure and application delivery, and remediate
+            exposed secrets across infrastructure repositories and pipelines.
           </Bullet>
         </Role>
 
         <Role
           company="One Team Anywhere"
           role="Cloud & DevOps Engineer"
-          period="May 2024 — Oct 2025"
+          period="May 2024 – Oct 2025"
           location="Mandaluyong City"
           delay="d1"
         >
           <Bullet metric="40% faster deploys · 99.99% availability">
-            Designed AWS and GCP infrastructure with Terraform, Pulumi, and
-            OpenTofu, and ran EKS/GKE clusters with autoscaling and ArgoCD
-            GitOps delivery —
+            Designed AWS and GCP infrastructure with Terraform, Pulumi, and OpenTofu, and ran
+            EKS/GKE clusters with autoscaling and ArgoCD GitOps delivery.
           </Bullet>
           <Bullet metric="99.9% SLA">
-            Architected a Prometheus and Grafana observability framework with
-            alerting and on-call escalation workflows —
+            Architected a Prometheus and Grafana observability framework with alerting and on-call
+            escalation workflows.
           </Bullet>
           <Bullet metric="+30% reliability">
-            Automated build, test, and release promotion, and supported
-            production operations across infrastructure, networking, and
-            workloads —
+            Automated build, test, and release promotion, and supported production operations
+            across infrastructure, networking, and workloads.
           </Bullet>
         </Role>
 
         <Role
           company="Stratpoint Global Outsourcing"
           role="Cloud Engineer III"
-          period="Mar 2022 — May 2024"
+          period="Mar 2022 – May 2024"
           location="Mandaluyong City"
           delay="d1"
         >
           <Bullet metric="onboarding −60%">
-            Helped design and build an internal developer platform for
-            self-service AWS resource provisioning —
+            Helped design and build an internal developer platform for self-service AWS resource
+            provisioning.
           </Bullet>
           <Bullet metric="provisioning −65%">
-            Built reusable Terraform modules for 10+ AWS services (EKS, RDS, S3,
-            IAM), standardising deployments across environments —
+            Built reusable Terraform modules for 10+ AWS services (EKS, RDS, S3, IAM),
+            standardising deployments across environments.
           </Bullet>
           <Bullet metric="3.6M+ users">
-            Served as technical lead for four application engineers across
-            frontend, backend, and infrastructure for a telco platform —
+            Served as technical lead for four application engineers across frontend, backend, and
+            infrastructure for a telco platform.
           </Bullet>
         </Role>
 
         <Role
           company="DXC Technology"
           role="Service Information Developer III"
-          period="Oct 2020 — Mar 2022"
+          period="Oct 2020 – Mar 2022"
           location="Taguig City"
           delay="d1"
         >
           <Bullet metric="99.5% SLA">
-            Single point of contact for AWS infrastructure across three luxury
-            retail clients operating 1,000+ stores, covering on-call rotations,
-            monthly patching, and incident handling —
+            Single point of contact for AWS infrastructure across three luxury retail clients
+            operating 1,000+ stores, covering on-call rotations, monthly patching, and incident
+            handling.
           </Bullet>
           <Bullet>
-            Developed Terraform modules for AWS provisioning, authored
-            operational runbooks, and tuned database queries and indexing for
-            the EPOS retail platform.
+            Developed Terraform modules for AWS provisioning, authored operational runbooks, and
+            tuned database queries and indexing for the EPOS retail platform.
           </Bullet>
         </Role>
 
         <Role
           company="Bosch Service Solutions"
           role="Service Desk Engineer"
-          period="Dec 2018 — Oct 2020"
+          period="Dec 2018 – Oct 2020"
           location="Taguig City"
           delay="d1"
         >
           <Bullet metric="30 min → 2 min">
-            Wrote PowerShell automation for software installation and
-            configuration, cutting install time —
+            Wrote PowerShell automation for software installation and configuration, cutting
+            install time.
           </Bullet>
           <Bullet metric="escalations −15%">
-            Handled ~60 tickets daily and designed troubleshooting protocols
-            that let the team absorb 40+ additional daily tickets —
+            Handled ~60 tickets daily and designed troubleshooting protocols that let the team
+            absorb 40+ additional daily tickets.
           </Bullet>
         </Role>
+      </div>
+    </section>
+
+    <!-- ============================= SELECTED WORK ============================= -->
+    <section id="work" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="selected-work" />
+
+      <div class="space-y-3">
+        {
+          work.map((w, i) => (
+            <article class={`reveal ${i ? `d${i}` : ""} card-tick p-5 sm:p-6`}>
+              <p class="tnum font-mono text-caption uppercase tracking-wider text-muted">
+                {w.org} · {w.period}
+              </p>
+              <h3 class="mt-3 text-headline font-semibold text-ink">{w.title}</h3>
+              <dl class="mt-4 space-y-3 text-footnote">
+                <div class="sm:grid sm:grid-cols-[6.5rem_1fr] sm:gap-4">
+                  <dt class="font-mono text-caption uppercase tracking-wider text-muted">Challenge</dt>
+                  <dd class="mt-1 text-muted sm:mt-0">{w.challenge}</dd>
+                </div>
+                <div class="sm:grid sm:grid-cols-[6.5rem_1fr] sm:gap-4">
+                  <dt class="font-mono text-caption uppercase tracking-wider text-muted">Approach</dt>
+                  <dd class="mt-1 text-muted sm:mt-0">{w.approach}</dd>
+                </div>
+                <div class="sm:grid sm:grid-cols-[6.5rem_1fr] sm:gap-4">
+                  <dt class="font-mono text-caption uppercase tracking-wider text-muted">Result</dt>
+                  <dd class="mt-1 flex flex-wrap gap-2 sm:mt-0">
+                    {w.results.map((r) => (
+                      <span class="metric-chip">{r}</span>
+                    ))}
+                  </dd>
+                </div>
+              </dl>
+            </article>
+          ))
+        }
       </div>
     </section>
 
@@ -388,14 +518,14 @@ const gear = [
             <div
               class={`reveal ${i < 5 ? `d${i + 1}` : "d5"} py-4 sm:grid sm:grid-cols-[13rem_1fr] sm:gap-6`}
             >
-              <dt class="font-mono text-[12px] uppercase tracking-wider text-muted">
+              <dt class="font-mono text-caption uppercase tracking-wider text-muted">
                 {group.k}
               </dt>
-              <dd class="mt-1.5 text-[14.5px] leading-relaxed text-ink sm:mt-0">
+              <dd class="mt-1.5 text-body text-ink sm:mt-0">
                 {group.v.map((item, j) => (
                   <>
                     {j > 0 && (
-                      <span class="mx-2 text-muted opacity-40" aria-hidden="true">
+                      <span class="mx-2 text-muted" aria-hidden="true">
                         ·
                       </span>
                     )}
@@ -420,15 +550,15 @@ const gear = [
               href={c.href}
               target="_blank"
               rel="noopener"
-              class={`reveal ${i === 1 ? "d1" : ""} group card-tick card-lift p-5`}
+              class={`reveal ${i === 1 ? "d1" : ""} press group card-tick card-lift p-5`}
             >
-              <p class="font-mono text-[12px] uppercase tracking-wider text-muted">
+              <p class="font-mono text-caption uppercase tracking-wider text-muted">
                 {c.issuer}
               </p>
-              <h3 class="mt-3 text-[13px] font-semibold leading-snug text-ink">
+              <h3 class="mt-3 text-footnote font-semibold text-ink">
                 {c.title}
               </h3>
-              <p class="mt-4 font-mono text-[12px] text-muted group-hover:text-ink">
+              <p class="mt-4 font-mono text-caption text-muted group-hover:text-ink">
                 about this cert ↗
               </p>
             </a>
@@ -437,26 +567,49 @@ const gear = [
       </div>
     </section>
 
-    <!-- ============================= RECOMMENDATIONS ============================= -->
-    <section id="recommendations" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="recommendations" />
+    <!-- ============================= GUIDES ============================= -->
+    <section id="guides" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="guides" actionLabel="all guides" actionHref="/how-to/" />
 
-      <figure class="reveal d1 max-w-xl border-l-2 border-line/20 pl-6">
-        <blockquote class="font-serif text-[16px] italic leading-relaxed text-ink">
-          “Cj is a fast learner and easy to work with. Even I am a senior to
-          him, he also helped me with difficulties at work. He is very
-          cooperative and hardworking.”
-        </blockquote>
-        <figcaption class="mt-4">
-          <p class="text-[13px] font-medium text-ink">Danica Capistrano</p>
-          <p class="mt-1 font-mono text-[12px] uppercase tracking-wider text-muted">
-            Support Analyst 2 · Koerber Supply Chain Software
-          </p>
-          <p class="mt-1 font-mono text-[12px] text-muted">
-            senior colleague · May 2021 · via LinkedIn
-          </p>
-        </figcaption>
-      </figure>
+      <p class="reveal mb-6 max-w-xl text-body text-muted">
+        Step-by-step setups with commands you can paste straight into your terminal.
+      </p>
+      <ol class="space-y-3">
+        {
+          guides.map((guide, i) => (
+            <li>
+              <GuideCard guide={guide} index={i} level="h3" delay={i ? `d${Math.min(i, 5)}` : ""} />
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- ============================= REVIEWS ============================= -->
+    <section id="reviews" class="relative scroll-mt-16 py-14">
+      <SectionLabel name="reviews" actionLabel="linkedin" actionHref={SITE.linkedinUrl} external />
+
+      <div class="grid grid-cols-1 gap-3">
+        {
+          reviews.map((r, i) => (
+            <figure class={`reveal ${i ? `d${Math.min(i, 5)}` : "d1"} card-tick p-5 sm:p-7`}>
+              <span class="block font-serif text-title1 leading-none text-muted" aria-hidden="true">
+                “
+              </span>
+              <blockquote class="-mt-3 font-serif text-callout italic text-ink">
+                <p>{r.quote}</p>
+              </blockquote>
+              <figcaption class="mt-5 border-t border-line/10 pt-4">
+                <p class="text-footnote font-medium text-ink">{r.name}</p>
+                <p class="mt-1 font-mono text-caption uppercase tracking-wider text-muted">
+                  {r.role}
+                </p>
+                <p class="mt-1 font-mono text-caption text-muted">{r.context}</p>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
     </section>
 
     <!-- ============================= RESOURCES ============================= -->
@@ -467,7 +620,7 @@ const gear = [
         {
           resources.map((section) => (
             <div>
-              <h3 class="reveal font-mono text-[12px] uppercase tracking-wider text-muted">
+              <h3 class="reveal font-mono text-caption uppercase tracking-wider text-muted">
                 {section.group}
               </h3>
               <div class="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -476,19 +629,19 @@ const gear = [
                     href={r.href}
                     target="_blank"
                     rel="noopener"
-                    class={`reveal ${i < 4 ? `d${i + 1}` : "d4"} group card-tick card-lift px-4 py-3.5`}
+                    class={`reveal ${i < 4 ? `d${i + 1}` : "d4"} press group card-tick card-lift px-4 py-3.5`}
                   >
                     <div class="flex items-baseline justify-between gap-3">
-                      <h4 class="text-[13px] font-medium text-ink">{r.title}</h4>
+                      <h4 class="text-footnote font-medium text-ink">{r.title}</h4>
                       <span
-                        class="shrink-0 font-mono text-[12px] text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
+                        class="shrink-0 font-mono text-caption text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
                         aria-hidden="true"
                       >
                         ↗
                       </span>
                     </div>
-                    <p class="mt-1 text-[12.5px] leading-relaxed text-muted">{r.desc}</p>
-                    <p class="mt-2 font-mono text-[12px] tracking-wide text-muted opacity-70">
+                    <p class="mt-1 text-footnote text-muted">{r.desc}</p>
+                    <p class="mt-2 font-mono text-caption tracking-wide text-muted">
                       {r.domain}
                     </p>
                   </a>
@@ -511,14 +664,14 @@ const gear = [
               href={g.href}
               target="_blank"
               rel="noopener"
-              class={`reveal ${i < 4 ? `d${i + 1}` : ""} group card-tick card-lift flex items-baseline justify-between gap-4 px-4 py-3.5`}
+              class={`reveal ${i < 4 ? `d${i + 1}` : ""} press group card-tick card-lift flex items-baseline justify-between gap-4 px-4 py-3.5`}
             >
               <div>
-                <h3 class="text-[13px] font-medium text-ink">{g.name}</h3>
-                <p class="mt-1 font-mono text-[12px] text-muted">{g.note}</p>
+                <h3 class="text-footnote font-medium text-ink">{g.name}</h3>
+                <p class="mt-1 font-mono text-caption text-muted">{g.note}</p>
               </div>
               <span
-                class="shrink-0 font-mono text-[12px] text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
+                class="shrink-0 font-mono text-caption text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
                 aria-hidden="true"
               >
                 ↗
@@ -533,20 +686,12 @@ const gear = [
     <section id="github" class="relative scroll-mt-16 py-14">
       <SectionLabel
         name="github"
-        actionLabel="@chrstnjsff"
-        actionHref="https://github.com/chrstnjsff"
+        actionLabel={`@${SITE.githubUser}`}
+        actionHref={SITE.githubUrl}
         external
       />
 
       <ContribGraph />
     </section>
-
-    <!-- ============================= PLAY ============================= -->
-    <section id="play" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="play" />
-
-      <FlappyGame />
-    </section>
-
   </div>
 </Base>
