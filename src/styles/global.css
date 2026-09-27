@@ -660,6 +660,13 @@ html.theme-fade * {
   background: transparent !important;
 }
 
+/* Prose blocks (prompts, Markdown files) wrap for reading; commands
+   keep scrolling sideways. Wrapping is visual only: Copy is unchanged. */
+.code-frame pre[data-language="markdown"] {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .astro-code,
 .astro-code span {
   color: var(--shiki-light);
