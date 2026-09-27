@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Full-bleed square: iOS applies its own rounded mask. Same prompt
+       glyph as public/favicon.svg, echoing the "> whoami" wordmark. -->
+  <rect width="32" height="32" fill="#0a0a0a"/>
+  <path d="M9 11l5 5-5 5M17.5 21h6" fill="none" stroke="#fafafa" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

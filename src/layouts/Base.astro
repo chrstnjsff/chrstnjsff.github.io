@@ -2,45 +2,39 @@
 import "@fontsource-variable/geist";
 import "@fontsource-variable/geist-mono";
 import "@fontsource-variable/source-serif-4";
+import "@fontsource-variable/source-serif-4/wght-italic.css";
 import "../styles/global.css";
 import Sidebar from "../components/Sidebar.astro";
 import Logo from "../components/Logo.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { SITE, type NavItem } from "../config/site";
 
 interface Props {
   title: string;
   description: string;
+  /** Root-relative share image; defaults to the site-wide card. */
+  ogImage?: string;
+  ogType?: "website" | "article" | "profile";
+  /** Keep utility pages (e.g. the form thank-you page) out of search. */
+  noindex?: boolean;
+  /** Structured data blocks, each emitted as its own JSON-LD script. */
+  jsonLd?: object[];
+  /** In-page links for the sidebar: home sections, or a guide's steps. */
+  outline?: { title: string; items: NavItem[] };
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  ogImage = "/og.png",
+  ogType = "website",
+  noindex = false,
+  jsonLd = [],
+  outline,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL("/og.png", Astro.site).href;
-
-const person = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Christian Josef Aquino",
-  jobTitle: "Senior DevOps Engineer",
-  url: "https://chrstnjsff.github.io/",
-  email: "mailto:chrstnjsff@gmail.com",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Mandaluyong",
-    addressRegion: "Metro Manila",
-    addressCountry: "PH",
-  },
-  sameAs: ["https://github.com/chrstnjsff"],
-  knowsAbout: [
-    "Kubernetes",
-    "Terraform",
-    "OpenTofu",
-    "Amazon Web Services",
-    "Google Cloud Platform",
-    "Microsoft Azure",
-    "Site Reliability Engineering",
-    "CI/CD",
-    "GitOps",
-  ],
-};
+const ogImageUrl = new URL(ogImage, Astro.site).href;
+const isHome = Astro.url.pathname === "/";
 ---
 
 <!doctype html>
@@ -51,23 +45,26 @@ const person = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0c0c0f" media="(prefers-color-scheme: dark)" />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.name} />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     <link
       rel="preload"
@@ -78,8 +75,10 @@ const person = {
     />
 
     <script is:inline>
-      // Resolve the theme before first paint — no flash of the wrong theme.
+      // Resolve the theme before first paint, so there is no flash of the wrong theme.
+      // The js class lets CSS hide scroll-reveal content only when JS will show it.
       (function () {
+        document.documentElement.classList.add("js");
         try {
           var pref = localStorage.getItem("theme") || "system";
           var dark =
@@ -91,7 +90,7 @@ const person = {
       })();
     </script>
 
-    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
   </head>
 
   <body class="font-sans antialiased">
@@ -119,21 +118,27 @@ const person = {
     <nav
       class="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-line/12 bg-bg px-7 py-8 lg:flex"
       aria-label="Primary"
+      data-inert-when-menu
     >
-      <Sidebar />
+      <Sidebar outline={outline} />
     </nav>
 
     <!-- mobile bar -->
     <div
-      class="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-line/12 bg-bg/85 px-5 backdrop-blur-md lg:hidden"
+      class="material-bar sticky top-0 z-50 flex h-14 items-center justify-between border-b border-line/12 px-5 lg:hidden"
+      data-inert-when-menu
     >
-      <a href="#top" class="p-2 -m-2 leading-none" aria-label="Christian Josef Aquino — back to top">
+      <a
+        href={isHome ? "#top" : "/"}
+        class="press -mx-2 inline-flex min-h-11 items-center px-2 leading-none"
+        aria-label={isHome ? `${SITE.name}, back to top` : `${SITE.name}, home`}
+      >
         <Logo size={15} />
       </a>
       <button
         type="button"
         id="mobile-nav-open"
-        class="grid h-8 w-8 place-items-center text-muted hover:text-ink"
+        class="press -mr-3.5 grid h-11 w-11 place-items-center text-muted hover:text-ink"
         aria-label="Open menu"
         aria-controls="mobileNav"
         aria-expanded="false"
@@ -144,26 +149,48 @@ const person = {
       </button>
     </div>
 
-    <!-- mobile overlay -->
+    <!-- mobile menu: a modal dialog that mirrors the bar it opens from -->
     <div
       id="mobileNav"
-      class="fixed inset-0 z-[60] hidden flex-col bg-bg px-7 py-8 lg:hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
+      class="fixed inset-0 z-[60] hidden flex-col bg-bg lg:hidden"
     >
-      <button
-        type="button"
-        id="mobile-nav-close"
-        class="absolute right-4 top-4 grid h-8 w-8 place-items-center text-muted hover:text-ink"
-        aria-label="Close menu"
-      >
-        <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-        </svg>
-      </button>
-      <Sidebar mobile={true} />
+      <div class="flex h-14 shrink-0 items-center justify-between border-b border-line/12 px-5">
+        <a
+          href={isHome ? "#top" : "/"}
+          class="press -mx-2 inline-flex min-h-11 items-center px-2 leading-none"
+          aria-label={isHome ? `${SITE.name}, back to top` : `${SITE.name}, home`}
+        >
+          <Logo size={15} />
+        </a>
+        <button
+          type="button"
+          id="mobile-nav-close"
+          class="press -mr-3.5 grid h-11 w-11 place-items-center text-muted hover:text-ink"
+          aria-label="Close menu"
+        >
+          <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-7 pb-10 pt-6">
+        <Sidebar mobile={true} outline={outline} />
+      </div>
     </div>
 
-    <main id="main" class="relative z-10 lg:pl-56">
-      <slot />
+    <!-- column fills the viewport (minus the mobile bar) so short pages keep the footer at the bottom -->
+    <main
+      id="main"
+      class="relative z-10 flex min-h-[calc(100dvh-3.5rem)] flex-col lg:min-h-dvh lg:pl-56"
+      data-inert-when-menu
+    >
+      <div class="flex-1">
+        <slot />
+      </div>
+      <SiteFooter />
     </main>
 
     <script is:inline>
@@ -250,36 +277,86 @@ const person = {
         update();
       })();
 
-      // ---- mobile nav --------------------------------------------------
+      // ---- mobile menu (modal dialog) ----------------------------------
       (function () {
         var panel = document.getElementById("mobileNav");
         var openBtn = document.getElementById("mobile-nav-open");
         var closeBtn = document.getElementById("mobile-nav-close");
         if (!panel || !openBtn || !closeBtn) return;
+        var background = document.querySelectorAll("[data-inert-when-menu]");
+
+        function isOpen() {
+          return !panel.classList.contains("hidden");
+        }
+
+        function focusables() {
+          return Array.prototype.filter.call(
+            panel.querySelectorAll("a[href], button:not([disabled])"),
+            function (el) {
+              return el.getClientRects().length > 0;
+            }
+          );
+        }
+
+        function setBackgroundInert(value) {
+          background.forEach(function (el) {
+            el.inert = value;
+          });
+        }
 
         function open() {
           panel.classList.remove("hidden");
           panel.classList.add("flex");
           openBtn.setAttribute("aria-expanded", "true");
           document.body.style.overflow = "hidden";
+          setBackgroundInert(true);
           closeBtn.focus();
         }
 
-        function close() {
+        // restoreFocus is false when a link inside the menu navigates,
+        // so focus follows the link target instead of the menu button.
+        function close(restoreFocus) {
           panel.classList.add("hidden");
           panel.classList.remove("flex");
           openBtn.setAttribute("aria-expanded", "false");
           document.body.style.overflow = "";
-          openBtn.focus();
+          setBackgroundInert(false);
+          if (restoreFocus !== false) openBtn.focus();
         }
 
         openBtn.addEventListener("click", open);
-        closeBtn.addEventListener("click", close);
+        closeBtn.addEventListener("click", function () {
+          close();
+        });
         panel.querySelectorAll("a").forEach(function (a) {
-          a.addEventListener("click", close);
+          a.addEventListener("click", function () {
+            close(false);
+          });
         });
         document.addEventListener("keydown", function (e) {
-          if (e.key === "Escape" && !panel.classList.contains("hidden")) close();
+          if (!isOpen()) return;
+          if (e.key === "Escape") {
+            close();
+            return;
+          }
+          if (e.key !== "Tab") return;
+          var items = focusables();
+          if (!items.length) return;
+          var first = items[0];
+          var last = items[items.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        });
+
+        // The menu only exists below lg; growing the window past it must
+        // not leave the page inert behind an invisible dialog.
+        window.matchMedia("(min-width: 1024px)").addEventListener("change", function (e) {
+          if (e.matches && isOpen()) close(false);
         });
       })();
 
@@ -315,14 +392,16 @@ const person = {
         });
       })();
 
-      // ---- top-bar scrollspy ------------------------------------------
+      // ---- sidebar scrollspy (in-page outline links only) --------------
       (function () {
-        var links = document.querySelectorAll("[data-nav-link]");
+        var links = document.querySelectorAll("[data-spy]");
         if (!links.length || !("IntersectionObserver" in window)) return;
 
         var map = {};
         links.forEach(function (a) {
-          var id = (a.getAttribute("href") || "").slice(1);
+          var href = a.getAttribute("href") || "";
+          if (href.charAt(0) !== "#") return;
+          var id = decodeURIComponent(href.slice(1));
           if (id) (map[id] = map[id] || []).push(a);
         });
 

@@ -1,20 +1,19 @@
 ---
 interface Props {
+  /** Outcome shown as a chip after the sentence, e.g. "99.95% uptime". */
   metric?: string;
 }
 const { metric } = Astro.props;
 ---
 
-<li class="flex gap-3 text-[14.5px] leading-relaxed text-muted">
-  <span class="mt-[0.62em] h-px w-3 shrink-0 bg-line/25"></span>
+<li class="flex gap-3 text-body text-muted">
+  <span class="mt-[0.8em] h-px w-3 shrink-0 bg-line/25" aria-hidden="true"></span>
   <span>
     <slot />{
       metric && (
         <>
           {" "}
-          <strong class="tnum font-mono text-[13px] font-medium not-italic text-ink">
-            {metric}
-          </strong>
+          <strong class="metric-chip">{metric}</strong>
         </>
       )
     }

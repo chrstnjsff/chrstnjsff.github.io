@@ -1,15 +1,17 @@
 ---
 // GitHub contribution calendar rendered as a halftone dot field.
 // Data comes from github.com's public contributions fragment at build
-// time — no token, no client-side third-party requests. The deploy
+// time: no token, no client-side third-party requests. The deploy
 // workflow rebuilds on a daily cron so the graph stays current.
+import { SITE } from "../config/site";
+
 interface Day {
   row: number;
   col: number;
   level: number;
 }
 
-const USER = "chrstnjsff";
+const USER = SITE.githubUser;
 
 let days: Day[] = [];
 let total = 0;
@@ -53,7 +55,7 @@ const totalLabel = total.toLocaleString("en-US");
 {
   ok ? (
     <div>
-      <div class="reveal d1 overflow-x-auto pb-2">
+      <div class="reveal d1 overflow-x-auto pb-2" data-contrib-scroll>
         <svg
           viewBox={`0 0 ${width} ${height}`}
           class="block h-auto w-full text-ink"
@@ -72,22 +74,31 @@ const totalLabel = total.toLocaleString("en-US");
           ))}
         </svg>
       </div>
-      <p class="reveal d2 mt-5 font-mono text-[13px] uppercase tracking-wider text-muted">
+      <p class="reveal d2 mt-5 font-mono text-footnote uppercase tracking-wider text-muted">
         {totalLabel} contributions in the last year
       </p>
     </div>
   ) : (
-    <p class="reveal d1 font-mono text-[13px] text-muted">
-      Contribution data is taking a nap —{" "}
+    <p class="reveal d1 font-mono text-footnote text-muted">
+      Contribution data is taking a nap.{" "}
       <a
         href={`https://github.com/${USER}`}
         target="_blank"
         rel="noopener"
         class="link-ul text-ink"
       >
-        see the live graph on GitHub
+        See the live graph on GitHub
       </a>
       .
     </p>
   )
 }
+
+<script is:inline>
+  // A full year is wider than the content column: open on the
+  // most recent weeks, where the activity that matters is.
+  (function () {
+    var el = document.querySelector("[data-contrib-scroll]");
+    if (el) el.scrollLeft = el.scrollWidth;
+  })();
+</script>
