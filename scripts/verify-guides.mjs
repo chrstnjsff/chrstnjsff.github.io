@@ -11,8 +11,8 @@
 //                      heredocs that write one: ghostty +validate-config,
 //                      plus every theme name against ghostty +list-themes
 //   json               JSON.parse, for json blocks and heredocs to *.json
-//   heredoc files      zsh -n for shell rc files, frontmatter for skills,
-//                      subagents and rules
+//   heredoc files      zsh -n for shell rc files, frontmatter for skills
+//                      and subagents (optional for rules)
 //   brew packages      brew info --json=v2 for every brew install/upgrade token
 //   links              every https:// URL answers 2xx or 3xx
 //   style              no em or en dashes, no "$ " prompts in bash blocks
@@ -301,7 +301,12 @@ for (const w of written.filter((w) => !w.snippet)) {
     record("heredoc files", r.ok ? "pass" : "fail", w.at, r.ok ? "" : r.out);
   } else if (w.kind in REQUIRED) {
     const fm = frontmatter(w.body);
-    const missing = fm ? REQUIRED[w.kind].filter((k) => !fm.keys.has(k)) : ["frontmatter"];
+    // A rule needs frontmatter only to set `paths`; plain Markdown is an always-on rule.
+    const missing = fm
+      ? REQUIRED[w.kind].filter((k) => !fm.keys.has(k))
+      : w.kind === "rule"
+        ? []
+        : ["frontmatter"];
     record("heredoc files", missing.length ? "fail" : "pass", w.at, missing.length ? `missing ${missing.join(", ")}` : "");
   } else if (w.kind === "other") {
     record("heredoc files", "skip", w.at, "no validator for this file type");

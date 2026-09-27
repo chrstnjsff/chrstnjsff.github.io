@@ -42,7 +42,7 @@ sed -i '' -e 's/Plan Node Default/Plan Mode Default/' -e 's/One tack per subagen
 ```
 
 The file is now yours, so edit it to fit how you work.
-Inside Claude Code, `/memory` shows the instruction files that are loaded and opens them for editing.
+Inside Claude Code, `/memory` lists your instruction files and opens them for editing, and `/context` shows which ones loaded into the current session.
 To create a `CLAUDE.md` for one project, run `/init` inside Claude Code in that project.
 
 If you use rtk, from the tools step below, run this afterwards, because the download replaced the `@RTK.md` line that rtk had added:
