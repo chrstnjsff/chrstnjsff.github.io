@@ -11,11 +11,9 @@ A skill is a `SKILL.md` file with a short description at the top and instruction
 Claude keeps only the description in mind until a task matches it, then loads the rest, so an unused skill costs just its short description.
 Where you save the folder decides where the skill works:
 
-| Location | Works in |
-| --- | --- |
-| `~/.claude/skills/<name>/SKILL.md` | All your projects |
-| `.claude/skills/<name>/SKILL.md` | One project, and anyone you share the repository with |
-| A plugin's `skills/` folder | Wherever the plugin is turned on |
+- `~/.claude/skills/<name>/SKILL.md` works in all your projects.
+- `.claude/skills/<name>/SKILL.md` works in one project, and for anyone you share the repository with.
+- A plugin's `skills/` folder works wherever the plugin is turned on.
 
 This example from the Claude Code docs creates a skill that summarizes your uncommitted changes and flags anything risky.
 The `` !`git diff HEAD` `` line runs that command first and pastes its output into the instructions.

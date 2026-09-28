@@ -593,6 +593,12 @@ html.theme-fade * {
     font-weight: 600;
     color: rgb(var(--ink));
   }
+
+  /* A key sequence such as "Ctrl+b then %" reads as one unit, so the
+     first column never wraps; keep those cells short. */
+  .prose td:first-child {
+    white-space: nowrap;
+  }
 }
 
 /* ---------------------------------------------------------------
