@@ -660,8 +660,11 @@ html.theme-fade * {
   background: transparent !important;
 }
 
-/* Prose blocks (prompts, Markdown files) wrap for reading; commands
-   keep scrolling sideways. Wrapping is visual only: Copy is unchanged. */
+/* Prose blocks (prompts, expected output, Markdown files) wrap for
+   reading; commands keep scrolling sideways. Wrapping is visual only:
+   Copy is unchanged. */
+.code-frame pre[data-language="text"],
+.code-frame pre[data-language="plaintext"],
 .code-frame pre[data-language="markdown"] {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
