@@ -34,7 +34,7 @@ const HOWTO = process.env.HOWTO_DIR ? path.resolve(process.env.HOWTO_DIR) : path
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "verify-guides-"));
 const URL_TIMEOUT_MS = 15_000;
 const URL_CONCURRENCY = 6;
-const USER_AGENT = "verify-guides/1.0 (+https://chrstnjsff.github.io)";
+const USER_AGENT = "verify-guides/1.0 (+https://christianaquino.dev)";
 
 // ---------------------------------------------------------------- results
 

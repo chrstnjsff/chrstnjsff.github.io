@@ -4,7 +4,7 @@
 export const SITE = {
   name: "Christian Josef Aquino",
   role: "Senior DevOps Engineer",
-  url: "https://chrstnjsff.github.io",
+  url: "https://christianaquino.dev",
   email: "chrstnjsff@gmail.com",
   githubUser: "chrstnjsff",
   githubUrl: "https://github.com/chrstnjsff",

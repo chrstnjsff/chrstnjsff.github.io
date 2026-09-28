@@ -7,7 +7,7 @@ import { codeFrame } from './src/lib/code-frame.mjs';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://chrstnjsff.github.io',
+  site: 'https://christianaquino.dev',
   integrations: [
     sitemap({ filter: (page) => !page.includes('/contact/thanks') }),
   ],

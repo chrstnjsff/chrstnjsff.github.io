@@ -28,3 +28,6 @@ tasks/
 
 # Serena MCP project cache
 .serena/
+
+# Wrangler local state
+.wrangler/
