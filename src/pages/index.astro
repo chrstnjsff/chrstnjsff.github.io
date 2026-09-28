@@ -102,11 +102,11 @@ const work = [
   {
     org: "Iron Mountain",
     period: "2025 – present",
-    title: "Keeping a mission-critical platform up through every upgrade",
+    title: "Owning reliability for mission-critical platforms",
     challenge:
-      "The ICM application runs on Kubernetes across EKS, GKE, and AKS, and it has to stay available while clusters are upgraded and scaled.",
+      "ICM, Insight, and DXP run on Kubernetes across AWS, Azure, and GCP, and every release has to keep production available and secure.",
     approach:
-      "Zero-downtime version upgrades, Karpenter node autoscaling, and capacity planning, with Grafana dashboards, alert rules, and SLA/SLO monitoring behind P1/P2 incident response and root cause analysis.",
+      "Primary point of contact for ICM; OpenTofu infrastructure as code; EKS, GKE, and AKS operations; and CI/CD for controlled releases, fixing production issues for good with engineering and security teams.",
     results: ["99.95% uptime", "MTTR −40%"],
   },
   {
@@ -434,22 +434,29 @@ const guides = await getGuides();
           current={true}
           delay="d1"
         >
-          <Bullet metric="35% faster provisioning">
-            Design and maintain multi-cloud infrastructure across AWS, GCP, and Azure with custom
-            OpenTofu modules, holding parity between staging and production.
+          <Bullet>
+            Serve as the primary point of contact for the ICM application and infrastructure,
+            leading technical coordination, incident triage, change planning, and stakeholder
+            communication.
           </Bullet>
           <Bullet metric="99.95% uptime">
-            Administer and upgrade multi-cluster Kubernetes environments (EKS, GKE, AKS):
-            zero-downtime version upgrades, Karpenter node autoscaling, and capacity planning for
-            the mission-critical ICM application.
+            Own the reliability and operational readiness of the ICM, Insight, and DXP platforms,
+            supporting availability, performance, secure releases, and production stability.
           </Bullet>
-          <Bullet metric="MTTR −40%">
-            Lead P1/P2 incident response and root cause analysis, backed by Grafana dashboards,
-            alert rules, and SLA/SLO monitoring.
+          <Bullet metric="35% faster provisioning">
+            Engineer and manage cloud infrastructure across AWS, Azure, and GCP using infrastructure
+            as code (OpenTofu) and automation, delivering scalable, consistent, and auditable
+            environments.
           </Bullet>
           <Bullet>
-            Build GitLab CI/CD pipelines for infrastructure and application delivery, and remediate
-            exposed secrets across infrastructure repositories and pipelines.
+            Operate and troubleshoot Kubernetes-based and containerised workloads (EKS, GKE, AKS),
+            resolving deployment, configuration, networking, capacity, and platform reliability
+            issues.
+          </Bullet>
+          <Bullet metric="MTTR −40%">
+            Build and improve CI/CD pipelines for ICM, Insight, and DXP services, enabling
+            controlled releases and partnering with engineering and security teams to resolve
+            production issues permanently.
           </Bullet>
         </Role>
 
