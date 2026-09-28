@@ -1,7 +1,7 @@
 ---
 title: Set up Neovim with LazyVim
 summary: Turn Neovim into a full editor with LazyVim, with support for Go, TypeScript, Terraform, Docker, Helm and YAML, a transparent Tokyo Night theme, and Claude Code one key away.
-order: 5
+order: 6
 platform: macOS on Apple silicon
 duration: About 20 minutes
 verifiedOn: 2026-09-28

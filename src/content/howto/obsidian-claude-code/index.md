@@ -1,7 +1,7 @@
 ---
 title: Set up Obsidian with Claude Code
 summary: Keep your notes in an Obsidian vault and let Claude Code search, write and link them, with every change tracked in Git.
-order: 4
+order: 5
 platform: macOS on Apple silicon
 duration: About 20 minutes
 verifiedOn: 2026-09-28

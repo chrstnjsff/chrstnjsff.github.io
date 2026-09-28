@@ -13,8 +13,9 @@
 //   json               JSON.parse, for json blocks and heredocs to *.json
 //   lua syntax         heredocs that write *.lua, compiled by Neovim's
 //                      LuaJIT with loadfile, so nothing in them runs
-//   heredoc files      zsh -n for shell rc files, frontmatter for skills
-//                      and subagents (optional for rules)
+//   heredoc files      zsh -n for shell rc files, bash -n for *.sh scripts,
+//                      frontmatter for skills and subagents (optional
+//                      for rules)
 //   brew packages      brew info --json=v2 for every brew install/upgrade token
 //   links              every https:// URL answers 2xx or 3xx
 //   style              no em or en dashes, no "$ " prompts in bash blocks
@@ -133,6 +134,7 @@ function classify(target) {
   if (/\.json$/.test(target)) return "json";
   if (/\.lua$/.test(target)) return "lua";
   if (/\.(zshrc|zprofile|bashrc)$/.test(target)) return "shell";
+  if (/\.sh$/.test(target)) return "script";
   if (/\/SKILL\.md$/.test(target)) return "skill";
   if (/agents\/[^/]+\.md$/.test(target)) return "agent";
   if (/rules\/[^/]+\.md$/.test(target)) return "rule";
@@ -316,6 +318,10 @@ for (const w of written.filter((w) => !w.snippet)) {
       continue;
     }
     const r = run("zsh", ["-n", tmpFile("rc.zsh", w.body)]);
+    record("heredoc files", r.ok ? "pass" : "fail", w.at, r.ok ? "" : r.out);
+  } else if (w.kind === "script") {
+    // Hook and status line scripts start with #!/bin/bash, so check them with bash.
+    const r = run("bash", ["-n", tmpFile("script.sh", w.body)]);
     record("heredoc files", r.ok ? "pass" : "fail", w.at, r.ok ? "" : r.out);
   } else if (w.kind in REQUIRED) {
     const fm = frontmatter(w.body);
