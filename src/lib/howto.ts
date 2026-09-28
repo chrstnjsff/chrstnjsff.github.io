@@ -39,6 +39,3 @@ export async function getGuides(): Promise<Guide[]> {
 }
 
 export const guideHref = (slug: string) => `/how-to/${slug}/`;
-
-export const formatVerified = (date: Date) =>
-  date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
