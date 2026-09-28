@@ -1,0 +1,38 @@
+name: Redirect GitHub Pages to christianaquino.dev
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/pages-redirect/**
+      - .github/workflows/pages-redirect.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v7
+      # GitHub Pages serves 404.html for any unknown path, so the same page
+      # catches every old URL.
+      - name: Serve the redirect page for every path
+        run: |
+          mkdir _site
+          cp .github/pages-redirect/index.html _site/index.html
+          cp .github/pages-redirect/index.html _site/404.html
+      - name: Upload the redirect site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

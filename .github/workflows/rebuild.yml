@@ -1,0 +1,22 @@
+name: Daily rebuild
+
+on:
+  schedule:
+    # Daily rebuild (21:00 UTC / 5am PHT) keeps the contribution graph fresh.
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      # Cloudflare Workers Builds deploy hook: the secret URL starts a build of
+      # main, the same as a push does.
+      - name: Trigger a Cloudflare Workers build
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          : "${DEPLOY_HOOK_URL:?Set the CLOUDFLARE_DEPLOY_HOOK_URL repository secret}"
+          curl -fsS --retry 3 -X POST "$DEPLOY_HOOK_URL"

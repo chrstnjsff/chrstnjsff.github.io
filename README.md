@@ -9,7 +9,7 @@ Personal site with how-to guides and a contact form: <https://christianaquino.de
 | Framework | [Astro](https://astro.build) 7 (static output, zero client framework) |
 | Styling | [Tailwind CSS](https://tailwindcss.com) 4 via `@tailwindcss/vite` (CSS-first, no `tailwind.config.js`) |
 | Type | Geist / Geist Mono / Source Serif 4 (self-hosted, Fontsource) + Geist Pixel for display |
-| Hosting | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/) static assets, deployed by Workers Builds on every push to `main` (`wrangler.jsonc`) |
+| Hosting | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/) static assets, deployed by Workers Builds on every push to `main` (`wrangler.jsonc`) and daily through a deploy hook (`.github/workflows/rebuild.yml`); the old `chrstnjsff.github.io` address redirects here (`.github/workflows/pages-redirect.yml`) |
 
 Every font and asset is self-hosted.
 The one third-party request at runtime is the contact form on `/contact/`, which posts to [Web3Forms](https://web3forms.com).
