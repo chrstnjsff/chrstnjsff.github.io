@@ -116,6 +116,11 @@ const stack = [
     v: ["Grafana", "Prometheus", "Sentry", "SLA / SLO", "Incident response", "RCA"],
   },
   { k: "Scripting & Systems", v: ["Python", "Bash", "PowerShell", "Linux"] },
+  {
+    k: "Application Development",
+    v: ["TypeScript", "React", "Node.js", "Laravel", "MongoDB"],
+  },
+  { k: "AI & LLMs", v: ["LangChain", "RAG"] },
 ];
 
 const certs = [
@@ -548,12 +553,16 @@ const guides = await getGuides();
               <dd class="mt-1.5 text-body text-ink sm:mt-0">
                 {group.v.map((item, j) => (
                   <>
-                    {j > 0 && (
-                      <span class="mx-2 text-muted" aria-hidden="true">
-                        ·
-                      </span>
-                    )}
-                    <span>{item}</span>
+                    {/* Lines break only after a separator, never inside an item. */}
+                    {j > 0 && <wbr />}
+                    <span class="whitespace-nowrap">
+                      {item}
+                      {j < group.v.length - 1 && (
+                        <span class="mx-2 text-muted" aria-hidden="true">
+                          ·
+                        </span>
+                      )}
+                    </span>
                   </>
                 ))}
               </dd>
