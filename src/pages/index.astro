@@ -20,7 +20,10 @@ const person = {
   jobTitle: SITE.role,
   url: `${SITE.url}/`,
   email: `mailto:${SITE.email}`,
-  worksFor: { "@type": "Organization", name: "Iron Mountain" },
+  worksFor: [
+    { "@type": "Organization", name: "Iron Mountain" },
+    { "@type": "Organization", name: "Nova Virtual Solutions" },
+  ],
   address: {
     "@type": "PostalAddress",
     addressLocality: SITE.location.locality,
@@ -110,7 +113,7 @@ const stack = [
   },
   {
     k: "Observability & Reliability",
-    v: ["Grafana", "Prometheus", "SLA / SLO", "Incident response", "RCA"],
+    v: ["Grafana", "Prometheus", "Sentry", "SLA / SLO", "Incident response", "RCA"],
   },
   { k: "Scripting & Systems", v: ["Python", "Bash", "PowerShell", "Linux"] },
 ];
@@ -358,11 +361,42 @@ const guides = await getGuides();
 
       <div>
         <Role
+          company="Nova Virtual Solutions"
+          role="Senior DevOps Engineer (Contractor)"
+          period="Apr 2026 – Present"
+          location="Remote"
+          current={true}
+        >
+          <Bullet>
+            Designed and built the Nova Home Care platform from scratch: a HIPAA-compliant Django API
+            and React portal for home care agencies.
+          </Bullet>
+          <Bullet>
+            Built all AWS infrastructure as code with OpenTofu (9 stacks, 3 accounts) with
+            encryption, firewalls and least-privilege access.
+          </Bullet>
+          <Bullet>
+            Built CI/CD for every product on GitLab, with keyless AWS deploys, security scans and
+            nightly automated tests.
+          </Bullet>
+          <Bullet>
+            Designed company-wide error monitoring on Sentry, with patient-data scrubbing and
+            Microsoft Teams alerts.
+          </Bullet>
+          <Bullet>
+            Designed and shipped internal platforms: Nova Workforce Monitoring (live screen viewing
+            and AI productivity reports), the Nova Pulse executive dashboard, a QR code generator and
+            the internal portal (IDP).
+          </Bullet>
+        </Role>
+
+        <Role
           company="Iron Mountain Philippines"
           role="Senior DevOps Engineer"
           period="Oct 2025 – Present"
           location="Taguig City"
           current={true}
+          delay="d1"
         >
           <Bullet metric="35% faster provisioning">
             Design and maintain multi-cloud infrastructure across AWS, GCP, and Azure with custom
