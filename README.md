@@ -23,7 +23,7 @@ The one third-party request at runtime is the contact form on `/contact/`, which
 | `src/content/howto/<guide>/index.md` | A how-to guide's metadata and intro |
 | `src/content/howto/<guide>/NN-<anchor>.md` | One collapsible step; `NN` orders it, `<anchor>` is its deep link |
 
-Guide commands are checked with `npm run verify:guides` (macOS only: it uses `zsh`, `tmux`, `ghostty` and `brew info`).
+Guide commands are checked with `npm run verify:guides` (macOS only: it uses `zsh`, `tmux`, `ghostty`, `nvim` and `brew info`).
 
 ## Develop
 

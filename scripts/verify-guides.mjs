@@ -11,6 +11,8 @@
 //                      heredocs that write one: ghostty +validate-config,
 //                      plus every theme name against ghostty +list-themes
 //   json               JSON.parse, for json blocks and heredocs to *.json
+//   lua syntax         heredocs that write *.lua, compiled by Neovim's
+//                      LuaJIT with loadfile, so nothing in them runs
 //   heredoc files      zsh -n for shell rc files, frontmatter for skills
 //                      and subagents (optional for rules)
 //   brew packages      brew info --json=v2 for every brew install/upgrade token
@@ -41,6 +43,7 @@ const CHECKS = [
   "tmux config",
   "ghostty config",
   "json",
+  "lua syntax",
   "heredoc files",
   "brew packages",
   "links",
@@ -128,6 +131,7 @@ function classify(target) {
   if (/ghostty\/config(\.ghostty)?$/.test(target)) return "ghostty-config";
   if (/\.tmux\.conf$/.test(target)) return "tmux";
   if (/\.json$/.test(target)) return "json";
+  if (/\.lua$/.test(target)) return "lua";
   if (/\.(zshrc|zprofile|bashrc)$/.test(target)) return "shell";
   if (/\/SKILL\.md$/.test(target)) return "skill";
   if (/agents\/[^/]+\.md$/.test(target)) return "agent";
@@ -285,6 +289,20 @@ for (const w of written.filter((w) => w.kind === "json" && !w.snippet)) {
     record("json", "pass", w.at);
   } catch (e) {
     record("json", "fail", w.at, e.message);
+  }
+}
+
+// ---------------------------------------------------------------- lua
+
+const luaItems = written.filter((w) => w.kind === "lua");
+if (!has("nvim")) {
+  for (const w of luaItems) record("lua syntax", "skip", w.at, "nvim not found");
+} else if (luaItems.length) {
+  // loadfile only compiles the chunk, so plugin specs are checked without loading any plugin.
+  const checker = tmpFile("check.lua", "local f, err = loadfile(_G.arg[1])\nif not f then io.stderr:write(err) os.exit(1) end\n");
+  for (const w of luaItems) {
+    const r = run("nvim", ["--clean", "--headless", "-l", checker, tmpFile("chunk.lua", w.body)]);
+    record("lua syntax", r.ok ? "pass" : "fail", w.at, r.ok ? "" : r.out);
   }
 }
 
