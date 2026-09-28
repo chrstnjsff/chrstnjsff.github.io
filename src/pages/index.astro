@@ -66,8 +66,39 @@ const stats = [
   { v: "3.6M+", l: "users on platforms I run" },
 ];
 
-// Case studies, built only from facts and figures on the resume.
+// Case studies, built only from facts and figures on the resume or in
+// the author's own project records.
 const work = [
+  {
+    org: "Nova Virtual Solutions",
+    period: "2026 – present",
+    title: "A HIPAA-compliant home care platform, built from scratch",
+    challenge:
+      "Home care agencies across several US states needed one system for clients, caregivers, and signed paperwork, with patient data protected throughout.",
+    approach:
+      "A Django API and React portal on AWS, with all infrastructure in OpenTofu, GitLab CI/CD with keyless deploys and security scans, nightly automated tests, and Sentry monitoring with patient-data scrubbing.",
+    results: ["12 agencies in 5 states", "9 OpenTofu stacks", "3 AWS accounts"],
+  },
+  {
+    org: "Nova Virtual Solutions",
+    period: "2026 – present",
+    title: "Live screen monitoring for a remote workforce",
+    challenge:
+      "Virtual assistants work remotely for US home care agencies, and managers needed to see who was working right now and how productive each shift was.",
+    approach:
+      "A React and TypeScript app with a Node.js API: live screen viewing over LiveKit, idle detection, and AI productivity reports that classify shift screenshots with Claude on Amazon Bedrock. Every administrator view is audit-logged.",
+    results: ["live since Sep 2026", "340+ automated tests"],
+  },
+  {
+    org: "Nova Virtual Solutions",
+    period: "2026 – present",
+    title: "One page for company uptime and delivery",
+    challenge:
+      "Leadership had no single view of whether every site was up or how each company's projects were moving.",
+    approach:
+      "The Nova Pulse dashboard: a Python Lambda checks every site and pulls Jira epic progress on a schedule, and a static page on S3 and CloudFront shows uptime and delivery, all defined in OpenTofu.",
+    results: ["27 endpoints checked", "5-minute refresh"],
+  },
   {
     org: "Iron Mountain",
     period: "2025 – present",
@@ -510,7 +541,7 @@ const guides = await getGuides();
           work.map((w, i) => (
             <article class={`reveal ${i ? `d${i}` : ""} card-tick p-5 sm:p-6`}>
               <p class="tnum font-mono text-caption uppercase tracking-wider text-muted">
-                {w.org} · {w.period}
+                {w.org} · <span class="whitespace-nowrap">{w.period}</span>
               </p>
               <h3 class="mt-3 text-headline font-semibold text-ink">{w.title}</h3>
               <dl class="mt-4 space-y-3 text-footnote">
