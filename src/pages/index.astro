@@ -100,6 +100,16 @@ const work = [
     results: ["27 endpoints checked", "5-minute refresh"],
   },
   {
+    org: "Nova Virtual Solutions",
+    period: "2026 – present",
+    title: "One page for company cloud and software spend",
+    challenge:
+      "Company spend was spread across three AWS accounts and the billing pages of fourteen software vendors, with no view of what each product cost or how spend compared with budget.",
+    approach:
+      "The Nova FinOps dashboard: a daily Python Lambda reads Cost Explorer, AWS Config, and AWS Budgets across the AWS organization and splits cost per product by tag, showing untagged spend as its own line. A static page on CloudFront behind Cloudflare Access adds budget meters and software subscription costs, all defined in OpenTofu.",
+    results: ["3 AWS accounts", "14 software vendors", "daily refresh"],
+  },
+  {
     org: "Iron Mountain",
     period: "2025 – present",
     title: "Owning reliability for mission-critical platforms",
@@ -418,6 +428,10 @@ const guides = await getGuides();
           <Bullet>
             Designed company-wide error monitoring on Sentry, with patient-data scrubbing and
             Microsoft Teams alerts.
+          </Bullet>
+          <Bullet>
+            Built the Nova FinOps dashboard: daily AWS cost per account and product, budget tracking
+            and software subscription costs on one page.
           </Bullet>
           <Bullet>
             Designed and shipped internal platforms: Nova Workforce Monitoring (live screen viewing
