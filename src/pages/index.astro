@@ -91,8 +91,8 @@ const chipColor = (c: Chip) => c.color ?? (c.icon ? `#${c.icon.hex}` : "currentC
               <Icon name="github" size={14} /> github ↗
             </a>
             <a href={`mailto:${SITE.email}`}><Icon name="mail" size={14} /> email ↗</a>
-            <a href={SITE.resumePath} download={SITE.resumeFilename}>
-              <Icon name="file" size={14} /> cv ↓
+            <a href={SITE.resumePath} target="_blank" rel="noopener">
+              <Icon name="file" size={14} /> cv ↗
             </a>
           </div>
         </div>
@@ -160,7 +160,7 @@ const chipColor = (c: Chip) => c.color ?? (c.icon ? `#${c.icon.hex}` : "currentC
     <section class="sec" id="experience" aria-labelledby="experience-h">
       <div class="sec-head">
         <h2 class="micro" id="experience-h">02 · Experience</h2>
-        <a class="btn-sm press" href={SITE.resumePath} download={SITE.resumeFilename}>
+        <a class="btn-sm press" href="/experience/">
           full history <Icon name="arrow" size={14} />
         </a>
       </div>
@@ -170,7 +170,9 @@ const chipColor = (c: Chip) => c.color ?? (c.icon ? `#${c.icon.hex}` : "currentC
             <li>
               <span class="yr" title={e.period}>{e.year}</span>
               <div class="row-main">
-                <span class="t">{e.role}</span>
+                <span class="t">
+                  <a href={`/experience/#${e.id}`}>{e.role}</a>
+                </span>
                 <span class="o">{e.org}</span>
               </div>
             </li>
@@ -179,7 +181,9 @@ const chipColor = (c: Chip) => c.color ?? (c.icon ? `#${c.icon.hex}` : "currentC
         <li>
           <span class="yr">{education.year}</span>
           <div class="row-main">
-            <span class="t">{education.role}</span>
+            <span class="t">
+              <a href="/experience/#education">{education.role}</a>
+            </span>
             <span class="o">{education.org}</span>
           </div>
         </li>

@@ -20,10 +20,11 @@ The one third-party request at runtime is the contact form on `/contact/`, which
 | Path | What |
 |---|---|
 | `src/config/site.ts` | Name, links, navigation, and the Web3Forms access key (public by design) |
-| `src/data/portfolio.ts` | Home page content: employer logos, projects, experience, certifications, stack, reviews, resources and gear |
+| `src/data/portfolio.ts` | Site content: employer logos, projects, every role with its CV points, certifications, stack, reviews, resources and gear |
 | `src/pages/index.astro` | Home page layout; styles in `src/styles/home.css` |
+| `src/pages/experience/index.astro` | Full history: every role with its points, then education and certifications |
 | `src/components/ProjectShot.astro` | The drawn project thumbnails (no company names) |
-| `public/resume.pdf` | The CV from `~/job-hunt/cv-builder`, with the phone number replaced by the site link |
+| `public/resume.pdf` | The CV from `~/job-hunt/cv-builder`, with the phone number replaced by the site link; CV links open it in a new tab |
 | `src/content/howto/<guide>/index.md` | A how-to guide's metadata and intro |
 | `src/content/howto/<guide>/NN-<anchor>.md` | One collapsible step; `NN` orders it, `<anchor>` is its deep link |
 

@@ -235,11 +235,11 @@ const isHome = Astro.url.pathname === "/";
           set(!isOpen());
         });
         // A link that navigates or jumps in the page takes focus with it; a
-        // download or mailto link leaves the page where it was, so focus
+        // new-tab or mailto link leaves the page where it was, so focus
         // returns to the menu button instead of dropping to <body>.
         sheet.querySelectorAll("a").forEach(function (a) {
           a.addEventListener("click", function () {
-            var stays = a.hasAttribute("download") || /^mailto:/.test(a.getAttribute("href") || "");
+            var stays = a.target === "_blank" || /^mailto:/.test(a.getAttribute("href") || "");
             set(false, stays);
           });
         });
@@ -293,7 +293,7 @@ const isHome = Astro.url.pathname === "/";
       // ---- sidebar scrollspy (in-page links only) -----------------------
       (function () {
         var links = document.querySelectorAll("[data-spy]");
-        if (!links.length || !("IntersectionObserver" in window)) return;
+        if (!links.length) return;
 
         var map = {};
         links.forEach(function (a) {
@@ -315,19 +315,44 @@ const isHome = Astro.url.pathname === "/";
           });
         }
 
-        var io = new IntersectionObserver(
-          function (entries) {
-            entries.forEach(function (entry) {
-              if (entry.isIntersecting) activate(entry.target.id);
+        // The current section is the last one whose top has passed 40% of
+        // the window, or the last one outright once the page is at the
+        // bottom (short last sections never reach that line). Recomputed on
+        // every scroll, so tall sections and scrolling back up stay right.
+        var targets = Object.keys(map)
+          .map(function (id) {
+            return document.getElementById(id);
+          })
+          .filter(Boolean)
+          // Sidebar groups are not in page order, so sort by position.
+          .sort(function (a, b) {
+            return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+          });
+        function update() {
+          var line = window.innerHeight * 0.4;
+          var atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+          var id = null;
+          targets.forEach(function (el) {
+            if (el.getBoundingClientRect().top <= line) id = el.id;
+          });
+          if (atEnd && targets.length) id = targets[targets.length - 1].id;
+          if (id) activate(id);
+        }
+        var queued = false;
+        window.addEventListener(
+          "scroll",
+          function () {
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(function () {
+              queued = false;
+              update();
             });
           },
-          { rootMargin: "-35% 0px -55% 0px", threshold: 0 }
+          { passive: true }
         );
-
-        Object.keys(map).forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el) io.observe(el);
-        });
+        window.addEventListener("resize", update);
+        update();
       })();
     </script>
   </body>

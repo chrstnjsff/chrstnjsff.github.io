@@ -9,7 +9,7 @@
 .hero::before { content: ""; position: absolute; inset: 0 -56px 0 34%; background-image: radial-gradient(var(--dot) 1px, transparent 1.2px); background-size: 12px 12px; -webkit-mask-image: radial-gradient(70% 80% at 70% 20%, #000 0%, transparent 75%); mask-image: radial-gradient(70% 80% at 70% 20%, #000 0%, transparent 75%); pointer-events: none; }
 .hero-grid { position: relative; display: flex; align-items: center; gap: 48px; }
 .photo { width: 288px; height: 360px; flex-shrink: 0; border-radius: 22px; border: 1px solid var(--border); object-fit: cover; box-shadow: var(--shadow); background: var(--border); }
-.hero h1 { margin-top: 8px; font: 700 60px/1 var(--font-display); letter-spacing: -1.5px; text-wrap: balance; }
+.hero h1, .xp-head h1 { margin-top: 8px; font: 700 60px/1 var(--font-display); letter-spacing: -1.5px; text-wrap: balance; }
 .lede { margin-top: 20px; max-width: 672px; font-size: 18px; line-height: 28px; opacity: .9; }
 .links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
 .links a { display: inline-flex; align-items: center; gap: 6px; font: 400 12px/16px var(--font-mono); opacity: .7; transition: opacity .15s; }
@@ -276,9 +276,10 @@
   .hero::before { inset: 0 -24px 40% -24px; -webkit-mask-image: radial-gradient(60% 60% at 50% 30%, #000, transparent 80%); mask-image: radial-gradient(60% 60% at 50% 30%, #000, transparent 80%); }
   .hero-grid { flex-direction: column; text-align: center; gap: 32px; }
   .photo { width: 192px; height: 240px; }
-  .hero h1 { font-size: 40px; line-height: 1.05; letter-spacing: -1px; }
-  .lede { font-size: 17px; line-height: 27px; margin-inline: auto; }
-  .links { justify-content: center; }
+  .hero h1, .xp-head h1 { font-size: 40px; line-height: 1.05; letter-spacing: -1px; }
+  .lede { font-size: 17px; line-height: 27px; }
+  .hero .lede { margin-inline: auto; }
+  .hero .links { justify-content: center; }
   .cards { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
@@ -286,7 +287,7 @@
   .two, .three { grid-template-columns: 1fr; }
   .two > div + div { margin-top: 24px; }
   .wrap { padding: 0 max(24px, env(safe-area-inset-left)); }
-  .hero h1 { font-size: 36px; }
+  .hero h1, .xp-head h1 { font-size: 36px; }
   .stat { padding: 14px 10px 16px; }
   .stat-v { font-size: 20px; }
   .stat .micro .long { display: none; }
@@ -296,4 +297,24 @@
   .quote { grid-template-columns: 1fr; }
   .quote .yr { margin-bottom: 8px; }
   .quote blockquote { font-size: 18px; line-height: 27px; }
+}
+
+/* ---------- /experience/: every role in full ---------- */
+.xp-head { padding: 64px 0 24px; }
+.links .back { transform: scaleX(-1); }
+.roles { margin-top: 24px; }
+.role { display: grid; grid-template-columns: 11rem minmax(0, 1fr); column-gap: 24px; border-top: 1px solid var(--border); padding: 28px 0 32px; scroll-margin-top: 24px; }
+.role-when { font: 400 12px/24px var(--font-mono); opacity: .6; }
+.role h2 { font: 600 20px/24px var(--font-display); letter-spacing: -.2px; }
+.role-org { margin-top: 4px; font-size: 14px; line-height: 20px; opacity: .7; }
+.role-points { margin-top: 16px; max-width: 72ch; display: grid; gap: 10px; }
+.role-points li { position: relative; padding-left: 18px; font-size: 15px; line-height: 24px; text-wrap: pretty; }
+.role-points li::before { content: ""; position: absolute; left: 2px; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: rgb(var(--accent)); }
+@media (max-width: 1023px) {
+  .xp-head { padding: 32px 0 16px; }
+  .role { grid-template-columns: 9rem minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .role { grid-template-columns: 1fr; padding: 24px 0 28px; }
+  .role-when { margin-bottom: 4px; }
 }

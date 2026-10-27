@@ -1,0 +1,93 @@
+---
+import "../../styles/home.css";
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import { SITE } from "../../config/site";
+import { certs, education, experience } from "../../data/portfolio";
+
+const title = `Experience · ${SITE.name}`;
+const description =
+  "Every role Christian Josef Aquino has held, with what he did there: multi-cloud infrastructure, Kubernetes, Infrastructure as Code, CI/CD and site reliability.";
+
+const outline = {
+  title: "On this page",
+  items: [
+    ...experience.map((r) => ({ href: `#${r.id}`, label: r.short })),
+    { href: "#education", label: "Education" },
+  ],
+};
+---
+
+<Base title={title} description={description} outline={outline}>
+  <div class="home wrap">
+    <header class="xp-head">
+      <p class="micro fade-up">Full history</p>
+      <h1 class="fade-up d1">Experience</h1>
+      <p class="lede fade-up d2">
+        7+ years across multi-cloud infrastructure, Kubernetes, Infrastructure as Code, CI/CD and site
+        reliability. Every role, with what I did there.
+      </p>
+      <div class="links fade-up d3">
+        <a href="/#experience"><Icon name="arrow" size={14} class="back" /> home</a>
+        <a href={SITE.resumePath} target="_blank" rel="noopener"><Icon name="file" size={14} /> cv ↗</a>
+      </div>
+    </header>
+
+    <ol class="roles">
+      {
+        experience.map((r) => (
+          <li id={r.id} class="role reveal">
+            <p class="role-when">{r.period}</p>
+            <div>
+              <h2>
+                {r.role}
+                <span class="sr-only"> at {r.org}</span>
+              </h2>
+              <p class="role-org">
+                {r.org} <span aria-hidden="true">·</span> {r.where}
+              </p>
+              <ul class="role-points">
+                {r.points.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <section class="sec" id="education" aria-labelledby="education-h">
+      <div class="sec-head"><h2 class="micro" id="education-h">Education and certifications</h2></div>
+      <ul class="rows">
+        <li>
+          <span class="yr">{education.year}</span>
+          <div class="row-main">
+            <span class="t">{education.role}</span>
+            <span class="o">{education.org}, {education.where}</span>
+          </div>
+        </li>
+        {
+          certs.map((c) => (
+            <li>
+              <span class="yr">{c.year}</span>
+              <div class="row-main">
+                <span class="t">
+                  {c.href ? (
+                    <a href={c.href} target="_blank" rel="noopener">
+                      {c.title}
+                    </a>
+                  ) : (
+                    c.title
+                  )}
+                  {c.badge && <span class="badge">{c.badge}</span>}
+                </span>
+                <span class="o">{c.issuer}</span>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</Base>
