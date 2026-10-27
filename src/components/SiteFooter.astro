@@ -1,38 +1,29 @@
 ---
-// Quiet closing line on every page: navigation only. Contact details
-// already live in the sidebar and on /contact/.
-import { SITE, NAV_PAGES } from "../config/site";
+// Closing line on every page: the mark, the year and the three ways to
+// reach me. Built daily by the deploy cron, so the year stays current.
+import Logo from "./Logo.astro";
+import Icon from "./Icon.astro";
+import { SITE } from "../config/site";
 
-// Built daily by the deploy cron, so the year stays current.
 const year = new Date().getFullYear();
 ---
 
-<footer class="mx-auto w-full max-w-2xl px-6 pb-10">
-  <div
-    class="flex flex-col gap-3 border-t border-line/12 pt-5 font-mono text-caption text-muted sm:flex-row sm:items-center sm:justify-between"
-  >
-    <p>© {year} {SITE.name}</p>
-    <nav aria-label="Footer">
-      <ul class="-ml-2 flex flex-wrap sm:-mr-2 sm:ml-0">
-        {
-          NAV_PAGES.map((p) => (
-            <li>
-              <a href={p.href} class="inline-flex min-h-11 items-center px-2 hover:text-ink">
-                {p.label}
-              </a>
-            </li>
-          ))
-        }
-        <li>
-          <a
-            href={SITE.resumePath}
-            download={SITE.resumeFilename}
-            class="inline-flex min-h-11 items-center px-2 hover:text-ink"
-          >
-            Resume
-          </a>
-        </li>
-      </ul>
-    </nav>
+<footer class="site-foot">
+  <div class="foot">
+    <div class="foot-l">
+      <Logo markOnly size={22} />
+      <p class="micro">© {year} {SITE.name}</p>
+    </div>
+    <div class="foot-r">
+      <a href={SITE.linkedinUrl} target="_blank" rel="me noopener" aria-label="LinkedIn">
+        <Icon name="linkedin" size={20} />
+      </a>
+      <a href={SITE.githubUrl} target="_blank" rel="me noopener" aria-label="GitHub">
+        <Icon name="github" size={20} />
+      </a>
+      <a href={`mailto:${SITE.email}`} aria-label="Email">
+        <Icon name="mail" size={20} />
+      </a>
+    </div>
   </div>
 </footer>

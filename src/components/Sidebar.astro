@@ -1,116 +1,116 @@
 ---
+// Site navigation, shared by the desktop rail and the phone menu sheet.
+// Home sections link in place on the home page and through "/#id" elsewhere.
 import ThemeSwitch from "./ThemeSwitch.astro";
-import Logo from "./Logo.astro";
-import Icon from "./Icon.astro";
-import { SITE, NAV_PAGES, type NavItem } from "../config/site";
+import Icon, { type IconName } from "./Icon.astro";
+import { SITE, type NavItem } from "../config/site";
+import { getGuides } from "../lib/howto";
+import { certs, experience, projects, reviews } from "../data/portfolio";
 
 interface Props {
-  /** Rendered inside the mobile menu instead of the fixed rail. */
-  mobile?: boolean;
-  /** In-page links: home sections, or the steps of a guide. */
+  /** In-page links for a guide's steps. */
   outline?: { title: string; items: NavItem[] };
 }
-const { mobile = false, outline } = Astro.props;
+const { outline } = Astro.props;
 
 const path = Astro.url.pathname;
 const isHome = path === "/";
-const isCurrentPage = (href: string) =>
-  href === "/" ? isHome : path.startsWith(href);
+const at = (id: string) => (isHome ? `#${id}` : `/#${id}`);
+const guides = await getGuides();
 
-// The rail is compact; the mobile menu gets full 44px rows.
-const linkClass = mobile
-  ? "inline-flex min-h-11 w-fit items-center gap-2.5 text-callout text-muted hover:text-ink"
-  : "inline-flex w-fit items-center gap-2.5 py-1.5 -my-1.5 text-muted hover:text-ink";
-const listGap = mobile ? "gap-0" : "gap-2.5";
+interface Link {
+  href: string;
+  icon: IconName;
+  label: string;
+  count?: number;
+  /** The link is the current page, not an in-page section. */
+  page?: boolean;
+}
+
+const groups: { label: string; links: Link[] }[] = [
+  {
+    label: "Learn with me",
+    links: [
+      { href: "/how-to/", icon: "book", label: "How-to guides", count: guides.length, page: path.startsWith("/how-to/") },
+      { href: at("resources"), icon: "link", label: "Resources" },
+      { href: at("gear"), icon: "laptop", label: "Gear" },
+      { href: at("reviews"), icon: "quote", label: "Reviews", count: reviews.length },
+    ],
+  },
+  {
+    label: "Portfolio",
+    links: [
+      { href: at("top"), icon: "user", label: "About" },
+      { href: at("projects"), icon: "folder", label: "Projects", count: projects.length },
+      { href: at("experience"), icon: "briefcase", label: "Experience", count: experience.length },
+      { href: at("systems"), icon: "server", label: "What I run" },
+      { href: at("certifications"), icon: "award", label: "Certifications", count: certs.length },
+      { href: at("stack"), icon: "layers", label: "Stack" },
+      { href: at("github"), icon: "github", label: "GitHub" },
+    ],
+  },
+];
 ---
 
 {
-  !mobile && (
-    <a
-      href={isHome ? "#top" : "/"}
-      class="press -m-2 shrink-0 p-2 leading-none hover:opacity-60"
-      aria-label={isHome ? `${SITE.name}, back to top` : `${SITE.name}, home`}
-    >
-      <Logo size={19} />
-    </a>
+  outline && outline.items.length > 0 && (
+    <>
+      <p class="micro group-label">{outline.title}</p>
+      <nav class="nav" aria-label={outline.title}>
+        {outline.items.map((item, i) => (
+          <a href={item.href} data-spy>
+            <span class="step-n" aria-hidden="true">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span>{item.label}</span>
+          </a>
+        ))}
+      </nav>
+    </>
   )
 }
 
-<!-- The rail scrolls its link list; the mobile menu scrolls as one panel. -->
-<div
-  class={`${mobile ? "" : "mt-9 -ml-5 min-h-0 flex-1 overflow-y-auto pl-5"} flex flex-col gap-5 font-mono text-footnote`}
->
-  <!-- pages -->
-  <ul class={`flex flex-col ${listGap}`}>
-    {
-      NAV_PAGES.map((p) => (
-        <li>
+{
+  groups.map((g) => (
+    <>
+      <p class="micro group-label">{g.label}</p>
+      <nav class="nav" aria-label={g.label}>
+        {g.links.map((l) => (
           <a
-            href={p.href}
-            data-nav-link
-            aria-current={isCurrentPage(p.href) ? "page" : undefined}
-            class={linkClass}
+            href={l.href}
+            aria-current={l.page ? "page" : undefined}
+            data-spy={isHome && l.href.startsWith("#") ? "" : undefined}
           >
-            {p.label}
+            <Icon name={l.icon} />
+            <span>{l.label}</span>
+            {l.count !== undefined && <span class="count">{l.count}</span>}
           </a>
-        </li>
-      ))
-    }
-  </ul>
+        ))}
+      </nav>
+    </>
+  ))
+}
 
-  {
-    outline && outline.items.length > 0 && (
-      <>
-        <div class="h-px shrink-0 bg-line/12" aria-hidden="true" />
-        <div>
-          <p class="mb-3 text-caption uppercase tracking-wider text-muted">{outline.title}</p>
-          <ul class={`flex flex-col ${listGap}`}>
-            {outline.items.map((item) => (
-              <li>
-                <a href={item.href} data-nav-link data-spy class={linkClass}>
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </>
-    )
-  }
+<div class="side-foot">
+  <ThemeSwitch />
+  <a class="side-btn" href={SITE.resumePath} download={SITE.resumeFilename}>
+    <Icon name="file" />
+    <span>Curriculum Vitae</span>
+    <Icon name="ne" class="ext" size={14} />
+  </a>
+  <a class="side-btn" href="/contact/" aria-current={path.startsWith("/contact/") ? "page" : undefined}>
+    <Icon name="send" />
+    <span>Contact</span>
+  </a>
 </div>
 
-<div class="mt-6 shrink-0">
-  <ThemeSwitch idSuffix={mobile ? "-m" : ""} />
-
-  <div class="mt-5 flex items-center gap-5 font-mono text-footnote">
-    <a
-      href={SITE.githubUrl}
-      target="_blank"
-      rel="me noopener"
-      class={`${mobile ? "min-h-11" : "py-1.5 -my-1.5"} inline-flex items-center gap-2 text-muted hover:text-ink`}
-    >
-      <Icon name="github" />
-      GitHub
-    </a>
-    <a
-      href={SITE.linkedinUrl}
-      target="_blank"
-      rel="me noopener"
-      class={`${mobile ? "min-h-11" : "py-1.5 -my-1.5"} inline-flex items-center gap-2 text-muted hover:text-ink`}
-    >
-      <Icon name="linkedin" />
-      LinkedIn
-    </a>
+<div class="collab">
+  <p class="micro">Work &amp; collabs</p>
+  <div class="collab-row">
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    <button type="button" class="copy" data-copy-email={SITE.email} aria-label="Copy email address">
+      <Icon name="copy" size={14} />
+      <span class="done" aria-live="polite"></span>
+    </button>
   </div>
-
-  <p class="mt-5 text-caption text-muted">
-    For work, infrastructure problems &amp; everything else, reach me at
-  </p>
-  <a
-    href={`mailto:${SITE.email}`}
-    class={`${mobile ? "min-h-11" : "mt-1.5 py-1.5 -my-1.5"} inline-flex w-fit items-center gap-2 font-mono text-footnote text-ink hover:text-muted`}
-  >
-    <Icon name="mail" />
-    {SITE.email}
-  </a>
 </div>

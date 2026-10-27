@@ -19,7 +19,7 @@ export default defineConfig({
     // typographic characters.
     processor: satteri({ features: { smartPunctuation: false } }),
     shikiConfig: {
-      themes: { light: 'github-light', dark: 'github-dark' },
+      themes: { light: 'github-light', dark: 'tokyo-night' },
       defaultColor: false,
       transformers: [codeFrame()],
     },

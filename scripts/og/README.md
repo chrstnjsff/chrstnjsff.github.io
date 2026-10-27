@@ -10,10 +10,9 @@ To regenerate:
    cp scripts/og/og.html public/__og.html
    cat node_modules/@fontsource-variable/geist/index.css \
        node_modules/@fontsource-variable/geist-mono/index.css \
-       node_modules/@fontsource-variable/source-serif-4/index.css \
-       node_modules/@fontsource-variable/source-serif-4/wght-italic.css > public/_fonts.css
+       node_modules/@fontsource-variable/space-grotesk/index.css > public/_fonts.css
    mkdir -p public/_f
-   cp node_modules/@fontsource-variable/*/files/*.woff2 public/_f/
+   cp node_modules/@fontsource-variable/{geist,geist-mono,space-grotesk}/files/*.woff2 public/_f/
    sed -i '' 's#\./files/#/_f/#g' public/_fonts.css
    ```
 2. Serve `public/` statically (the dev server's live-reload socket stalls headless Chrome) and

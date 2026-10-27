@@ -1,6 +1,6 @@
 # Site icons
 
-`public/favicon.svg` is the source icon: a `>_` shell prompt that echoes the `> whoami` wordmark and flips colours in dark mode.
+`public/favicon.svg` is the source icon: a terminal window with a `>_` prompt, the same mark as the site logo; it switches to the Tokyo Night Storm foreground in dark mode.
 The PNGs are rendered from SVG with `rsvg-convert` (`brew install librsvg`):
 
 ```sh

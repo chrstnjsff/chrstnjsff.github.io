@@ -189,12 +189,12 @@ const facts = [
     >
       {
         prev ? (
-          <a href={guideHref(prev.slug)} class="press group card-tick card-lift block p-4">
+          <a href={guideHref(prev.slug)} class="press group panel panel-lift block p-4">
             <p class="font-mono text-caption text-muted">← Previous guide</p>
             <p class="mt-1.5 text-footnote font-medium text-ink">{prev.entry.data.title}</p>
           </a>
         ) : (
-          <a href="/how-to/" class="press group card-tick card-lift block p-4">
+          <a href="/how-to/" class="press group panel panel-lift block p-4">
             <p class="font-mono text-caption text-muted">← All guides</p>
             <p class="mt-1.5 text-footnote font-medium text-ink">How-to guides</p>
           </a>
@@ -202,7 +202,7 @@ const facts = [
       }
       {
         next && (
-          <a href={guideHref(next.slug)} class="press group card-tick card-lift block p-4 sm:text-right">
+          <a href={guideHref(next.slug)} class="press group panel panel-lift block p-4 sm:text-right">
             <p class="font-mono text-caption text-muted">Next guide →</p>
             <p class="mt-1.5 text-footnote font-medium text-ink">{next.entry.data.title}</p>
           </a>

@@ -1,0 +1,325 @@
+---
+// One project thumbnail, drawn as a small product screen so a visitor sees
+// what was built without any company name. Names and amounts inside the
+// drawings are made up for the picture; the card text carries the facts.
+// Styles live in src/styles/home.css (.shot and .s1 to .s7).
+import type { ShotKind } from "../data/portfolio";
+
+interface Props {
+  kind: ShotKind;
+}
+const { kind } = Astro.props;
+
+const pulse = Array.from({ length: 24 }, (_, i) => i === 9);
+const people = ["Ana R.", "Ben T.", "Carla M.", "Dan P.", "Eli S.", "Faye L.", "Gio V.", "Hana K."];
+const dots = (n: number, dim: number[]) => Array.from({ length: n }, (_, i) => dim.includes(i));
+const clouds = [
+  { name: "AWS", kind: "EKS", dots: dots(40, [7]) },
+  { name: "Azure", kind: "AKS", dots: dots(30, []) },
+  { name: "Google Cloud", kind: "GKE", dots: dots(30, [18]) },
+];
+const clients = [
+  { name: "M. Rivera", tone: "#b6d7f5", carer: "J. Santos", visits: "5 / wk", signed: true },
+  { name: "A. Cohen", tone: "#f7d3b5", carer: "R. Lim", visits: "3 / wk", signed: false },
+  { name: "D. Patel", tone: "#cfe9d6", carer: "K. Reyes", visits: "7 / wk", signed: true },
+  { name: "L. Brooks", tone: "#e3d9f5", carer: "M. Cruz", visits: "2 / wk", signed: true },
+];
+const spend = [
+  { k: "Care platform", w: 68, v: "$1,904" },
+  { k: "HR portal", w: 44, v: "$1,231" },
+  { k: "Workforce app", w: 31, v: "$868" },
+  { k: "Untagged", w: 12, v: "$336", warn: true },
+  { k: "SaaS tools", w: 17, v: "$473" },
+];
+---
+
+{
+  kind === "care" && (
+    <div class="shot s4" aria-hidden="true">
+      <div class="bar">
+        <b>Care portal</b>
+        <span class="sp" />
+        <span>Clients</span>
+        <span>Caregivers</span>
+        <span>Documents</span>
+        <span class="pill">HIPAA</span>
+      </div>
+      <div class="body4">
+        <div class="copy4">
+          <span class="tag4">12 agencies · 5 states</span>
+          <h4>Care records, signed and safe.</h4>
+          <p>Clients, caregivers and e-signed paperwork in one place, with patient data protected end to end.</p>
+        </div>
+        <div class="app4">
+          <div class="app4-head">
+            <b>Clients</b>
+            <span>Search clients…</span>
+          </div>
+          <div class="tr4 th">
+            <span>Client</span>
+            <span>Caregiver</span>
+            <span>Visits</span>
+            <span>Paperwork</span>
+          </div>
+          {clients.map((c) => (
+            <div class="tr4">
+              <span>
+                <i class="av" style={`background:${c.tone}`} />
+                {c.name}
+              </span>
+              <span>{c.carer}</span>
+              <span>{c.visits}</span>
+              <span>{c.signed ? <em class="ok">Signed</em> : <em class="wait">Awaiting signature</em>}</span>
+            </div>
+          ))}
+          <div class="doc4">
+            <b>Admission packet</b>
+            <span>8 pages · e-signed</span>
+            <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10" /></svg></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+{
+  kind === "cost" && (
+    <div class="shot s1" aria-hidden="true">
+      <div class="bar">
+        <b style="color:#fff">Cost</b>
+        <span class="sp" />
+        <span>Products</span>
+        <span>Vendors</span>
+        <span>Budgets</span>
+        <span class="pill">This month</span>
+      </div>
+      <h4>Every dollar, per product.</h4>
+      <p>Every cloud account and software bill on one page, refreshed daily.</p>
+      <div class="panel1">
+        <div class="big">
+          <div>
+            Month to date
+            <br />
+            <strong>$4,812</strong>
+          </div>
+          <div style="text-align:right">
+            Budget
+            <br />
+            <span style="color:#e7e9ec">74% used</span>
+          </div>
+        </div>
+        {spend.map((r) => (
+          <div class="row">
+            <span>{r.k}</span>
+            <span class="track2">
+              <i class={r.warn ? "w" : undefined} style={`width:${r.w}%`} />
+            </span>
+            <em>{r.v}</em>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+{
+  kind === "status" && (
+    <div class="shot s2" aria-hidden="true">
+      <div class="bar">
+        <b>Status</b>
+        <span class="sp" />
+        <span>Uptime</span>
+        <span>Delivery</span>
+        <span class="pill">All systems up</span>
+      </div>
+      <span class="tag">27 endpoints · 5 min refresh</span>
+      <h4>Is everything up? One page.</h4>
+      <p>Every site checked on a schedule, next to delivery progress for each project.</p>
+      <div class="grid">
+        {pulse.map((warn) => (
+          <i class={warn ? "warn" : undefined} />
+        ))}
+      </div>
+      <div class="legend">
+        <span>● 26 up</span>
+        <span>● 1 slow</span>
+        <span>30-day view</span>
+      </div>
+    </div>
+  )
+}
+
+{
+  kind === "workforce" && (
+    <div class="shot s3" aria-hidden="true">
+      <div class="bar">
+        <b>Workforce</b>
+        <span class="sp" />
+        <span>Live</span>
+        <span>Reports</span>
+        <span>Audit</span>
+        <span class="pill">Admin</span>
+      </div>
+      <div class="side3">
+        <b>Live view</b>
+        <span>Shifts</span>
+        <span>Productivity</span>
+        <span>Audit log</span>
+        <span>Settings</span>
+      </div>
+      <div class="head3">
+        Live now<small>Updated a few seconds ago</small>
+      </div>
+      <div class="tiles">
+        {people.map((n, i) => (
+          <div class={i === 5 ? "tile idle" : "tile"}>
+            <div class="scr" />
+            <div class="meta">
+              <span>{n}</span>
+              <span>{i === 5 ? "idle 4m" : "active"}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+{
+  kind === "platform" && (
+    <div class="shot s7" aria-hidden="true">
+      <div class="bar">
+        <b>Platform</b>
+        <span class="sp" />
+        <span>Catalog</span>
+        <span>My services</span>
+        <span class="pill">New</span>
+      </div>
+      <h4>Self-service AWS. No tickets.</h4>
+      <div class="tpl">
+        <div class="t on">
+          <b>Web service</b>
+          <span>EKS · load balancer · DNS</span>
+          <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10" /></svg></i>
+        </div>
+        <div class="t">
+          <b>Database</b>
+          <span>RDS PostgreSQL · backups</span>
+        </div>
+        <div class="t">
+          <b>Static site</b>
+          <span>S3 · CloudFront</span>
+        </div>
+      </div>
+      <div class="form7">
+        <span>Service name</span>
+        <b>billing-api</b>
+        <span>Environment</span>
+        <b>staging</b>
+        <em>Create</em>
+      </div>
+    </div>
+  )
+}
+
+{
+  kind === "gitops" && (
+    <div class="shot s6" aria-hidden="true">
+      <div class="bar">
+        <b>Delivery</b>
+        <span class="sp" />
+        <span>Pipelines</span>
+        <span>Dashboards</span>
+        <span class="pill">Synced</span>
+      </div>
+      <div class="pipe">
+        <span>Commit</span>
+        <i />
+        <span>Build</span>
+        <i />
+        <span>Scan</span>
+        <i />
+        <span>GitOps sync</span>
+        <i />
+        <span class="run">Production</span>
+      </div>
+      <div class="chart6">
+        <div class="ch-head">
+          <b>p95 latency</b>
+          <span>alert at 400 ms</span>
+        </div>
+        <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+          <line x1="0" y1="14" x2="200" y2="14" stroke="#e5484d" stroke-dasharray="3 3" stroke-width=".8" vector-effect="non-scaling-stroke" />
+          <polyline
+            fill="none"
+            stroke="#2563eb"
+            stroke-width="1.6"
+            vector-effect="non-scaling-stroke"
+            points="0,40 12,38 24,42 36,36 48,39 60,33 72,37 84,30 96,35 108,26 120,31 132,22 144,34 156,38 168,36 180,40 200,37"
+          />
+        </svg>
+      </div>
+      <div class="kpi6">
+        <span>
+          <b>−40%</b> deploy time
+        </span>
+        <span>
+          <b>99.99%</b> availability
+        </span>
+      </div>
+    </div>
+  )
+}
+
+{
+  kind === "fleet" && (
+    <div class="shot s5" aria-hidden="true">
+      <div class="bar">
+        <b>Fleet</b>
+        <span class="sp" />
+        <span>Clusters</span>
+        <span>Incidents</span>
+        <span>Releases</span>
+        <span class="pill">On call</span>
+      </div>
+      <div class="body5">
+        <div class="copy5">
+          <h4>148 clusters. Three clouds. One on-call.</h4>
+          <div class="big5">
+            <b>99.95%</b>
+            <span>uptime on mission-critical platforms</span>
+          </div>
+        </div>
+        <div class="clouds">
+          {clouds.map((c) => (
+            <div class="cl">
+              <div class="cl-h">
+                <b>{c.name}</b>
+                <span>{c.kind}</span>
+              </div>
+              <div class="dots">
+                {c.dots.map((dim) => (
+                  <i class={dim ? "d" : undefined} />
+                ))}
+              </div>
+              <div class="spark" />
+            </div>
+          ))}
+          <div class="mttr">
+            <b>Time to recover</b>
+            <div class="mb">
+              <span>Before</span>
+              <i style="width:100%" />
+            </div>
+            <div class="mb">
+              <span>After</span>
+              <i class="g" style="width:60%" />
+            </div>
+            <em>−40%</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
