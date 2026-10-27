@@ -4,36 +4,68 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------------------------------------------------------------
-   Palette: ink on paper. RGB triplets so Tailwind can apply
-   opacity modifiers (e.g. text-ink/60).
+   Palette. Light: ink on white. Dark: Tokyo Night Storm, the theme of
+   the author's Ghostty and Neovim, as translucent glass over a soft
+   blue and purple glow instead of black.
+   The triplets let Tailwind apply opacity modifiers (text-ink/60);
+   the full colours below them serve the shell and the home page.
    --------------------------------------------------------------- */
 :root {
   /* native scrollbars, form controls and autofill follow the theme */
   color-scheme: light;
   --bg: 255 255 255;
-  --ink: 10 10 10;
-  --muted: 109 109 114;
+  --ink: 7 7 7;
+  --muted: 102 102 102;
   --line: 10 10 10;
-  --accent: 224 88 79;
-  /* accent dark enough for text on paper: 5.4:1 on white (AA) */
-  --accent-text: 190 60 52;
+  --accent: 31 79 216;
+  /* 6.3:1 on white (AA) */
+  --accent-text: 31 79 216;
   --danger: 185 28 28;
   --success: 21 128 61;
-  --sel-bg: #0a0a0a;
+  --sel-bg: #070707;
   --sel-fg: #ffffff;
+
+  --border: #e5e5e5;
+  --card: #ffffff;
+  --glass: rgb(255 255 255 / 0);
+  --hover: rgb(10 10 10 / 0.05);
+  --chip-icon: #ffffff;
+  --tile: #ffffff;
+  --accent-fg: #ffffff;
+  --live: #10b981;
+  --dot: rgb(10 10 10 / 0.13);
+  --shadow: 0 24px 48px -20px rgb(10 10 10 / 0.35);
+  --wall: #ffffff;
 }
 
 .dark {
   color-scheme: dark;
-  --bg: 12 12 15;
-  --ink: 244 244 245;
-  --muted: 150 150 158;
-  --line: 244 244 245;
-  --accent-text: 224 88 79;
-  --danger: 248 113 113;
-  --success: 74 222 128;
-  --sel-bg: #fafafa;
-  --sel-fg: #0a0a0a;
+  --bg: 36 40 59;
+  --ink: 192 202 245;
+  --muted: 169 177 214;
+  --line: 122 162 247;
+  --accent: 122 162 247;
+  --accent-text: 122 162 247;
+  --danger: 247 118 142;
+  --success: 158 206 106;
+  --sel-bg: #364a82;
+  --sel-fg: #c0caf5;
+
+  --border: rgb(122 162 247 / 0.16);
+  --card: rgb(31 35 53 / 0.62);
+  --glass: rgb(31 35 53 / 0.55);
+  --hover: rgb(122 162 247 / 0.1);
+  --chip-icon: #e6e9f7;
+  --tile: #e6e9f7;
+  --accent-fg: #1a1b26;
+  --live: #9ece6a;
+  --dot: rgb(192 202 245 / 0.1);
+  --shadow: 0 24px 48px -20px rgb(10 12 24 / 0.7);
+  --wall:
+    radial-gradient(55% 45% at 88% 4%, rgb(122 162 247 / 0.2), transparent 70%),
+    radial-gradient(45% 45% at 4% 96%, rgb(187 154 247 / 0.14), transparent 70%),
+    radial-gradient(35% 35% at 55% 55%, rgb(125 207 255 / 0.06), transparent 70%),
+    #24283b;
 }
 
 @theme inline {
@@ -49,8 +81,7 @@
 
   --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
-  --font-serif: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
-  --font-pixel: "Geist Pixel", "Geist Mono Variable", ui-monospace, monospace;
+  --font-display: "Space Grotesk Variable", "Geist Variable", ui-sans-serif, sans-serif;
 }
 
 /* ---------------------------------------------------------------
@@ -80,13 +111,6 @@
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@font-face {
-  font-family: "Geist Pixel";
-  src: url("/fonts/GeistPixel-Square.woff2") format("woff2");
-  font-display: swap;
-  font-weight: 400;
-  font-style: normal;
-}
 
 /* ---------------------------------------------------------------
    Base
@@ -95,11 +119,20 @@ html {
   scroll-behavior: smooth;
   /* offset anchor targets for the sticky top bar */
   scroll-padding-top: 4.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 1.5rem;
+  }
 }
 
 body {
+  margin: 0;
   background-color: rgb(var(--bg));
   color: rgb(var(--ink));
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -138,25 +171,30 @@ body {
    Scroll reveal: blur-to-sharp, toggled by one IntersectionObserver
    --------------------------------------------------------------- */
 /* Hidden only once JS is known to run (the head script adds .js),
-   so the page never renders blank without JavaScript. */
-.reveal {
-  transition:
-    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
+   so the page never renders blank without JavaScript. It is an
+   animation, not a transition, so it never fights the transitions
+   that cards and buttons set for hover and press. */
 .js .reveal:not(.in) {
   opacity: 0;
-  transform: translateY(12px);
-  filter: blur(6px);
 }
 
-.d1 { transition-delay: 60ms; }
-.d2 { transition-delay: 120ms; }
-.d3 { transition-delay: 180ms; }
-.d4 { transition-delay: 240ms; }
-.d5 { transition-delay: 300ms; }
+.reveal.in {
+  animation: reveal-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(6px);
+  }
+}
+
+.d1 { --reveal-delay: 60ms; }
+.d2 { --reveal-delay: 120ms; }
+.d3 { --reveal-delay: 180ms; }
+.d4 { --reveal-delay: 240ms; }
+.d5 { --reveal-delay: 300ms; }
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -165,9 +203,7 @@ body {
   .reveal,
   .js .reveal:not(.in) {
     opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
+    animation: none;
   }
   *,
   *::before,
@@ -197,7 +233,7 @@ body {
 /* ---------------------------------------------------------------
    Press feedback - controls settle slightly under the finger.
    Uses the individual `scale` property so it composes with the
-   translate of .card-lift instead of replacing it.
+   translate of .panel-lift instead of replacing it.
    --------------------------------------------------------------- */
 .press {
   transition: scale 120ms var(--ease-out-soft);
@@ -214,117 +250,6 @@ body {
 }
 
 /* ---------------------------------------------------------------
-   Bar material - translucent where the platform can blur behind it,
-   solid when blur is missing or the reader asked for less
-   transparency or more contrast.
-   --------------------------------------------------------------- */
-.material-bar {
-  background-color: rgb(var(--bg));
-}
-
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .material-bar {
-    background-color: rgb(var(--bg) / 0.82);
-    -webkit-backdrop-filter: saturate(180%) blur(16px);
-    backdrop-filter: saturate(180%) blur(16px);
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .material-bar {
-    background-color: rgb(var(--bg));
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-}
-
-@media (prefers-contrast: more) {
-  .material-bar {
-    background-color: rgb(var(--bg));
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    border-color: rgb(var(--line) / 0.45);
-  }
-}
-
-/* ---------------------------------------------------------------
-   Blinking block cursor: the hero role line's heartbeat
-   --------------------------------------------------------------- */
-.cursor-blink {
-  display: inline-block;
-  animation: cursor-blink 1.1s step-end infinite;
-}
-
-@keyframes cursor-blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cursor-blink {
-    animation: none;
-  }
-}
-
-/* ---------------------------------------------------------------
-   Halftone dot texture: the faint background grid behind every page.
-   --------------------------------------------------------------- */
-:root {
-  --halftone: rgba(10, 10, 10, 0.9);
-}
-
-.dark {
-  --halftone: rgba(244, 244, 245, 0.42);
-}
-
-.halftone {
-  background-image: radial-gradient(
-    circle at center,
-    var(--halftone) 1px,
-    transparent 1.6px
-  );
-  background-size: 6px 6px;
-}
-
-
-/* ---------------------------------------------------------------
-   Three-state theme switcher (system / light / dark)
-   --------------------------------------------------------------- */
-.theme-opt {
-  display: inline-flex;
-  height: 30px;
-  width: 30px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  color: rgb(var(--muted));
-  transition: color 0.2s, background-color 0.2s;
-}
-
-.theme-opt svg {
-  height: 0.875rem;
-  width: 0.875rem;
-}
-
-.theme-opt:hover {
-  color: rgb(var(--ink));
-}
-
-/* 44pt minimum hit area on touch screens */
-@media (pointer: coarse) {
-  .theme-opt {
-    height: 44px;
-    width: 44px;
-  }
-}
-
-.theme-opt[aria-pressed="true"] {
-  background-color: rgb(var(--ink) / 0.07);
-  color: rgb(var(--ink));
-}
-
-/* ---------------------------------------------------------------
    Theme switching: a soft cross-fade via the View Transitions API
    (the toggle script wraps the class change in startViewTransition).
    --------------------------------------------------------------- */
@@ -334,61 +259,6 @@ body {
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Fallback for browsers without view transitions: ease the colors */
-html.theme-fade,
-html.theme-fade body,
-html.theme-fade * {
-  transition:
-    background-color 0.35s ease,
-    border-color 0.35s ease,
-    color 0.35s ease,
-    fill 0.35s ease,
-    stroke 0.35s ease !important;
-}
-
-/* ---------------------------------------------------------------
-   Sidebar links - the current page, or the section in view, lights
-   its link and grows a small dash, like a cursor in a margin.
-   --------------------------------------------------------------- */
-[data-nav-link] {
-  position: relative;
-  transition: color 0.25s ease, transform 0.25s ease;
-}
-
-[data-nav-link]::before {
-  content: "";
-  position: absolute;
-  left: -1.15rem;
-  top: 50%;
-  height: 1px;
-  width: 0.6rem;
-  background: rgb(var(--accent));
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[data-nav-link]:hover {
-  color: rgb(var(--ink));
-}
-
-[data-nav-link][aria-current] {
-  color: rgb(var(--ink));
-  transform: translateX(0.35rem);
-}
-
-[data-nav-link][aria-current]::before {
-  transform: scaleX(1);
-}
-
-/* ---------------------------------------------------------------
-   Scroll progress: a 1px accent hairline pinned to the very top.
-   Width is driven by a passive scroll listener in Base.astro.
-   --------------------------------------------------------------- */
-#scroll-progress {
-  transform: scaleX(0);
-  transform-origin: left center;
-}
 
 /* ---------------------------------------------------------------
    Quiet scrollbar
@@ -414,78 +284,6 @@ html.theme-fade * {
 
 *::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--muted) / 0.6);
-}
-
-/* ---------------------------------------------------------------
-   Cards: solid hairline border with crop-mark corner ticks,
-   like registration marks on a print proof.
-   --------------------------------------------------------------- */
-.card-tick {
-  position: relative;
-  border: 1px solid rgb(var(--line) / 0.15);
-  transition: border-color 0.25s ease;
-}
-
-.card-tick:hover {
-  border-color: rgb(var(--line) / 0.45);
-}
-
-.card-tick::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  --tick: rgb(var(--line) / 0.6);
-  background-image:
-    linear-gradient(var(--tick), var(--tick)),
-    linear-gradient(var(--tick), var(--tick)),
-    linear-gradient(var(--tick), var(--tick)),
-    linear-gradient(var(--tick), var(--tick)),
-    linear-gradient(var(--tick), var(--tick)),
-    linear-gradient(var(--tick), var(--tick)),
-    linear-gradient(var(--tick), var(--tick)),
-    linear-gradient(var(--tick), var(--tick));
-  background-repeat: no-repeat;
-  background-size:
-    7px 1px, 1px 7px,
-    7px 1px, 1px 7px,
-    7px 1px, 1px 7px,
-    7px 1px, 1px 7px;
-  background-position:
-    top left, top left,
-    top right, top right,
-    bottom left, bottom left,
-    bottom right, bottom right;
-  opacity: 0.55;
-  transition: opacity 0.25s ease;
-}
-
-.card-tick:hover::before {
-  opacity: 1;
-}
-
-/* ---------------------------------------------------------------
-   Card micro-lift: used by certification/resource/gear cards
-   --------------------------------------------------------------- */
-.card-lift {
-  transition:
-    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.25s ease,
-    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px -12px rgb(var(--line) / 0.35);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card-lift:hover {
-    transform: none;
-  }
-  [data-nav-link][aria-current] {
-    transform: none;
-  }
 }
 
 /* ---------------------------------------------------------------
@@ -609,8 +407,10 @@ html.theme-fade * {
 .code-frame {
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
-  border: 1px solid rgb(var(--line) / 0.14);
-  background: rgb(var(--ink) / 0.025);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
 }
 
 .code-frame-bar {
@@ -698,7 +498,12 @@ html.theme-fade * {
    --------------------------------------------------------------- */
 .disclosure > summary {
   list-style: none;
+  border-radius: 14px;
   transition: background-color 0.2s;
+}
+
+.disclosure[open] > summary {
+  border-radius: 14px 14px 0 0;
 }
 
 .disclosure > summary::-webkit-details-marker {
@@ -742,7 +547,7 @@ html.theme-fade * {
 }
 
 /* ---------------------------------------------------------------
-   Buttons: square, mono, at least 44px tall.
+   Buttons: rounded, at least 44px tall.
    --------------------------------------------------------------- */
 .btn {
   display: inline-flex;
@@ -751,9 +556,10 @@ html.theme-fade * {
   justify-content: center;
   gap: 0.5rem;
   border: 1px solid transparent;
+  border-radius: 10px;
   padding: 0 1.125rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-footnote);
+  font-size: 0.875rem;
+  font-weight: 500;
   transition:
     background-color 0.2s,
     border-color 0.2s,
@@ -773,13 +579,13 @@ html.theme-fade * {
 }
 
 .btn-secondary {
-  border-color: rgb(var(--line) / 0.4);
-  background-color: rgb(var(--bg));
+  border-color: var(--border);
+  background-color: var(--card);
   color: rgb(var(--ink));
 }
 
 .btn-secondary:hover {
-  border-color: rgb(var(--ink));
+  background-color: var(--hover);
 }
 
 .btn[aria-disabled="true"] {
@@ -804,6 +610,7 @@ html.theme-fade * {
   width: 100%;
   min-height: 2.75rem;
   border: 1px solid rgb(var(--line) / 0.2);
+  border-radius: 10px;
   background-color: rgb(var(--ink) / 0.025);
   padding: 0.625rem 0.75rem;
   font-size: 1rem;
@@ -868,17 +675,467 @@ html.theme-fade * {
 }
 
 /* Outcome chip that closes an experience bullet */
-.metric-chip {
-  display: inline-block;
-  margin-top: 0.15rem;
-  border: 1px solid rgb(var(--line) / 0.15);
-  background-color: rgb(var(--ink) / 0.03);
-  padding: 0 0.4rem;
+
+/* ---------------------------------------------------------------
+   Panels: the card surface shared by guides, forms and the home
+   page. Translucent glass in dark mode, plain white in light.
+   --------------------------------------------------------------- */
+.panel {
+  position: relative;
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--border);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  /* includes the .press scale, which this rule would otherwise replace */
+  transition:
+    box-shadow 0.2s,
+    translate 0.2s,
+    background-color 0.2s,
+    scale 120ms var(--ease-out-soft);
+}
+
+.panel-lift:hover {
+  box-shadow: 0 0 0 1px var(--border), 0 12px 28px -16px rgb(0 0 0 / 0.25);
+  translate: 0 -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-lift:hover {
+    translate: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Shell: a 240px glass rail on desktop; a top bar with a menu
+   sheet below 1024px. The glow wallpaper sits on a fixed layer so
+   it stays put while the page scrolls, iOS included.
+   --------------------------------------------------------------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--wall);
+  pointer-events: none;
+}
+
+.dark body {
+  background-color: #24283b;
+}
+
+.micro {
   font-family: var(--font-mono);
-  font-size: var(--text-caption);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.6;
+  font-size: 11px;
+  line-height: 16.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.skip {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 80;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: rgb(var(--ink));
+  color: rgb(var(--bg));
+  font-size: 0.875rem;
+  transform: translateY(-200%);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: rgb(var(--ink));
+}
+
+.logo-word {
+  font: 700 17px/1 var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+.logo-word span {
+  color: rgb(var(--muted));
+  font-weight: 500;
+}
+
+.side {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 40;
+  display: none;
+  width: 240px;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 20px 12px;
+  border-right: 1px solid var(--border);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.side-logo {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  margin-bottom: 16px;
+  padding: 0 8px;
+  border-radius: 10px;
+}
+
+.group-label {
+  margin-bottom: 6px;
+  padding: 0 10px;
+  color: rgb(var(--muted));
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 24px;
+}
+
+.nav a,
+.side-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 20px;
+  transition: background-color 0.15s;
+}
+
+.nav a:hover,
+.side-btn:hover {
+  background: var(--hover);
+}
+
+.nav a[aria-current],
+.side-btn[aria-current] {
+  background: var(--hover);
+  font-weight: 600;
+}
+
+.nav a > span:first-of-type,
+.side-btn > span:first-of-type {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.nav svg,
+.side-btn svg {
+  flex-shrink: 0;
+}
+
+.step-n {
+  flex: none !important;
+  width: 16px;
+  font: 400 11px/20px var(--font-mono);
+  color: rgb(var(--muted));
+}
+
+.count {
+  font: 400 12px/16px var(--font-mono);
+  opacity: 0.6;
+}
+
+.ext {
+  opacity: 0.5;
+}
+
+.side-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 32px;
+  height: 18px;
+  border-radius: 99px;
+  background: rgb(var(--ink) / 0.14);
+  transition: background-color 0.2s;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  transition: transform 0.25s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+/* Keyed off the theme class, which is set before first paint, so the
+   knob never slides into place while the page loads. */
+.dark [data-theme-toggle] .switch {
+  background: rgb(var(--accent));
+}
+
+.dark [data-theme-toggle] .switch::after {
+  transform: translateX(14px);
+}
+
+.collab {
+  margin-top: 12px;
+  padding: 16px 10px 0;
+  border-top: 1px solid var(--border);
+}
+
+.collab .micro {
+  color: rgb(var(--muted));
+}
+
+.collab-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.collab-row a {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  font: 400 12px/16px var(--font-mono);
+}
+
+.collab-row a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.copy {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  opacity: 0.6;
+}
+
+.copy:hover {
+  opacity: 1;
+  background: var(--hover);
+}
+
+.copy .done {
+  position: absolute;
+  right: 0;
+  top: -26px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: rgb(var(--ink));
+  color: rgb(var(--bg));
+  font: 400 11px/1 var(--font-mono);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.copy.ok .done {
+  opacity: 1;
+}
+
+.page {
+  display: flex;
+  min-height: calc(100dvh - 56px);
+  flex-direction: column;
+}
+
+.page-body {
+  flex: 1;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(20px, env(safe-area-inset-left));
+  border-bottom: 1px solid var(--border);
+  background: rgb(var(--bg) / 0.72);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.topbar > a {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  border-radius: 10px;
+}
+
+.icon-btn .i-x,
+.icon-btn[aria-expanded="true"] .i-menu {
+  display: none;
+}
+
+.icon-btn[aria-expanded="true"] .i-x {
+  display: block;
+}
+
+.sheet {
+  position: fixed;
+  inset: 56px 0 0;
+  z-index: 29;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 12px max(24px, env(safe-area-inset-bottom));
+  background: rgb(var(--bg) / 0.82);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+}
+
+.sheet[hidden] {
+  display: none;
+}
+
+.sheet .nav a,
+.sheet .side-btn {
+  min-height: 44px;
+  font-size: 16px;
+}
+
+.sheet .side-foot {
+  margin-top: 0;
+}
+
+.sheet .copy {
+  width: 44px;
+  height: 44px;
+}
+
+@media (min-width: 1024px) {
+  .side {
+    display: flex;
+  }
+  .topbar,
+  .sheet {
+    display: none;
+  }
+  .page {
+    min-height: 100dvh;
+    padding-left: 240px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .side,
+  .topbar,
+  .sheet,
+  .panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .dark .side,
+  .dark .panel {
+    background: #1f2335;
+  }
+  .topbar,
+  .sheet {
+    background: rgb(var(--bg));
+  }
+}
+
+.site-foot {
+  margin-top: 64px;
+  border-top: 1px solid var(--border);
+}
+
+.foot {
+  display: flex;
+  max-width: 1200px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 auto;
+  padding: 28px 56px 40px;
+}
+
+.foot-l {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.foot-l .micro {
+  color: rgb(var(--muted));
+}
+
+.foot-r {
+  display: flex;
+  gap: 4px;
+  margin-right: -12px;
+}
+
+.foot-r a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  opacity: 0.85;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+.foot-r a:hover {
+  opacity: 1;
+  background: var(--hover);
+}
+
+@media (max-width: 1023px) {
+  .foot {
+    padding: 28px 24px 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .foot-r {
+    margin-left: -12px;
+  }
 }

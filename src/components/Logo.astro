@@ -1,19 +1,29 @@
 ---
-// Wordmark: a shell prompt running `whoami`, the command that answers
-// exactly what this page answers. Set in Geist Pixel Square, the site's
-// display face, so it reads as part of the console language.
+// The mark is a terminal window with a shell prompt, the same glyph as
+// the favicon; the wordmark is the domain, set in the display face.
 interface Props {
-  /** Font size in px. */
+  /** Show only the mark, for tight spots like the footer. */
+  markOnly?: boolean;
   size?: number;
-  class?: string;
 }
-const { size = 18, class: className = "" } = Astro.props;
+const { markOnly = false, size = 30 } = Astro.props;
 ---
 
-<span
-  class={`inline-flex items-baseline gap-[0.45em] whitespace-nowrap font-pixel leading-none ${className}`}
-  style={`font-size: ${size}px`}
->
-  <span class="text-muted" aria-hidden="true">&gt;</span>
-  <span>whoami</span>
+<span class="logo">
+  <svg
+    class="logo-mark"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="2.95" y="5" width="18.3" height="14.2" rx="3"></rect>
+    <path d="m6.8 10.2 3.1 2.5-3.1 2.5M12.1 15.2h5.3"></path>
+  </svg>
+  {!markOnly && <span class="logo-word">christianaquino<span>.dev</span></span>}
 </span>

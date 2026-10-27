@@ -4,41 +4,38 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="/_fonts.css">
 <style>
-  @font-face { font-family:"Geist Pixel"; src:url("/fonts/GeistPixel-Square.woff2") format("woff2"); font-display:block; }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{width:1200px;height:630px;overflow:hidden}
   body{
-    background:#fff;color:#0a0a0a;
+    position:relative;background:#fff;color:#070707;
     font-family:"Geist Variable",ui-sans-serif,system-ui,sans-serif;
-    display:flex;flex-direction:column;justify-content:space-between;
-    padding:76px 84px;
+    display:flex;align-items:center;gap:64px;padding:0 80px;
     -webkit-font-smoothing:antialiased;
   }
-  .kicker{font-family:"Geist Mono Variable",ui-monospace,monospace;font-size:17px;letter-spacing:.18em;text-transform:uppercase;color:#6d6d72}
-  h1{font-family:"Geist Pixel",monospace;font-size:74px;line-height:1;letter-spacing:-.02em;margin-top:30px}
-  .role{font-size:27px;color:#6d6d72;margin-top:26px}
-  .role em{font-family:"Source Serif 4 Variable",Georgia,serif;font-style:italic;color:#0a0a0a}
-  .rule{height:1px;background:rgba(10,10,10,.12);margin-bottom:26px}
-  .stats{display:flex;gap:56px;font-family:"Geist Mono Variable",ui-monospace,monospace;font-variant-numeric:tabular-nums}
-  .stats b{display:block;font-size:25px;font-weight:500;letter-spacing:-.01em}
-  .stats span{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6d6d72;margin-top:8px}
-  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#e0584f;margin-right:11px;vertical-align:middle}
+  body::before{content:"";position:absolute;inset:0 0 0 40%;background-image:radial-gradient(rgba(10,10,10,.13) 1px,transparent 1.2px);background-size:12px 12px;-webkit-mask-image:radial-gradient(70% 80% at 70% 20%,#000,transparent 75%)}
+  .photo{position:relative;width:336px;height:420px;flex-shrink:0;border-radius:26px;border:1px solid #e5e5e5;object-fit:cover;box-shadow:0 28px 56px -24px rgba(10,10,10,.4)}
+  .copy{position:relative}
+  .logo{display:flex;align-items:center;gap:10px;font:700 24px/1 "Space Grotesk Variable",sans-serif;letter-spacing:-.03em}
+  .logo .w span{color:#737373;font-weight:500}
+  .kicker{margin-top:44px;font:400 15px/1 "Geist Mono Variable",monospace;letter-spacing:.1em;text-transform:uppercase;color:#525252}
+  h1{margin-top:16px;font:700 68px/1 "Space Grotesk Variable",sans-serif;letter-spacing:-1.7px}
+  .lede{margin-top:22px;max-width:620px;font-size:23px;line-height:34px;color:#262626}
+  .stats{margin-top:34px;display:flex;gap:44px}
+  .stats b{display:block;font:600 30px/1 "Space Grotesk Variable",sans-serif;letter-spacing:-.5px}
+  .stats span{display:block;margin-top:10px;font:400 13px/1 "Geist Mono Variable",monospace;letter-spacing:.1em;text-transform:uppercase;color:#525252}
 </style>
 </head>
 <body>
-  <div>
-    <p class="kicker"><span class="dot"></span>Metro Manila, PH · UTC+8</p>
+  <img class="photo" src="/avatar.webp" alt="">
+  <div class="copy">
+    <p class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.95" y="5" width="18.3" height="14.2" rx="3"/><path d="m6.8 10.2 3.1 2.5-3.1 2.5M12.1 15.2h5.3"/></svg><span class="w">christianaquino<span>.dev</span></span></p>
+    <p class="kicker">Senior DevOps engineer · Mandaluyong, PH</p>
     <h1>Christian Josef Aquino</h1>
-    <p class="role">Senior DevOps Engineer who keeps production <em>quietly, relentlessly boring</em>.</p>
-  </div>
-  <div>
-    <div class="rule"></div>
+    <p class="lede">I keep production running: 148 Kubernetes clusters across AWS, Azure and GCP.</p>
     <div class="stats">
       <div><b>7+</b><span>years</span></div>
+      <div><b>148</b><span>clusters</span></div>
       <div><b>99.95%</b><span>uptime</span></div>
-      <div><b>&minus;40%</b><span>mttr</span></div>
-      <div><b>3.6M+</b><span>users served</span></div>
-      <div><b>Kubernetes</b><span>terraform · gitops</span></div>
     </div>
   </div>
 </body>

@@ -19,7 +19,7 @@ const redirect = new URL("/contact/thanks/", SITE.url).href;
   <form
     action="https://api.web3forms.com/submit"
     method="POST"
-    class="card-tick p-5 sm:p-7"
+    class="panel p-5 sm:p-7"
     data-contact
     data-captcha={CONTACT_CAPTCHA}
     aria-describedby="contact-privacy"
@@ -131,7 +131,7 @@ const redirect = new URL("/contact/thanks/", SITE.url).href;
     <p class="sr-only" role="status" aria-live="polite" id="contact-status"></p>
   </form>
 
-  <div id="contact-success" class="card-tick p-5 sm:p-7" hidden>
+  <div id="contact-success" class="panel p-5 sm:p-7" hidden>
     <p class="font-mono text-caption uppercase tracking-wider text-success">Sent</p>
     <h2 class="mt-3 text-title3 font-semibold text-ink outline-none" tabindex="-1" data-success-heading>
       Message sent

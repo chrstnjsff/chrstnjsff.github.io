@@ -1,10 +1,10 @@
 ---
 import "@fontsource-variable/geist";
 import "@fontsource-variable/geist-mono";
-import "@fontsource-variable/source-serif-4";
-import "@fontsource-variable/source-serif-4/wght-italic.css";
+import "@fontsource-variable/space-grotesk";
 import "../styles/global.css";
 import Sidebar from "../components/Sidebar.astro";
+import Icon from "../components/Icon.astro";
 import Logo from "../components/Logo.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { SITE, type NavItem } from "../config/site";
@@ -19,7 +19,7 @@ interface Props {
   noindex?: boolean;
   /** Structured data blocks, each emitted as its own JSON-LD script. */
   jsonLd?: object[];
-  /** In-page links for the sidebar: home sections, or a guide's steps. */
+  /** In-page links for the sidebar: a guide's steps. */
   outline?: { title: string; items: NavItem[] };
 }
 
@@ -52,8 +52,7 @@ const isHome = Astro.url.pathname === "/";
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0c0c0f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITE.name} />
@@ -66,26 +65,17 @@ const isHome = Astro.url.pathname === "/";
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <link
-      rel="preload"
-      href="/fonts/GeistPixel-Square.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-
     <script is:inline>
       // Resolve the theme before first paint, so there is no flash of the wrong theme.
+      // Light is the default; only an explicit "dark" choice turns dark mode on.
       // The js class lets CSS hide scroll-reveal content only when JS will show it.
       (function () {
         document.documentElement.classList.add("js");
         try {
-          var pref = localStorage.getItem("theme") || "system";
-          var dark =
-            pref === "dark" ||
-            (pref === "system" &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches);
-          document.documentElement.classList.toggle("dark", dark);
+          if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+            document.querySelector('meta[name="theme-color"]').content = "#24283b";
+          }
         } catch (e) {}
       })();
     </script>
@@ -93,270 +83,178 @@ const isHome = Astro.url.pathname === "/";
     {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
   </head>
 
-  <body class="font-sans antialiased">
-    <a
-      href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-ink focus:px-4 focus:py-2 focus:font-mono focus:text-xs focus:text-bg"
-    >
-      Skip to content
-    </a>
+  <body>
+    <a href="#main" class="skip">Skip to content</a>
 
-    <!-- background dot field -->
-    <div aria-hidden="true" class="pointer-events-none fixed inset-0 z-0">
-      <div class="halftone absolute inset-0 opacity-[0.055]"></div>
-    </div>
-
-    <!-- scroll progress hairline -->
-    <div
-      id="scroll-progress"
-      aria-hidden="true"
-      class="fixed left-0 top-0 z-[70] h-px w-full bg-accent"
-    >
-    </div>
-
-    <!-- fixed rail (lg+) -->
-    <nav
-      class="fixed inset-y-0 left-0 z-50 hidden w-56 flex-col border-r border-line/12 bg-bg px-7 py-8 lg:flex"
-      aria-label="Primary"
-      data-inert-when-menu
-    >
-      <Sidebar outline={outline} />
-    </nav>
-
-    <!-- mobile bar -->
-    <div
-      class="material-bar sticky top-0 z-50 flex h-14 items-center justify-between border-b border-line/12 px-5 lg:hidden"
-      data-inert-when-menu
-    >
+    <!-- desktop rail (lg+) -->
+    <aside class="side" aria-label="Site" data-inert-when-menu>
       <a
+        class="side-logo"
         href={isHome ? "#top" : "/"}
-        class="press -mx-2 inline-flex min-h-11 items-center px-2 leading-none"
         aria-label={isHome ? `${SITE.name}, back to top` : `${SITE.name}, home`}
       >
-        <Logo size={15} />
+        <Logo />
+      </a>
+      <Sidebar outline={outline} />
+    </aside>
+
+    <!-- phone and tablet: top bar, and the menu sheet it opens -->
+    <header class="topbar">
+      <a
+        data-topbar-logo
+        href={isHome ? "#top" : "/"}
+        aria-label={isHome ? `${SITE.name}, back to top` : `${SITE.name}, home`}
+      >
+        <Logo size={26} />
       </a>
       <button
         type="button"
-        id="mobile-nav-open"
-        class="press -mr-3.5 grid h-11 w-11 place-items-center text-muted hover:text-ink"
-        aria-label="Open menu"
-        aria-controls="mobileNav"
+        class="icon-btn"
+        id="menuBtn"
         aria-expanded="false"
+        aria-controls="sheet"
+        aria-label="Open menu"
       >
-        <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-        </svg>
+        <Icon name="menu" size={20} class="i-menu" />
+        <Icon name="x" size={20} class="i-x" />
       </button>
+    </header>
+    <div class="sheet" id="sheet" hidden>
+      <Sidebar outline={outline} />
     </div>
 
-    <!-- mobile menu: a modal dialog that mirrors the bar it opens from -->
-    <div
-      id="mobileNav"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Menu"
-      class="fixed inset-0 z-[60] hidden flex-col bg-bg lg:hidden"
-    >
-      <div class="flex h-14 shrink-0 items-center justify-between border-b border-line/12 px-5">
-        <a
-          href={isHome ? "#top" : "/"}
-          class="press -mx-2 inline-flex min-h-11 items-center px-2 leading-none"
-          aria-label={isHome ? `${SITE.name}, back to top` : `${SITE.name}, home`}
-        >
-          <Logo size={15} />
-        </a>
-        <button
-          type="button"
-          id="mobile-nav-close"
-          class="press -mr-3.5 grid h-11 w-11 place-items-center text-muted hover:text-ink"
-          aria-label="Close menu"
-        >
-          <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4" aria-hidden="true">
-            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-          </svg>
-        </button>
-      </div>
-      <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-7 pb-10 pt-6">
-        <Sidebar mobile={true} outline={outline} />
-      </div>
-    </div>
-
-    <!-- column fills the viewport (minus the mobile bar) so short pages keep the footer at the bottom -->
-    <main
-      id="main"
-      class="relative z-10 flex min-h-[calc(100dvh-3.5rem)] flex-col lg:min-h-dvh lg:pl-56"
-      data-inert-when-menu
-    >
-      <div class="flex-1">
+    <div class="page" data-inert-when-menu>
+      <main id="main" class="page-body">
         <slot />
-      </div>
+      </main>
       <SiteFooter />
-    </main>
+    </div>
 
     <script is:inline>
-      // ---- theme: system | light | dark -------------------------------
+      // ---- theme: light (default) | dark --------------------------------
       (function () {
-        var media = window.matchMedia("(prefers-color-scheme: dark)");
+        var root = document.documentElement;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        var toggles = document.querySelectorAll("[data-theme-toggle]");
 
-        function read() {
-          try {
-            return localStorage.getItem("theme") || "system";
-          } catch (e) {
-            return "system";
-          }
-        }
-
-        function apply(pref) {
-          var dark = pref === "dark" || (pref === "system" && media.matches);
-          document.documentElement.classList.toggle("dark", dark);
-          document.querySelectorAll("[data-theme-opt]").forEach(function (b) {
-            b.setAttribute("aria-pressed", String(b.dataset.themeOpt === pref));
+        function sync() {
+          var dark = root.classList.contains("dark");
+          toggles.forEach(function (b) {
+            b.setAttribute("aria-checked", String(dark));
           });
+          if (meta) meta.content = dark ? "#24283b" : "#ffffff";
         }
 
-        window.setTheme = function (pref) {
-          try {
-            localStorage.setItem("theme", pref);
-          } catch (e) {}
-          var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          if (document.startViewTransition && !reduce) {
-            document.startViewTransition(function () {
-              apply(pref);
-            });
-          } else if (!reduce) {
-            var root = document.documentElement;
-            root.classList.add("theme-fade");
-            apply(pref);
-            setTimeout(function () {
-              root.classList.remove("theme-fade");
-            }, 400);
-          } else {
-            apply(pref);
-          }
-        };
+        function apply(dark) {
+          root.classList.toggle("dark", dark);
+          sync();
+        }
 
-        document.querySelectorAll("[data-theme-opt]").forEach(function (b) {
+        toggles.forEach(function (b) {
           b.addEventListener("click", function () {
-            window.setTheme(b.dataset.themeOpt);
+            var dark = !root.classList.contains("dark");
+            try {
+              localStorage.setItem("theme", dark ? "dark" : "light");
+            } catch (e) {}
+            var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (document.startViewTransition && !reduce) {
+              document.startViewTransition(function () {
+                apply(dark);
+              });
+            } else {
+              apply(dark);
+            }
           });
         });
 
-        // follow the OS while the preference is "system"
-        media.addEventListener("change", function () {
-          if (read() === "system") apply("system");
-        });
-
-        apply(read());
+        sync();
       })();
 
-      // ---- scroll progress hairline -----------------------------------
+      // ---- copy email ----------------------------------------------------
       (function () {
-        var bar = document.getElementById("scroll-progress");
-        if (!bar) return;
-        var ticking = false;
-
-        function update() {
-          ticking = false;
-          var doc = document.documentElement;
-          var max = doc.scrollHeight - window.innerHeight;
-          var p = max > 0 ? window.scrollY / max : 0;
-          bar.style.transform = "scaleX(" + Math.min(1, Math.max(0, p)) + ")";
-        }
-
-        window.addEventListener(
-          "scroll",
-          function () {
-            if (!ticking) {
-              ticking = true;
-              requestAnimationFrame(update);
+        document.querySelectorAll("[data-copy-email]").forEach(function (b) {
+          var done = b.querySelector(".done");
+          var timer;
+          b.addEventListener("click", function () {
+            function show(text) {
+              if (done) done.textContent = text;
+              b.classList.add("ok");
+              clearTimeout(timer);
+              timer = setTimeout(function () {
+                b.classList.remove("ok");
+                if (done) done.textContent = "";
+              }, 1400);
             }
-          },
-          { passive: true }
-        );
-        window.addEventListener("resize", update, { passive: true });
-        update();
+            if (!navigator.clipboard) return show("copy failed");
+            navigator.clipboard.writeText(b.dataset.copyEmail).then(
+              function () {
+                show("copied");
+              },
+              function () {
+                show("copy failed");
+              }
+            );
+          });
+        });
       })();
 
-      // ---- mobile menu (modal dialog) ----------------------------------
+      // ---- phone menu: a sheet under the top bar ------------------------
+      // The page behind goes inert while it is open, so Tab stays in the
+      // top bar and the sheet; Escape closes it and returns focus.
       (function () {
-        var panel = document.getElementById("mobileNav");
-        var openBtn = document.getElementById("mobile-nav-open");
-        var closeBtn = document.getElementById("mobile-nav-close");
-        if (!panel || !openBtn || !closeBtn) return;
+        var btn = document.getElementById("menuBtn");
+        var sheet = document.getElementById("sheet");
+        if (!btn || !sheet) return;
         var background = document.querySelectorAll("[data-inert-when-menu]");
 
         function isOpen() {
-          return !panel.classList.contains("hidden");
+          return !sheet.hidden;
         }
 
-        function focusables() {
-          return Array.prototype.filter.call(
-            panel.querySelectorAll("a[href], button:not([disabled])"),
-            function (el) {
-              return el.getClientRects().length > 0;
-            }
-          );
-        }
-
-        function setBackgroundInert(value) {
+        function set(open, restoreFocus) {
+          sheet.hidden = !open;
+          btn.setAttribute("aria-expanded", String(open));
+          btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+          document.body.style.overflow = open ? "hidden" : "";
           background.forEach(function (el) {
-            el.inert = value;
+            el.inert = open;
           });
+          if (open) {
+            var first = sheet.querySelector("a, button");
+            if (first) first.focus();
+          } else if (restoreFocus === "rail") {
+            // the window grew past the sheet: hand focus to the desktop rail
+            var rail = document.querySelector(".side a, .side button");
+            if (rail) rail.focus();
+          } else if (restoreFocus !== false) {
+            btn.focus();
+          }
         }
 
-        function open() {
-          panel.classList.remove("hidden");
-          panel.classList.add("flex");
-          openBtn.setAttribute("aria-expanded", "true");
-          document.body.style.overflow = "hidden";
-          setBackgroundInert(true);
-          closeBtn.focus();
-        }
-
-        // restoreFocus is false when a link inside the menu navigates,
-        // so focus follows the link target instead of the menu button.
-        function close(restoreFocus) {
-          panel.classList.add("hidden");
-          panel.classList.remove("flex");
-          openBtn.setAttribute("aria-expanded", "false");
-          document.body.style.overflow = "";
-          setBackgroundInert(false);
-          if (restoreFocus !== false) openBtn.focus();
-        }
-
-        openBtn.addEventListener("click", open);
-        closeBtn.addEventListener("click", function () {
-          close();
+        btn.addEventListener("click", function () {
+          set(!isOpen());
         });
-        panel.querySelectorAll("a").forEach(function (a) {
+        // A link that navigates or jumps in the page takes focus with it; a
+        // download or mailto link leaves the page where it was, so focus
+        // returns to the menu button instead of dropping to <body>.
+        sheet.querySelectorAll("a").forEach(function (a) {
           a.addEventListener("click", function () {
-            close(false);
+            var stays = a.hasAttribute("download") || /^mailto:/.test(a.getAttribute("href") || "");
+            set(false, stays);
           });
         });
+        var logo = document.querySelector("[data-topbar-logo]");
+        if (logo)
+          logo.addEventListener("click", function () {
+            if (isOpen()) set(false, false);
+          });
         document.addEventListener("keydown", function (e) {
-          if (!isOpen()) return;
-          if (e.key === "Escape") {
-            close();
-            return;
-          }
-          if (e.key !== "Tab") return;
-          var items = focusables();
-          if (!items.length) return;
-          var first = items[0];
-          var last = items[items.length - 1];
-          if (e.shiftKey && document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          } else if (!e.shiftKey && document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
+          if (e.key === "Escape" && isOpen()) set(false);
         });
-
-        // The menu only exists below lg; growing the window past it must
-        // not leave the page inert behind an invisible dialog.
+        // The sheet only exists below lg; growing the window past it must
+        // not leave the page inert behind an invisible menu.
         window.matchMedia("(min-width: 1024px)").addEventListener("change", function (e) {
-          if (e.matches && isOpen()) close(false);
+          if (e.matches && isOpen()) set(false, sheet.contains(document.activeElement) ? "rail" : false);
         });
       })();
 
@@ -392,7 +290,7 @@ const isHome = Astro.url.pathname === "/";
         });
       })();
 
-      // ---- sidebar scrollspy (in-page outline links only) --------------
+      // ---- sidebar scrollspy (in-page links only) -----------------------
       (function () {
         var links = document.querySelectorAll("[data-spy]");
         if (!links.length || !("IntersectionObserver" in window)) return;

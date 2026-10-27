@@ -8,7 +8,8 @@ Personal site with how-to guides and a contact form: <https://christianaquino.de
 |---|---|
 | Framework | [Astro](https://astro.build) 7 (static output, zero client framework) |
 | Styling | [Tailwind CSS](https://tailwindcss.com) 4 via `@tailwindcss/vite` (CSS-first, no `tailwind.config.js`) |
-| Type | Geist / Geist Mono / Source Serif 4 (self-hosted, Fontsource) + Geist Pixel for display |
+| Type | Geist, Geist Mono and Space Grotesk for display (self-hosted, Fontsource) |
+| Icons | Lucide-style line icons in `src/components/Icon.astro`; brand marks from [Simple Icons](https://simpleicons.org) at build time |
 | Hosting | [Cloudflare Workers](https://developers.cloudflare.com/workers/static-assets/) static assets, deployed by Workers Builds on every push to `main` (`wrangler.jsonc`) and daily through a deploy hook (`.github/workflows/rebuild.yml`); the old `chrstnjsff.github.io` address redirects here (`.github/workflows/pages-redirect.yml`) |
 
 Every font and asset is self-hosted.
@@ -19,7 +20,10 @@ The one third-party request at runtime is the contact form on `/contact/`, which
 | Path | What |
 |---|---|
 | `src/config/site.ts` | Name, links, navigation, and the Web3Forms access key (public by design) |
-| `src/pages/index.astro` | Home page and its data (experience, selected work, reviews, resources) |
+| `src/data/portfolio.ts` | Home page content: employer logos, projects, experience, certifications, stack, reviews, resources and gear |
+| `src/pages/index.astro` | Home page layout; styles in `src/styles/home.css` |
+| `src/components/ProjectShot.astro` | The drawn project thumbnails (no company names) |
+| `public/resume.pdf` | The CV from `~/job-hunt/cv-builder`, with the phone number replaced by the site link |
 | `src/content/howto/<guide>/index.md` | A how-to guide's metadata and intro |
 | `src/content/howto/<guide>/NN-<anchor>.md` | One collapsible step; `NN` orders it, `<anchor>` is its deep link |
 
@@ -37,10 +41,11 @@ npm run preview  # serve the production build
 
 ## Theming
 
-Colours live as RGB triplets in `src/styles/global.css` under `:root` and `.dark`,
-surfaced to Tailwind through `@theme inline`.
+Colours live in `src/styles/global.css` under `:root` (light) and `.dark` (Tokyo Night Storm, as translucent glass over a glow wallpaper).
+The RGB triplets are surfaced to Tailwind through `@theme inline`; the full colours beside them serve the shell and the home page.
 The type scale (`text-caption` through `text-large`) lives in the same file.
-Dark mode is a `.dark` class on `<html>`, set before first paint by an inline script in `src/layouts/Base.astro`, so there is no flash of the wrong theme.
+Light is the default.
+Dark mode is a `.dark` class on `<html>`, set before first paint by an inline script in `src/layouts/Base.astro` when the visitor turned it on, so there is no flash of the wrong theme.
 
 ## Open graph image
 

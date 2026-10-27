@@ -1,49 +1,63 @@
 ---
-// Stroke icons drawn on a 24px grid, sized to the surrounding text.
+// Line icons on a 24px grid (Lucide geometry), plus the two filled brand
+// marks. Decorative: the text beside each icon carries the meaning.
+import { siGithub } from "simple-icons";
+
+const LINKEDIN =
+  "M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z";
+
+const STROKE = {
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  server: '<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+  award: '<circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  book: '<path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  laptop: '<rect x="4" y="4" width="16" height="11" rx="2"/><path d="M2 19h20"/>',
+  quote: '<path d="M7 7h4v6a4 4 0 0 1-4 4M15 7h4v6a4 4 0 0 1-4 4"/>',
+  file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  send: '<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+  copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  ne: '<path d="M7 17 17 7M8 7h9v9"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  pause: '<path d="M9 5v14M15 5v14"/>',
+  play: '<path d="m7 4 13 8-13 8z"/>',
+} as const;
+
+export type IconName = keyof typeof STROKE | "github" | "linkedin";
+
 interface Props {
-  name: "github" | "linkedin" | "mail";
+  name: IconName;
+  size?: number;
   class?: string;
 }
-const { name, class: className = "h-[1.15em] w-[1.15em]" } = Astro.props;
+const { name, size = 16, class: className } = Astro.props;
+const fill = name === "github" ? siGithub.path : name === "linkedin" ? LINKEDIN : null;
 ---
 
-<svg viewBox="0 0 24 24" fill="none" class={`shrink-0 ${className}`} aria-hidden="true">
-  {
-    name === "github" && (
-      <path
-        d="M12 3a9 9 0 00-2.85 17.54c.45.08.61-.2.61-.43v-1.5c-2.5.55-3.04-1.2-3.04-1.2-.41-1.05-1-1.33-1-1.33-.82-.56.06-.55.06-.55.9.06 1.38.93 1.38.93.8 1.38 2.1.98 2.62.75.08-.58.31-.98.57-1.2-2-.23-4.1-1-4.1-4.45 0-.98.35-1.79.93-2.42-.1-.23-.4-1.15.08-2.4 0 0 .75-.24 2.47.92a8.6 8.6 0 014.5 0c1.72-1.16 2.47-.92 2.47-.92.48 1.25.18 2.17.09 2.4.58.63.92 1.44.92 2.42 0 3.46-2.1 4.22-4.1 4.44.32.28.6.83.6 1.67v2.48c0 .24.16.52.62.43A9 9 0 0012 3z"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linejoin="round"
-      />
-    )
-  }
-  {
-    name === "linkedin" && (
-      <>
-        <rect x="3" y="3" width="18" height="18" rx="2.5" stroke="currentColor" stroke-width="1.5" />
-        <path
-          d="M8 10.5V16M12 16v-5.5M12 13a2.5 2.5 0 015 0v3"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-        />
-        <circle cx="8" cy="7.6" r="0.9" fill="currentColor" />
-      </>
-    )
-  }
-  {
-    name === "mail" && (
-      <>
-        <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6" />
-        <path
-          d="M4 7l8 6 8-6"
-          stroke="currentColor"
-          stroke-width="1.6"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </>
-    )
-  }
-</svg>
+{
+  fill ? (
+    <svg width={size} height={size} viewBox="0 0 24 24" class={className} aria-hidden="true">
+      <path fill="currentColor" d={fill} />
+    </svg>
+  ) : (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class={className}
+      aria-hidden="true"
+      set:html={STROKE[name as keyof typeof STROKE]}
+    />
+  )
+}

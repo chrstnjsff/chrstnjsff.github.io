@@ -23,11 +23,6 @@ export interface NavItem {
   label: string;
 }
 
-export const NAV_PAGES: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/how-to/", label: "How-to" },
-  { href: "/contact/", label: "Contact" },
-];
 
 // Web3Forms access keys are public by design: the key only routes
 // submissions to the owner's inbox and is meant to ship in client-side

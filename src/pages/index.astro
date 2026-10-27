@@ -1,17 +1,30 @@
 ---
+import "../styles/home.css";
 import Base from "../layouts/Base.astro";
-import SectionLabel from "../components/SectionLabel.astro";
-import Role from "../components/Role.astro";
-import Bullet from "../components/Bullet.astro";
 import ContribGraph from "../components/ContribGraph.astro";
 import Icon from "../components/Icon.astro";
-import GuideCard from "../components/howto/GuideCard.astro";
-import { getGuides } from "../lib/howto";
+import ProjectShot from "../components/ProjectShot.astro";
+import { getGuides, guideHref } from "../lib/howto";
 import { SITE } from "../config/site";
+import {
+  certs,
+  companies,
+  education,
+  experience,
+  gear,
+  projects,
+  reading,
+  reviews,
+  stack,
+  stackMore,
+  stats,
+  systems,
+  type Chip,
+} from "../data/portfolio";
 
 const title = `${SITE.name} · ${SITE.role}`;
 const description =
-  "Senior DevOps engineer in Mandaluyong, Metro Manila with 7+ years building and operating production cloud infrastructure on AWS, GCP, and Azure. Kubernetes, Terraform/OpenTofu, GitOps, and observability.";
+  "Senior DevOps engineer in Mandaluyong, Metro Manila with 7+ years running production cloud infrastructure on AWS, Azure and GCP: 148 Kubernetes clusters at 99.95% uptime, OpenTofu and Terraform, GitOps and observability.";
 
 const person = {
   "@context": "https://schema.org",
@@ -19,6 +32,7 @@ const person = {
   name: SITE.name,
   jobTitle: SITE.role,
   url: `${SITE.url}/`,
+  image: `${SITE.url}/avatar.webp`,
   email: `mailto:${SITE.email}`,
   worksFor: [
     { "@type": "Organization", name: "Iron Mountain" },
@@ -44,739 +58,326 @@ const person = {
   ],
 };
 
-const outline = {
-  title: "On this page",
-  items: [
-    { href: "#about", label: "About" },
-    { href: "#experience", label: "Experience" },
-    { href: "#work", label: "Selected work" },
-    { href: "#stack", label: "Stack" },
-    { href: "#certifications", label: "Certifications" },
-    { href: "#guides", label: "Guides" },
-    { href: "#reviews", label: "Reviews" },
-    { href: "#resources", label: "Resources" },
-    { href: "#gear", label: "Gear" },
-  ],
-};
-
-const stats = [
-  { v: "7+", l: "years of experience" },
-  { v: "99.95%", l: "platform uptime sustained" },
-  { v: "40%", l: "faster incident recovery" },
-  { v: "3.6M+", l: "users on platforms I run" },
-];
-
-// Case studies, built only from facts and figures on the resume or in
-// the author's own project records.
-const work = [
-  {
-    org: "Nova Virtual Solutions",
-    period: "2026 – present",
-    title: "A HIPAA-compliant home care platform, built from scratch",
-    challenge:
-      "Home care agencies across several US states needed one system for clients, caregivers, and signed paperwork, with patient data protected throughout.",
-    approach:
-      "A Django API and React portal on AWS, with all infrastructure in OpenTofu, GitLab CI/CD with keyless deploys and security scans, nightly automated tests, and Sentry monitoring with patient-data scrubbing.",
-    results: ["12 agencies in 5 states", "9 OpenTofu stacks", "3 AWS accounts"],
-  },
-  {
-    org: "Nova Virtual Solutions",
-    period: "2026 – present",
-    title: "Live screen monitoring for a remote workforce",
-    challenge:
-      "Virtual assistants work remotely for US home care agencies, and managers needed to see who was working right now and how productive each shift was.",
-    approach:
-      "A React and TypeScript app with a Node.js API: live screen viewing over LiveKit, idle detection, and AI productivity reports that classify shift screenshots with Claude on Amazon Bedrock. Every administrator view is audit-logged.",
-    results: ["live since Sep 2026", "340+ automated tests"],
-  },
-  {
-    org: "Nova Virtual Solutions",
-    period: "2026 – present",
-    title: "One page for company uptime and delivery",
-    challenge:
-      "Leadership had no single view of whether every site was up or how each company's projects were moving.",
-    approach:
-      "The Nova Pulse dashboard: a Python Lambda checks every site and pulls Jira epic progress on a schedule, and a static page on S3 and CloudFront shows uptime and delivery, all defined in OpenTofu.",
-    results: ["27 endpoints checked", "5-minute refresh"],
-  },
-  {
-    org: "Nova Virtual Solutions",
-    period: "2026 – present",
-    title: "One page for company cloud and software spend",
-    challenge:
-      "Company spend was spread across three AWS accounts and the billing pages of fourteen software vendors, with no view of what each product cost or how spend compared with budget.",
-    approach:
-      "The Nova FinOps dashboard: a daily Python Lambda reads Cost Explorer, AWS Config, and AWS Budgets across the AWS organization and splits cost per product by tag, showing untagged spend as its own line. A static page on CloudFront behind Cloudflare Access adds budget meters and software subscription costs, all defined in OpenTofu.",
-    results: ["3 AWS accounts", "14 software vendors", "daily refresh"],
-  },
-  {
-    org: "Iron Mountain",
-    period: "2025 – present",
-    title: "Owning reliability for mission-critical platforms",
-    challenge:
-      "ICM, Insight, and DXP run on Kubernetes across AWS, Azure, and GCP, and every release has to keep production available and secure.",
-    approach:
-      "Primary point of contact for ICM; OpenTofu infrastructure as code; EKS, GKE, and AKS operations; and CI/CD for controlled releases, fixing production issues for good with engineering and security teams.",
-    results: ["99.95% uptime", "MTTR −40%"],
-  },
-  {
-    org: "One Team Anywhere",
-    period: "2024 – 2025",
-    title: "GitOps delivery with observability built in",
-    challenge:
-      "AWS and GCP workloads needed faster, safer releases and an alert-driven view of production health.",
-    approach:
-      "Infrastructure in Terraform, Pulumi, and OpenTofu; EKS and GKE with autoscaling and ArgoCD GitOps delivery; a Prometheus and Grafana framework with alerting and on-call escalation.",
-    results: ["40% faster deploys", "99.99% availability", "99.9% SLA"],
-  },
-  {
-    org: "Stratpoint",
-    period: "2022 – 2024",
-    title: "Self-service AWS for application teams",
-    challenge:
-      "Onboarding new projects and provisioning AWS resources was slow, and deployments differed from one environment to the next.",
-    approach:
-      "Helped design and build an internal developer platform for self-service provisioning, backed by reusable Terraform modules for 10+ AWS services including EKS, RDS, S3, and IAM.",
-    results: ["onboarding −60%", "provisioning −65%"],
-  },
-];
-
-const stack = [
-  { k: "Cloud", v: ["AWS", "Google Cloud", "Azure"] },
-  {
-    k: "Containers & Orchestration",
-    v: ["Kubernetes (EKS · GKE · AKS)", "Docker", "Helm", "Karpenter"],
-  },
-  { k: "Infrastructure as Code", v: ["Terraform", "OpenTofu", "Pulumi"] },
-  {
-    k: "CI/CD & GitOps",
-    v: ["GitLab CI/CD", "ArgoCD", "Jenkins", "GitHub Actions", "SonarQube"],
-  },
-  {
-    k: "Observability & Reliability",
-    v: ["Grafana", "Prometheus", "Sentry", "SLA / SLO", "Incident response", "RCA"],
-  },
-  { k: "Scripting & Systems", v: ["Python", "Bash", "PowerShell", "Linux"] },
-  {
-    k: "Application Development",
-    v: ["TypeScript", "React", "Node.js", "Laravel", "MongoDB"],
-  },
-  { k: "AI & LLMs", v: ["LangChain", "RAG"] },
-];
-
-const certs = [
-  {
-    issuer: "HashiCorp",
-    title: "HashiCorp Certified: Terraform Associate",
-    href: "https://developer.hashicorp.com/certifications/infrastructure-automation",
-  },
-  {
-    issuer: "Amazon Web Services",
-    title: "AWS Certified Cloud Practitioner",
-    href: "https://aws.amazon.com/certification/certified-cloud-practitioner/",
-  },
-];
-
-// Only recommendations the author wrote or approved. Brackets mark the
-// one editorial insertion, per quoting convention.
-const reviews = [
-  {
-    quote:
-      "Cj is a fast learner and easy to work with. Even [though] I am a senior to him, he also helped me with difficulties at work. He is very cooperative and hardworking.",
-    name: "Danica Capistrano",
-    role: "Support Analyst 2 · Koerber Supply Chain Software",
-    context: "senior colleague · May 2021 · via LinkedIn",
-  },
-];
-
-const resources = [
-  {
-    group: "DevOps & Platform",
-    items: [
-      {
-        title: "Google SRE Book",
-        desc: "The reliability engineering canon, free to read",
-        href: "https://sre.google/books/",
-        domain: "sre.google",
-      },
-      {
-        title: "Kubernetes the Hard Way",
-        desc: "Kubernetes from first principles, no scripts",
-        href: "https://github.com/kelseyhightower/kubernetes-the-hard-way",
-        domain: "github.com",
-      },
-      {
-        title: "CNCF Landscape",
-        desc: "The map of the cloud-native ecosystem",
-        href: "https://landscape.cncf.io/",
-        domain: "landscape.cncf.io",
-      },
-      {
-        title: "DevOps Roadmap",
-        desc: "The learning path, kept current",
-        href: "https://roadmap.sh/devops",
-        domain: "roadmap.sh",
-      },
-      {
-        title: "Terraform Registry",
-        desc: "Providers and modules worth stealing from",
-        href: "https://registry.terraform.io/",
-        domain: "registry.terraform.io",
-      },
-    ],
-  },
-  {
-    group: "LLMs & AI Engineering",
-    items: [
-      {
-        title: "Anthropic Docs",
-        desc: "Building with Claude: API, agents, MCP",
-        href: "https://docs.anthropic.com/",
-        domain: "docs.anthropic.com",
-      },
-      {
-        title: "Anthropic Cookbook",
-        desc: "Working patterns for LLM applications",
-        href: "https://github.com/anthropics/anthropic-cookbook",
-        domain: "github.com",
-      },
-      {
-        title: "Simon Willison's Weblog",
-        desc: "The running commentary on the LLM era",
-        href: "https://simonwillison.net/",
-        domain: "simonwillison.net",
-      },
-      {
-        title: "Prompt Engineering Guide",
-        desc: "Techniques, papers, and model quirks",
-        href: "https://www.promptingguide.ai/",
-        domain: "promptingguide.ai",
-      },
-      {
-        title: "Hugging Face",
-        desc: "Models, datasets, and spaces",
-        href: "https://huggingface.co/",
-        domain: "huggingface.co",
-      },
-      {
-        title: "Ollama",
-        desc: "Run open models on your own machine",
-        href: "https://ollama.com/",
-        domain: "ollama.com",
-      },
-    ],
-  },
-];
-
-const gear = [
-  {
-    name: "MacBook Pro (M5 Pro)",
-    note: "daily driver",
-    href: "https://www.apple.com/macbook-pro/",
-    domain: "apple.com",
-  },
-  {
-    name: "NuPhy keyboard",
-    note: "low-profile mechanical",
-    href: "https://nuphy.com/",
-    domain: "nuphy.com",
-  },
-  {
-    name: "Shokz bone-conduction headphones",
-    note: "on-call, ears open",
-    href: "https://shokz.com/",
-    domain: "shokz.com",
-  },
-  {
-    name: "Apple Watch Series 11",
-    note: "pages reach me anywhere",
-    href: "https://www.apple.com/watch/",
-    domain: "apple.com",
-  },
-];
-
 const guides = await getGuides();
+const newest = guides.reduce((a, b) => (b.entry.data.verifiedOn > a.entry.data.verifiedOn ? b : a));
+
+const chipColor = (c: Chip) => c.color ?? (c.icon ? `#${c.icon.hex}` : "currentColor");
 ---
 
-<Base title={title} description={description} ogType="profile" jsonLd={[person]} outline={outline}>
-  <div class="mx-auto max-w-2xl px-6 pb-16">
-    <!-- ============================= HERO ============================= -->
-    <section id="top" class="relative pb-4 pt-14 sm:pt-20">
-      <div class="max-w-xl">
-        <h1 class="reveal d1 text-title1 font-semibold text-ink sm:text-large">
-          {SITE.name}
-        </h1>
-
-        <p class="reveal d2 mt-4 font-mono text-footnote text-muted">
-          senior devops engineer · mandaluyong, metro manila{" "}
-          <span class="cursor-blink" aria-hidden="true">▮</span>
-        </p>
-
-        <p class="reveal d3 mt-6 text-body text-muted">
-          I'm a senior DevOps engineer. I build the cloud infrastructure underneath production
-          systems: Kubernetes, Terraform, and the pipelines that ship to them.
-        </p>
-
-        <p class="reveal d3 mt-4 text-body text-muted">
-          Right now I keep a mission-critical platform{" "}
-          <span class="font-serif italic text-ink">quietly, relentlessly boring</span>{" "}
-          across AWS, GCP, and Azure. Good automation, real observability, and incident practice
-          do most of that work.
-        </p>
-
-        <div class="reveal d4 mt-7 flex flex-wrap items-center gap-3">
-          <a href={SITE.resumePath} download={SITE.resumeFilename} class="btn btn-primary press">
-            Download resume
-            <span aria-hidden="true">↓</span>
-          </a>
-          <a href="/contact/" class="btn btn-secondary press">
-            Get in touch
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
-        <div class="reveal d4 mt-2 flex flex-wrap items-center gap-x-5 font-mono text-footnote text-muted">
-          <a
-            href={SITE.githubUrl}
-            target="_blank"
-            rel="me noopener"
-            class="inline-flex min-h-11 items-center gap-2 hover:text-ink"
-          >
-            <Icon name="github" />
-            GitHub <span aria-hidden="true">↗</span>
-          </a>
-          <a
-            href={SITE.linkedinUrl}
-            target="_blank"
-            rel="me noopener"
-            class="inline-flex min-h-11 items-center gap-2 hover:text-ink"
-          >
-            <Icon name="linkedin" />
-            LinkedIn <span aria-hidden="true">↗</span>
-          </a>
+<Base title={title} description={description} ogType="profile" jsonLd={[person]}>
+  <div class="home wrap">
+    <section class="hero" id="top" aria-labelledby="name">
+      <div class="hero-grid">
+        <img
+          class="photo fade-up"
+          src="/avatar.webp"
+          alt={SITE.name}
+          width="288"
+          height="360"
+          fetchpriority="high"
+        />
+        <div>
+          <p class="micro fade-up d1">Senior DevOps engineer · Mandaluyong, PH</p>
+          <h1 id="name" class="fade-up d1">{SITE.name}</h1>
+          <p class="lede fade-up d2">
+            I keep production running. At Iron Mountain I operate 148 Kubernetes clusters across AWS,
+            Azure and GCP at 99.95% uptime, with every change shipped through OpenTofu and CI/CD.
+          </p>
+          <div class="links fade-up d3">
+            <a href={SITE.linkedinUrl} target="_blank" rel="me noopener">
+              <Icon name="linkedin" size={14} /> linkedin ↗
+            </a>
+            <a href={SITE.githubUrl} target="_blank" rel="me noopener">
+              <Icon name="github" size={14} /> github ↗
+            </a>
+            <a href={`mailto:${SITE.email}`}><Icon name="mail" size={14} /> email ↗</a>
+            <a href={SITE.resumePath} download={SITE.resumeFilename}>
+              <Icon name="file" size={14} /> cv ↓
+            </a>
+          </div>
         </div>
       </div>
+    </section>
 
-      <!-- career highlights -->
-      <div
-        class="reveal d5 mt-10 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-line/12 py-6 sm:grid-cols-4"
-        role="group"
-        aria-label="Career highlights"
-      >
+    <section class="proof fade-up d4" aria-labelledby="worked">
+      <div class="proof-head">
+        <h2 class="micro" id="worked">Where I've worked</h2>
+        <button type="button" class="marquee-toggle" aria-pressed="false" data-marquee-toggle>
+          <Icon name="pause" size={14} class="i-pause" />
+          <Icon name="play" size={14} class="i-play" />
+          <span class="sr-only">Pause the logo animation</span>
+        </button>
+      </div>
+      <div class="marquee" data-marquee>
+        <div class="track">
+          {
+            [false, true].map((copy) =>
+              companies.map((c) => (
+                <div class="co" aria-hidden={copy ? "true" : undefined}>
+                  <img src={c.src} alt={copy ? "" : c.name} style={`height:${c.height}px`} />
+                </div>
+              ))
+            )
+          }
+        </div>
+      </div>
+      <div class="stats">
         {
           stats.map((s) => (
-            <div>
-              <div class="tnum text-title3 font-semibold tracking-tight text-ink">{s.v}</div>
-              <div class="mt-1 text-caption text-muted">{s.l}</div>
+            <div class="stat">
+              <div class="stat-v">
+                {s.v} <Icon name="ne" size={14} />
+              </div>
+              <div class="micro">
+                {s.live && <span class="live" aria-hidden="true" />}
+                {s.pre && <span class="long">{s.pre}</span>}
+                {s.short}
+                {s.long && <span class="long">{s.long}</span>}
+              </div>
             </div>
           ))
         }
       </div>
     </section>
 
-    <!-- ============================= ABOUT ============================= -->
-    <section id="about" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="about" />
-
-      <div class="reveal d1 space-y-4 text-body text-muted">
-        <p>
-          Seven-plus years designing, implementing, and operating production cloud infrastructure
-          and networked systems across AWS, GCP, and Azure. My work sits where infrastructure as
-          code, Kubernetes, and delivery pipelines meet, and where they break.
-        </p>
-        <p>
-          Day to day that means multi-cluster Kubernetes administration across EKS, GKE, and AKS;
-          reusable Terraform and OpenTofu modules that keep staging and production honest; GitLab
-          CI/CD and ArgoCD pipelines; and Prometheus and Grafana instrumentation that turns{" "}
-          <span class="font-serif italic text-ink">something feels slow</span>{" "}
-          into a named root cause.
-        </p>
-        <p>
-          I lead P1 and P2 incident response, run root cause analysis, plan capacity, and close
-          security gaps in infrastructure repositories and pipelines.
-        </p>
-      </div>
-
-      <p class="reveal d2 mt-8 font-mono text-caption uppercase tracking-wider text-muted">
-        BS Information Technology · Jose Rizal University · 2017
-      </p>
-    </section>
-
-    <!-- ============================= EXPERIENCE ============================= -->
-    <section id="experience" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="experience" />
-
-      <div>
-        <Role
-          company="Nova Virtual Solutions"
-          role="Senior DevOps Engineer (Contractor)"
-          period="Apr 2026 – Present"
-          location="Remote"
-          current={true}
-        >
-          <Bullet>
-            Designed and built the Nova Home Care platform from scratch: a HIPAA-compliant Django API
-            and React portal for home care agencies.
-          </Bullet>
-          <Bullet>
-            Built all AWS infrastructure as code with OpenTofu (9 stacks, 3 accounts) with
-            encryption, firewalls and least-privilege access.
-          </Bullet>
-          <Bullet>
-            Built CI/CD for every product on GitLab, with keyless AWS deploys, security scans and
-            nightly automated tests.
-          </Bullet>
-          <Bullet>
-            Designed company-wide error monitoring on Sentry, with patient-data scrubbing and
-            Microsoft Teams alerts.
-          </Bullet>
-          <Bullet>
-            Built the Nova FinOps dashboard: daily AWS cost per account and product, budget tracking
-            and software subscription costs on one page.
-          </Bullet>
-          <Bullet>
-            Designed and shipped internal platforms: Nova Workforce Monitoring (live screen viewing
-            and AI productivity reports), the Nova Pulse executive dashboard, a QR code generator and
-            the internal portal (IDP).
-          </Bullet>
-        </Role>
-
-        <Role
-          company="Iron Mountain Philippines"
-          role="Senior DevOps Engineer"
-          period="Oct 2025 – Present"
-          location="Taguig City"
-          current={true}
-          delay="d1"
-        >
-          <Bullet>
-            Serve as the primary point of contact for the ICM application and infrastructure,
-            leading technical coordination, incident triage, change planning, and stakeholder
-            communication.
-          </Bullet>
-          <Bullet metric="99.95% uptime">
-            Own the reliability and operational readiness of the ICM, Insight, and DXP platforms,
-            supporting availability, performance, secure releases, and production stability.
-          </Bullet>
-          <Bullet metric="35% faster provisioning">
-            Engineer and manage cloud infrastructure across AWS, Azure, and GCP using infrastructure
-            as code (OpenTofu) and automation, delivering scalable, consistent, and auditable
-            environments.
-          </Bullet>
-          <Bullet>
-            Operate and troubleshoot Kubernetes-based and containerised workloads (EKS, GKE, AKS),
-            resolving deployment, configuration, networking, capacity, and platform reliability
-            issues.
-          </Bullet>
-          <Bullet metric="MTTR −40%">
-            Build and improve CI/CD pipelines for ICM, Insight, and DXP services, enabling
-            controlled releases and partnering with engineering and security teams to resolve
-            production issues permanently.
-          </Bullet>
-        </Role>
-
-        <Role
-          company="One Team Anywhere"
-          role="Cloud & DevOps Engineer"
-          period="May 2024 – Oct 2025"
-          location="Mandaluyong City"
-          delay="d1"
-        >
-          <Bullet metric="40% faster deploys · 99.99% availability">
-            Designed AWS and GCP infrastructure with Terraform, Pulumi, and OpenTofu, and ran
-            EKS/GKE clusters with autoscaling and ArgoCD GitOps delivery.
-          </Bullet>
-          <Bullet metric="99.9% SLA">
-            Architected a Prometheus and Grafana observability framework with alerting and on-call
-            escalation workflows.
-          </Bullet>
-          <Bullet metric="+30% reliability">
-            Automated build, test, and release promotion, and supported production operations
-            across infrastructure, networking, and workloads.
-          </Bullet>
-        </Role>
-
-        <Role
-          company="Stratpoint Global Outsourcing"
-          role="Cloud Engineer III"
-          period="Mar 2022 – May 2024"
-          location="Mandaluyong City"
-          delay="d1"
-        >
-          <Bullet metric="onboarding −60%">
-            Helped design and build an internal developer platform for self-service AWS resource
-            provisioning.
-          </Bullet>
-          <Bullet metric="provisioning −65%">
-            Built reusable Terraform modules for 10+ AWS services (EKS, RDS, S3, IAM),
-            standardising deployments across environments.
-          </Bullet>
-          <Bullet metric="3.6M+ users">
-            Served as technical lead for four application engineers across frontend, backend, and
-            infrastructure for a telco platform.
-          </Bullet>
-        </Role>
-
-        <Role
-          company="DXC Technology"
-          role="Service Information Developer III"
-          period="Oct 2020 – Mar 2022"
-          location="Taguig City"
-          delay="d1"
-        >
-          <Bullet metric="99.5% SLA">
-            Single point of contact for AWS infrastructure across three luxury retail clients
-            operating 1,000+ stores, covering on-call rotations, monthly patching, and incident
-            handling.
-          </Bullet>
-          <Bullet>
-            Developed Terraform modules for AWS provisioning, authored operational runbooks, and
-            tuned database queries and indexing for the EPOS retail platform.
-          </Bullet>
-        </Role>
-
-        <Role
-          company="Bosch Service Solutions"
-          role="Service Desk Engineer"
-          period="Dec 2018 – Oct 2020"
-          location="Taguig City"
-          delay="d1"
-        >
-          <Bullet metric="30 min → 2 min">
-            Wrote PowerShell automation for software installation and configuration, cutting
-            install time.
-          </Bullet>
-          <Bullet metric="escalations −15%">
-            Handled ~60 tickets daily and designed troubleshooting protocols that let the team
-            absorb 40+ additional daily tickets.
-          </Bullet>
-        </Role>
-      </div>
-    </section>
-
-    <!-- ============================= SELECTED WORK ============================= -->
-    <section id="work" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="selected-work" />
-
-      <div class="space-y-3">
+    <section class="sec" id="projects" aria-labelledby="projects-h">
+      <div class="sec-head"><h2 class="micro" id="projects-h">01 · Projects</h2></div>
+      <div class="cards">
         {
-          work.map((w, i) => (
-            <article class={`reveal ${i ? `d${i}` : ""} card-tick p-5 sm:p-6`}>
-              <p class="tnum font-mono text-caption uppercase tracking-wider text-muted">
-                {w.org} · <span class="whitespace-nowrap">{w.period}</span>
-              </p>
-              <h3 class="mt-3 text-headline font-semibold text-ink">{w.title}</h3>
-              <dl class="mt-4 space-y-3 text-footnote">
-                <div class="sm:grid sm:grid-cols-[6.5rem_1fr] sm:gap-4">
-                  <dt class="font-mono text-caption uppercase tracking-wider text-muted">Challenge</dt>
-                  <dd class="mt-1 text-muted sm:mt-0">{w.challenge}</dd>
-                </div>
-                <div class="sm:grid sm:grid-cols-[6.5rem_1fr] sm:gap-4">
-                  <dt class="font-mono text-caption uppercase tracking-wider text-muted">Approach</dt>
-                  <dd class="mt-1 text-muted sm:mt-0">{w.approach}</dd>
-                </div>
-                <div class="sm:grid sm:grid-cols-[6.5rem_1fr] sm:gap-4">
-                  <dt class="font-mono text-caption uppercase tracking-wider text-muted">Result</dt>
-                  <dd class="mt-1 flex flex-wrap gap-2 sm:mt-0">
-                    {w.results.map((r) => (
-                      <span class="metric-chip">{r}</span>
-                    ))}
-                  </dd>
-                </div>
-              </dl>
+          projects.map((p) => (
+            <article class={`card${"wide" in p && p.wide ? " wide" : ""}`}>
+              <ProjectShot kind={p.shot} />
+              <div class="card-body">
+                <h3 class="card-t">{p.title}</h3>
+                <p class="card-d">{p.desc}</p>
+              </div>
             </article>
           ))
         }
       </div>
     </section>
 
-    <!-- ============================= STACK ============================= -->
-    <section id="stack" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="stack" />
-
-      <dl class="divide-y divide-line/12 border-y border-line/12">
-        {
-          stack.map((group, i) => (
-            <div
-              class={`reveal ${i < 5 ? `d${i + 1}` : "d5"} py-4 sm:grid sm:grid-cols-[13rem_1fr] sm:gap-6`}
-            >
-              <dt class="font-mono text-caption uppercase tracking-wider text-muted">
-                {group.k}
-              </dt>
-              <dd class="mt-1.5 text-body text-ink sm:mt-0">
-                {group.v.map((item, j) => (
-                  <>
-                    {/* Lines break only after a separator, never inside an item. */}
-                    {j > 0 && <wbr />}
-                    <span class="whitespace-nowrap">
-                      {item}
-                      {j < group.v.length - 1 && (
-                        <span class="mx-2 text-muted" aria-hidden="true">
-                          ·
-                        </span>
-                      )}
-                    </span>
-                  </>
-                ))}
-              </dd>
-            </div>
-          ))
-        }
-      </dl>
-    </section>
-
-    <!-- ============================= CERTIFICATIONS ============================= -->
-    <section id="certifications" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="certifications" />
-
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {
-          certs.map((c, i) => (
-            <a
-              href={c.href}
-              target="_blank"
-              rel="noopener"
-              class={`reveal ${i === 1 ? "d1" : ""} press group card-tick card-lift p-5`}
-            >
-              <p class="font-mono text-caption uppercase tracking-wider text-muted">
-                {c.issuer}
-              </p>
-              <h3 class="mt-3 text-footnote font-semibold text-ink">
-                {c.title}
-              </h3>
-              <p class="mt-4 font-mono text-caption text-muted group-hover:text-ink">
-                about this cert ↗
-              </p>
-            </a>
-          ))
-        }
+    <section class="sec" id="experience" aria-labelledby="experience-h">
+      <div class="sec-head">
+        <h2 class="micro" id="experience-h">02 · Experience</h2>
+        <a class="btn-sm press" href={SITE.resumePath} download={SITE.resumeFilename}>
+          full history <Icon name="arrow" size={14} />
+        </a>
       </div>
-    </section>
-
-    <!-- ============================= GUIDES ============================= -->
-    <section id="guides" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="guides" actionLabel="all guides" actionHref="/how-to/" />
-
-      <p class="reveal mb-6 max-w-xl text-body text-muted">
-        Step-by-step setups with commands you can paste straight into your terminal.
-      </p>
-      <ol class="space-y-3">
+      <ul class="rows">
         {
-          guides.map((guide, i) => (
+          experience.map((e) => (
             <li>
-              <GuideCard guide={guide} index={i} level="h3" delay={i ? `d${Math.min(i, 5)}` : ""} />
+              <span class="yr" title={e.period}>{e.year}</span>
+              <div class="row-main">
+                <span class="t">{e.role}</span>
+                <span class="o">{e.org}</span>
+              </div>
             </li>
           ))
         }
-      </ol>
+        <li>
+          <span class="yr">{education.year}</span>
+          <div class="row-main">
+            <span class="t">{education.role}</span>
+            <span class="o">{education.org}</span>
+          </div>
+        </li>
+      </ul>
     </section>
 
-    <!-- ============================= REVIEWS ============================= -->
-    <section id="reviews" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="reviews" actionLabel="linkedin" actionHref={SITE.linkedinUrl} external />
-
-      <div class="grid grid-cols-1 gap-3">
+    <section class="sec" id="systems" aria-labelledby="systems-h">
+      <div class="sec-head"><h2 class="micro" id="systems-h">03 · What I run</h2></div>
+      <ul class="two">
         {
-          reviews.map((r, i) => (
-            <figure class={`reveal ${i ? `d${Math.min(i, 5)}` : "d1"} card-tick p-5 sm:p-7`}>
-              <span class="block font-serif text-title1 leading-none text-muted" aria-hidden="true">
-                “
-              </span>
-              <blockquote class="-mt-3 font-serif text-callout italic text-ink">
-                <p>{r.quote}</p>
-              </blockquote>
-              <figcaption class="mt-5 border-t border-line/10 pt-4">
-                <p class="text-footnote font-medium text-ink">{r.name}</p>
-                <p class="mt-1 font-mono text-caption uppercase tracking-wider text-muted">
-                  {r.role}
-                </p>
-                <p class="mt-1 font-mono text-caption text-muted">{r.context}</p>
-              </figcaption>
-            </figure>
+          systems.map((s) => (
+            <li>
+              <h3>{s.title}</h3>
+              <p>{s.meta}</p>
+            </li>
           ))
         }
-      </div>
+      </ul>
     </section>
 
-    <!-- ============================= RESOURCES ============================= -->
-    <section id="resources" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="resources" />
-
-      <div class="space-y-8">
+    <section class="sec" id="certifications" aria-labelledby="certs-h">
+      <div class="sec-head"><h2 class="micro" id="certs-h">04 · Certifications</h2></div>
+      <ul class="rows">
         {
-          resources.map((section) => (
-            <div>
-              <h3 class="reveal font-mono text-caption uppercase tracking-wider text-muted">
-                {section.group}
-              </h3>
-              <div class="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                {section.items.map((r, i) => (
-                  <a
-                    href={r.href}
-                    target="_blank"
-                    rel="noopener"
-                    class={`reveal ${i < 4 ? `d${i + 1}` : "d4"} press group card-tick card-lift px-4 py-3.5`}
-                  >
-                    <div class="flex items-baseline justify-between gap-3">
-                      <h4 class="text-footnote font-medium text-ink">{r.title}</h4>
-                      <span
-                        class="shrink-0 font-mono text-caption text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
-                        aria-hidden="true"
-                      >
-                        ↗
-                      </span>
-                    </div>
-                    <p class="mt-1 text-footnote text-muted">{r.desc}</p>
-                    <p class="mt-2 font-mono text-caption tracking-wide text-muted">
-                      {r.domain}
-                    </p>
-                  </a>
-                ))}
+          certs.map((c) => (
+            <li>
+              <span class="yr">{c.year}</span>
+              <div class="row-main">
+                <span class="t">
+                  {c.href ? (
+                    <a href={c.href} target="_blank" rel="noopener">
+                      {c.title}
+                    </a>
+                  ) : (
+                    c.title
+                  )}
+                  {c.badge && <span class="badge">{c.badge}</span>}
+                </span>
+                <span class="o">{c.issuer}</span>
               </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="sec" id="guides" aria-labelledby="guides-h">
+      <div class="sec-head">
+        <h2 class="micro" id="guides-h">05 · How-to guides</h2>
+        <a class="btn-sm press" href="/how-to/">all {guides.length} <Icon name="arrow" size={14} /></a>
+      </div>
+      <ul class="rows">
+        {
+          guides.map((g) => (
+            <li>
+              <span class="yr">{g.entry.data.verifiedOn.getFullYear()}</span>
+              <div class="row-main">
+                <span class="t">
+                  <a href={guideHref(g.slug)}>{g.entry.data.title}</a>
+                  {g === newest && <span class="badge">new</span>}
+                </span>
+                <span class="o">{g.steps.length} steps · {g.entry.data.duration.toLowerCase()}</span>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="sec" id="stack" aria-labelledby="stack-h">
+      <div class="sec-head"><h2 class="micro" id="stack-h">06 · Tech stack</h2></div>
+      <ul class="chips" data-chips>
+        {
+          [...stack, ...stackMore].map((c, i) => (
+            <li class={i >= stack.length ? "chip extra" : "chip"}>
+              <span class="ic" aria-hidden="true">
+                {c.icon ? (
+                  <svg width="15" height="15" viewBox="0 0 24 24">
+                    <path fill={chipColor(c)} d={c.icon.path} />
+                  </svg>
+                ) : (
+                  <b style={`color:${chipColor(c)}`}>{c.text}</b>
+                )}
+              </span>
+              <span>{c.label}</span>
+            </li>
+          ))
+        }
+        <li>
+          <button type="button" class="chip more" aria-expanded="false" data-chips-more>
+            +{stackMore.length} more
+          </button>
+        </li>
+      </ul>
+    </section>
+
+    <section class="sec" id="reviews" aria-labelledby="reviews-h">
+      <div class="sec-head">
+        <h2 class="micro" id="reviews-h">07 · Reviews</h2>
+        <a class="btn-sm press" href={SITE.linkedinUrl} target="_blank" rel="noopener">
+          on linkedin <Icon name="ne" size={14} />
+        </a>
+      </div>
+      {
+        reviews.map((r) => (
+          <figure class="quote">
+            <span class="yr">{r.year}</span>
+            <div>
+              <blockquote>"{r.quote}"</blockquote>
+              <figcaption class="who">
+                <b>{r.name}</b> <span>· {r.role}</span>
+              </figcaption>
+            </div>
+          </figure>
+        ))
+      }
+    </section>
+
+    <section class="sec" id="resources" aria-labelledby="resources-h">
+      <div class="sec-head"><h2 class="micro" id="resources-h">08 · Resources &amp; gear</h2></div>
+      <div class="two three">
+        {
+          reading.map((group) => (
+            <div class="col">
+              <h3 class="micro col-label">{group.label}</h3>
+              <ul>
+                {group.items.map((r) => (
+                  <li>
+                    <h4>
+                      <a href={r.href} target="_blank" rel="noopener">
+                        {r.title} <Icon name="ne" size={14} />
+                      </a>
+                    </h4>
+                    <p>{r.desc}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))
         }
+        <div class="col" id="gear">
+          <h3 class="micro col-label">What I use</h3>
+          <ul>
+            {
+              gear.map((g) => (
+                <li>
+                  <h4>
+                    <a href={g.href} target="_blank" rel="noopener">
+                      {g.title} <Icon name="ne" size={14} />
+                    </a>
+                  </h4>
+                  <p>{g.desc}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
     </section>
 
-    <!-- ============================= GEAR ============================= -->
-    <section id="gear" class="relative scroll-mt-16 py-14">
-      <SectionLabel name="gear" />
-
-      <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-        {
-          gear.map((g, i) => (
-            <a
-              href={g.href}
-              target="_blank"
-              rel="noopener"
-              class={`reveal ${i < 4 ? `d${i + 1}` : ""} press group card-tick card-lift flex items-baseline justify-between gap-4 px-4 py-3.5`}
-            >
-              <div>
-                <h3 class="text-footnote font-medium text-ink">{g.name}</h3>
-                <p class="mt-1 font-mono text-caption text-muted">{g.note}</p>
-              </div>
-              <span
-                class="shrink-0 font-mono text-caption text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
-                aria-hidden="true"
-              >
-                ↗
-              </span>
-            </a>
-          ))
-        }
+    <section class="sec" id="github" aria-labelledby="github-h">
+      <div class="sec-head">
+        <h2 class="micro" id="github-h">09 · GitHub</h2>
+        <a class="btn-sm press" href={SITE.githubUrl} target="_blank" rel="noopener">
+          @{SITE.githubUser} <Icon name="ne" size={14} />
+        </a>
       </div>
-    </section>
-
-    <!-- ============================= GITHUB ============================= -->
-    <section id="github" class="relative scroll-mt-16 py-14">
-      <SectionLabel
-        name="github"
-        actionLabel={`@${SITE.githubUser}`}
-        actionHref={SITE.githubUrl}
-        external
-      />
-
       <ContribGraph />
     </section>
   </div>
+
+  <script is:inline>
+    // The logo strip can be paused (WCAG 2.2.2); it also stops while a
+    // pointer or keyboard focus is on it, and under reduced motion.
+    (function () {
+      var btn = document.querySelector("[data-marquee-toggle]");
+      var strip = document.querySelector("[data-marquee]");
+      if (!btn || !strip) return;
+      btn.addEventListener("click", function () {
+        var paused = strip.classList.toggle("paused");
+        btn.setAttribute("aria-pressed", String(paused));
+      });
+    })();
+  
+    // The stack opens its remaining chips in place; without JS they all show.
+    (function () {
+      var btn = document.querySelector("[data-chips-more]");
+      var list = document.querySelector("[data-chips]");
+      if (!btn || !list) return;
+      btn.addEventListener("click", function () {
+        list.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+        var first = list.querySelector(".chip.extra");
+        if (first) {
+          first.setAttribute("tabindex", "-1");
+          first.focus();
+        }
+      });
+    })();
+  </script>
 </Base>
