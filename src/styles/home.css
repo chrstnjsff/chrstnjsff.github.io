@@ -242,6 +242,7 @@
 .chips.open .chip.more, html:not(.js) .chip.more { display: none; }
 
 .quote { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 20px 0; display: grid; grid-template-columns: 3rem minmax(0, 1fr); column-gap: 12px; }
+.quote + .quote { border-top: 0; }
 .quote blockquote { margin: 0; font: 500 20px/30px var(--font-display); letter-spacing: -.3px; max-width: 760px; }
 .quote .who { margin-top: 12px; font-size: 14px; line-height: 20px; }
 .quote .who span { opacity: .7; }
