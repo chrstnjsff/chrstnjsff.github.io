@@ -328,7 +328,7 @@ export const reviews = [
     quote:
       "I had the pleasure of working closely with Christian Josef, and I can confidently say he is an exceptional engineer. His expertise in agentic engineering is top-notch, and what truly sets him apart is his dedication to the team. He is really approachable, highly collaborative, and always willing to share his knowledge. He consistently takes the time to guide and support me whenever I need help, making complex technical challenges much easier to navigate. Any team would be lucky to have someone as skilled, supportive, and reliable as him.",
     name: "Marie Iris Dimaunahan",
-    role: "QA Automation Engineer",
+    role: "QA Automation Engineer, Nova Virtual Solutions",
   },
   {
     year: "2021",
