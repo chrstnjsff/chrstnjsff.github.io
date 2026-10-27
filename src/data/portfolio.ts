@@ -110,19 +110,137 @@ export const projects = [
 
 export type ShotKind = (typeof projects)[number]["shot"];
 
-export const experience = [
-  { year: "2026", period: "Apr 2026 - Present", role: "Senior DevOps Engineer (Contractor)", org: "Nova Virtual Solutions" },
-  { year: "2025", period: "Oct 2025 - Present", role: "Senior DevOps Engineer", org: "Iron Mountain Philippines" },
-  { year: "2024", period: "May 2024 - Oct 2025", role: "Cloud & DevOps Engineer", org: "One Team Anywhere · MRGE" },
-  { year: "2022", period: "Mar 2022 - May 2024", role: "Cloud Engineer III", org: "Stratpoint Global Outsourcing" },
-  { year: "2020", period: "Oct 2020 - Mar 2022", role: "Service Information Developer III", org: "DXC Technology" },
-  { year: "2018", period: "Dec 2018 - Oct 2020", role: "Service Desk Engineer", org: "Bosch Service Solutions" },
+export interface Role {
+  /** Anchor on /experience/. */
+  id: string;
+  year: string;
+  period: string;
+  role: string;
+  org: string;
+  /** Sidebar label on /experience/. */
+  short: string;
+  where: string;
+  /** Roles and responsibilities, worded as in the CV. */
+  points: string[];
+}
+
+/**
+ * Every role, newest first. The points follow the CV, except Nova: it is a
+ * freelance client the CV leaves out on purpose, so its points come from the
+ * CV's Nova client projects.
+ */
+export const experience: Role[] = [
+  {
+    id: "nova",
+    year: "2026",
+    period: "Apr 2026 - Present",
+    role: "Senior DevOps Engineer (Freelance)",
+    org: "Nova Virtual Solutions",
+    short: "Nova Virtual Solutions",
+    where: "Freelance client, remote",
+    points: [
+      "Built a multi-tenant web portal for a US home care agency client: caregiver and client onboarding, admission documents with e-signing, dynamic custom forms, job acceptance, and electronic visit verification (EVV).",
+      "Deployed on AWS through GitLab CI with a pip-audit security gate, frozen-lockfile builds, and Sentry error tracking; staging scales down outside working hours to cut cost.",
+      "Built a consent-based live screen-sharing and productivity monitoring platform for remote teams, with 5-second activity heartbeats, idle detection, shift summaries, admin dashboards with alerts, and hours-based exports.",
+      "Added role-based access across organisations with Amazon Cognito and Microsoft Entra SSO, OpenTofu-managed AWS infrastructure, and unit and Playwright end-to-end test suites.",
+      "Built a daily Lambda collector that reads Cost Explorer, Config resource counts, and Budgets across AWS accounts through a read-only cross-account role, publishing to S3 for a static CloudFront dashboard behind Cloudflare Access.",
+      "Shows cost by platform and month, budget meters, SaaS tool spend, and a year-to-date view, with invoice upload where Claude on Amazon Bedrock fills the fields for an editor to confirm.",
+      "Built a multi-account, HIPAA-aligned AWS landing zone as code: management and member accounts, IAM Identity Center SSO with permission sets, service control policies against guardrail bypass, and separate state for global, staging, production, and tools.",
+      "Baselined each account with CloudTrail, Config, GuardDuty, Security Hub, and KMS, with OIDC CI roles under permission boundaries, plan on merge request, apply on merge, and nightly drift detection alerting to Microsoft Teams.",
+    ],
+  },
+  {
+    id: "iron-mountain",
+    year: "2025",
+    period: "Oct 2025 - Present",
+    role: "Senior DevOps Engineer",
+    org: "Iron Mountain Philippines",
+    short: "Iron Mountain",
+    where: "Taguig City, Metro Manila PH (remote)",
+    points: [
+      "Lead technical coordination, incident triage, change planning, and stakeholder communication as primary Point of Contact for the mission-critical ICM application and infrastructure.",
+      "Own reliability and operational readiness of the ICM, Insight, and DXP platforms, sustaining 99.95% uptime through secure releases and production stability work.",
+      "Engineer multi-cloud infrastructure across AWS, Azure, and GCP with Infrastructure as Code (OpenTofu) and automation, delivering scalable, auditable environments with 35% faster provisioning.",
+      "Operate and troubleshoot 148 Kubernetes clusters (staging and production) and their containerised workloads on EKS, GKE, and AKS, resolving deployment, configuration, networking, and capacity issues.",
+      "Build and improve CI/CD pipelines and partner with engineering and security teams on permanent fixes, cutting Mean Time to Recovery (MTTR) by 40%.",
+      "Deploy versioned DXP tenant releases through GitLab CI generated deployment jobs, with secrets pulled from Akeyless, and verify rollout, readiness, external URL, and fresh logs before closing a release.",
+      "Run per-environment OpenTofu, module, and Kubernetes version upgrades, reading plans for replacements and deletes and following postchecks, which caught failed application checks hidden behind green pipelines.",
+      "Investigated an EKS SSO outage after an Nginx-to-ALB migration, tracing ingress, Terraform, Helm, and Route 53 DNS faults with the team and confirming recovery through the real user login flow.",
+      "Operate Grafana, Loki, Mimir, and OpenTelemetry observability for regional deployments, verifying log and metric ingestion freshness as well as dashboards, with Prometheus alerting for P1/P2 incident response.",
+      "Administer 44 Elasticsearch clusters and 73 MongoDB clusters, and troubleshoot and restore production dependencies behind application outages, including Elasticsearch shard capacity limits, Kafka consumers, Redis, PostgreSQL, and ZooKeeper recovery order.",
+    ],
+  },
+  {
+    id: "mrge",
+    year: "2024",
+    period: "May 2024 - Oct 2025",
+    role: "Cloud & DevOps Engineer",
+    org: "One Team Anywhere · MRGE",
+    short: "MRGE",
+    where: "Lahug, Cebu City PH (remote)",
+    points: [
+      "Led AWS and GCP infrastructure implementation with Terraform, Pulumi, and OpenTofu for a distributed engineering organisation, delivering 40% faster deployments and 99.99% platform availability.",
+      "Administered 50 EKS and GKE clusters (15 production and 15 staging on AWS, 10 production and 10 staging on GCP) with autoscaling and ArgoCD GitOps deployments, improving workload reliability by 30%.",
+      "Led a client migration of on-premise, VM-hosted, MySQL-backed applications to Kubernetes on AWS: built the EKS cluster and ArgoCD with Terraform, moved the on-premise databases to Amazon RDS, moved the client's DNS to Route 53, and moved repositories into our organisation.",
+      "Trained the client's developers on AWS, Kubernetes, and ArgoCD.",
+      "Migrated DNS for five companies acquired by the client (Shopping24, MaxBounty, Digidip, YK, SourceKnowledge) from Cloudflare to AWS Route 53 using Terraform, centralising it on one cloud provider.",
+      "Architected a Prometheus and Grafana observability framework, maintaining a 99.9% SLA across monitored services.",
+      "Moved observability from Datadog to Grafana Cloud with Terraform, Slack alerting, and Atlantis-reviewed Terraform plans.",
+      "Built the release path for the internal Tech Radar: GitHub Actions authenticates to AWS with OIDC, pushes images to Amazon ECR, and ArgoCD deploys them through GitOps.",
+    ],
+  },
+  {
+    id: "stratpoint",
+    year: "2022",
+    period: "Mar 2022 - May 2024",
+    role: "Cloud Engineer III",
+    org: "Stratpoint Global Outsourcing",
+    short: "Stratpoint",
+    where: "Mandaluyong City, Metro Manila PH (remote)",
+    points: [
+      "Served as Technical Lead for a team of 4 application engineers, overseeing frontend, backend, and infrastructure operations of a telco application serving 3.6M+ users.",
+      "Built reusable Terraform modules for 10+ AWS services (EKS, RDS, S3, IAM), standardising deployments across development, staging, and production.",
+      "Owned environment configuration, IAM access control, and deployment pipelines for client projects; reviewed code and mentored engineers on Infrastructure as Code and cloud best practices.",
+      "Co-designed and implemented Atlas, an internal developer platform of golden paths built on AWS Service Catalog, Infrastructure as Code, and automated CI/CD, giving 500+ engineers self-service AWS resource provisioning.",
+    ],
+  },
+  {
+    id: "dxc",
+    year: "2020",
+    period: "Oct 2020 - Mar 2022",
+    role: "Service Information Developer III",
+    org: "DXC Technology",
+    short: "DXC Technology",
+    where: "Taguig City, Metro Manila PH (remote)",
+    points: [
+      "Operated AWS infrastructure as Single Point of Contact (SPOC) for 3 luxury retail clients (1,000+ stores) at a 99.5% SLA; built Terraform provisioning modules and authored technical runbooks.",
+      "Supported Oracle databases and handled ITIL-based incident management in HP Service Manager, keeping to SLA targets.",
+      "Resolved end-to-end point-of-sale (POS) issues, including Oracle (ORA) errors, hardware peripheral faults, and tax application failures.",
+      "Troubleshot complex store operations issues involving promotions, sales discrepancies, stock variances, reporting inconsistencies, shipments, and online orders.",
+      "Monitored sales data transmission to SAP and Data Warehouse platforms to keep it reliable.",
+    ],
+  },
+  {
+    id: "bosch",
+    year: "2018",
+    period: "Dec 2018 - Oct 2020",
+    role: "Service Desk Engineer",
+    org: "Bosch Service Solutions",
+    short: "Bosch",
+    where: "Taguig City, Metro Manila PH (remote)",
+    points: [
+      "Automated software installation with PowerShell, cutting install time from 30 minutes to 2, and streamlined BMC Remedy ticketing across ~60 daily tickets, reducing escalations by 15%.",
+      "Administered user accounts through CI-CAT and SAP roles through OneIDM as an advanced service desk engineer.",
+      "Wrote technical runbooks on Active Directory and on troubleshooting Microsoft 365 application issues, which the wider service desk team used.",
+    ],
+  },
 ];
 
 export const education = {
   year: "2017",
   role: "BS Information Technology",
   org: "Jose Rizal University",
+  where: "Mandaluyong City",
 };
 
 export const systems = [

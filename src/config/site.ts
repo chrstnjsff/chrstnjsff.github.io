@@ -15,7 +15,6 @@ export const SITE = {
     country: "PH",
   },
   resumePath: "/resume.pdf",
-  resumeFilename: "Christian-Josef-Aquino-Resume.pdf",
 } as const;
 
 export interface NavItem {

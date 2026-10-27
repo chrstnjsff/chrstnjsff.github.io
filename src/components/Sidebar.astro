@@ -16,6 +16,7 @@ const { outline } = Astro.props;
 const path = Astro.url.pathname;
 const isHome = path === "/";
 const at = (id: string) => (isHome ? `#${id}` : `/#${id}`);
+const onExperience = path.startsWith("/experience/");
 const guides = await getGuides();
 
 interface Link {
@@ -42,7 +43,13 @@ const groups: { label: string; links: Link[] }[] = [
     links: [
       { href: at("top"), icon: "user", label: "About" },
       { href: at("projects"), icon: "folder", label: "Projects", count: projects.length },
-      { href: at("experience"), icon: "briefcase", label: "Experience", count: experience.length },
+      {
+        href: onExperience ? "/experience/" : at("experience"),
+        icon: "briefcase",
+        label: "Experience",
+        count: experience.length,
+        page: onExperience,
+      },
       { href: at("systems"), icon: "server", label: "What I run" },
       { href: at("certifications"), icon: "award", label: "Certifications", count: certs.length },
       { href: at("stack"), icon: "layers", label: "Stack" },
@@ -93,7 +100,7 @@ const groups: { label: string; links: Link[] }[] = [
 
 <div class="side-foot">
   <ThemeSwitch />
-  <a class="side-btn" href={SITE.resumePath} download={SITE.resumeFilename}>
+  <a class="side-btn" href={SITE.resumePath} target="_blank" rel="noopener">
     <Icon name="file" />
     <span>Curriculum Vitae</span>
     <Icon name="ne" class="ext" size={14} />
