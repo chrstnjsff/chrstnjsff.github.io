@@ -1,6 +1,6 @@
 ---
 // The mark is a terminal window with a shell prompt, the same glyph as
-// the favicon; the wordmark is the domain, set in the display face.
+// the favicon; the wordmark is a shell path, "~/home", in the display face.
 interface Props {
   /** Show only the mark, for tight spots like the footer. */
   markOnly?: boolean;
@@ -25,5 +25,5 @@ const { markOnly = false, size = 30 } = Astro.props;
     <rect x="2.95" y="5" width="18.3" height="14.2" rx="3"></rect>
     <path d="m6.8 10.2 3.1 2.5-3.1 2.5M12.1 15.2h5.3"></path>
   </svg>
-  {!markOnly && <span class="logo-word">christianaquino<span>.dev</span></span>}
+  {!markOnly && <span class="logo-word"><span>~/</span>home</span>}
 </span>
