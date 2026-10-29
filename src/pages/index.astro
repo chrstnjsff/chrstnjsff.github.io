@@ -2,6 +2,7 @@
 import "../styles/home.css";
 import Base from "../layouts/Base.astro";
 import ContribGraph from "../components/ContribGraph.astro";
+import GuideCursor from "../components/GuideCursor.astro";
 import Icon from "../components/Icon.astro";
 import ProjectShot from "../components/ProjectShot.astro";
 import { getGuides, guideHref } from "../lib/howto";
@@ -354,6 +355,8 @@ const chipColor = (c: Chip) => c.color ?? (c.icon ? `#${c.icon.hex}` : "currentC
       <ContribGraph />
     </section>
   </div>
+
+  <GuideCursor />
 
   <script is:inline>
     // The logo strip can be paused (WCAG 2.2.2); it also stops while a
