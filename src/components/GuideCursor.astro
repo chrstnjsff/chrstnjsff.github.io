@@ -1,0 +1,477 @@
+---
+// A second pointer that gives first-time visitors a short tour of the home
+// page: it glides to a few things, types a line about each, then leaves.
+// Desktop with a mouse only, never under reduced motion, once per browser
+// session (?tour forces it). It never takes clicks, and it is hidden from
+// screen readers because everything it says is already on the page.
+// Styles live in home.css under "guided tour".
+import Icon from "./Icon.astro";
+---
+
+<div class="guide" id="guide" aria-hidden="true">
+  <svg class="guide-arrow" viewBox="0 0 24 24" fill="none">
+    <path class="guide-rim" d="M4.5 3.5 19 10.2l-6.8 2-2.6 6.8z" />
+    <path class="guide-body" d="M4.5 3.5 19 10.2l-6.8 2-2.6 6.8z" />
+  </svg>
+  <div class="guide-tag">
+    <span class="guide-name">Christian</span>
+    <div class="guide-clip"><div class="guide-text" data-guide-text></div></div>
+    <div class="guide-text guide-measure" data-guide-measure></div>
+    <span class="guide-caret"></span>
+  </div>
+</div>
+
+<div class="guide-replay" id="guideReplay" hidden>
+  <button type="button" data-guide-replay>
+    <Icon name="replay" size={14} />
+    Take the tour again
+  </button>
+  <button type="button" class="guide-dismiss" data-guide-dismiss aria-label="Hide the tour button">
+    <Icon name="x" size={14} />
+  </button>
+</div>
+
+<script is:inline>
+  (function () {
+    var root = document.getElementById("guide");
+    var pill = document.getElementById("guideReplay");
+    var desk = window.matchMedia(
+      "(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
+    );
+    if (!root || !pill || !desk.matches) return;
+
+    var tag = root.querySelector(".guide-tag");
+    var nameTag = root.querySelector(".guide-name");
+    var clip = root.querySelector(".guide-clip");
+    var text = root.querySelector("[data-guide-text]");
+    var measure = root.querySelector("[data-guide-measure]");
+    var caret = root.querySelector(".guide-caret");
+    var rail = document.querySelector(".side");
+    var segmenter = "Segmenter" in Intl ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null;
+
+    var store = {
+      get: function (k) {
+        try {
+          return sessionStorage.getItem(k);
+        } catch (e) {
+          return "blocked";
+        }
+      },
+      set: function (k, v) {
+        try {
+          sessionStorage.setItem(k, v);
+        } catch (e) {}
+      },
+    };
+
+    function all(sel) {
+      return function () {
+        return Array.prototype.slice.call(document.querySelectorAll(sel));
+      };
+    }
+    function railLink(href) {
+      return all('.side a[href="' + href + '"]');
+    }
+    function rand(min, max) {
+      return min + Math.random() * (max - min);
+    }
+    function clamp(v, min, max) {
+      return Math.min(Math.max(v, min), max);
+    }
+
+    // The tour, in order. A stop whose target is off screen is skipped;
+    // `free` stops fall back to open space in the content area.
+    var steps = [
+      { els: all("#name"), at: "above", free: true, text: "Hi! I'm Christian. Welcome to my site 👋" },
+      { els: all(".hero .links a"), at: "below", text: "My LinkedIn, GitHub, email and CV are all here." },
+      { els: all(".stats .stat-v"), at: "below", text: "A few numbers from my work so far." },
+      { els: railLink("/how-to/"), text: "Step-by-step DevOps guides I've written." },
+      { els: railLink("#projects"), text: "Things I've built and shipped." },
+      { els: railLink("#experience"), text: "Where I've worked and what I did there." },
+      { els: railLink("#systems"), text: "The systems I keep running day to day." },
+      { els: railLink("#reviews"), text: "What my colleagues say about working with me." },
+      { els: all(".side [data-theme-toggle]"), text: "Try dark mode. It's Tokyo Night." },
+      { els: railLink("/contact/"), text: "Want to work together? Start here." },
+      { free: true, text: "That's the tour. Enjoy your stay! ✌️" },
+    ];
+
+    // ---- one clock for everything --------------------------------------
+    // `goal` is where the hand is heading; `pos` chases it on a spring, so
+    // nothing snaps. The clock stops while the tour is away (window too
+    // small), and every wait in the script runs on it.
+    var goal = { x: 0, y: 0 };
+    var pos = { x: 0, y: 0, vx: 0, vy: 0 };
+    var SPRING = 180;
+    var DAMPING = 2 * Math.sqrt(SPRING) * 0.85;
+    var clock = 0;
+    var last = 0;
+    var running = false;
+    var away = false;
+    var typing = false;
+    var still = 1;
+    var move = null;
+    var pin = null;
+    var guided = null;
+    var talk = null;
+    var lost = false;
+    var loop = 0;
+    var waits = [];
+
+    function wait(ms) {
+      return new Promise(function (done) {
+        waits.push({ at: clock + ms, done: done });
+      });
+    }
+
+    function frame(now, id) {
+      if (!running || id !== loop) return;
+      var dt = Math.min(now - last, 50);
+      last = now;
+      if (away !== !desk.matches) {
+        away = !desk.matches;
+        root.classList.toggle("is-away", away);
+      }
+      if (!away) {
+        clock += dt;
+        if (move) {
+          var p = Math.min((clock - move.t0) / move.dur, 1);
+          var u = Math.pow(p, move.skew); // quick start, long settle
+          var e = u * u * u * (u * (u * 6 - 15) + 10); // minimum-jerk, like a real hand
+          var to = move.to();
+          var bow = 4 * e * (1 - e) * move.bow; // a gentle curve, never a ruler line
+          goal.x = move.from.x + (to.x - move.from.x) * e + move.nx * bow;
+          goal.y = move.from.y + (to.y - move.from.y) * e + move.ny * bow;
+          if (p === 1) {
+            pin = move.to;
+            var done = move.done;
+            move = null;
+            done();
+          }
+        } else if (pin) {
+          // stay on the target while the page scrolls under it
+          var at = pin();
+          goal.x = at.x;
+          goal.y = at.y;
+        }
+
+        // The visitor scrolled the target away: end this stop now, so the
+        // hand does not follow it off screen.
+        if (guided && !onScreen(guided)) lost = true;
+        if (lost) {
+          if (move) {
+            var cut = move.done;
+            move = null;
+            cut();
+          }
+          pin = null;
+          waits.splice(0).forEach(function (w) {
+            w.done();
+          });
+        }
+
+        var hops = Math.ceil(dt / 12);
+        var h = dt / hops / 1000;
+        for (var i = 0; i < hops; i++) {
+          pos.vx += (SPRING * (goal.x - pos.x) - DAMPING * pos.vx) * h;
+          pos.vy += (SPRING * (goal.y - pos.y) - DAMPING * pos.vy) * h;
+          pos.x += pos.vx * h;
+          pos.y += pos.vy * h;
+        }
+
+        // A resting hand drifts a little; it goes still while typing.
+        still += ((typing ? 0 : 1) - still) * Math.min(dt / 250, 1);
+        var x = pos.x + (Math.sin(clock / 870 + 1.1) * 1.4 + Math.sin(clock / 290 + 3.7) * 0.5) * still;
+        var y = pos.y + (Math.cos(clock / 990 + 0.6) * 1.2 + Math.sin(clock / 350 + 2.4) * 0.5) * still;
+        root.style.transform = "translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px,0)";
+
+        for (var j = waits.length - 1; j >= 0; j--) {
+          if (waits[j].at <= clock) waits.splice(j, 1)[0].done();
+        }
+      }
+      requestAnimationFrame(function (t) {
+        frame(t, id);
+      });
+    }
+
+    // ---- moving -----------------------------------------------------------
+    function glide(to, dur) {
+      return new Promise(function (done) {
+        var from = { x: goal.x, y: goal.y };
+        var t = to();
+        var dx = t.x - from.x;
+        var dy = t.y - from.y;
+        var dist = Math.hypot(dx, dy) || 1;
+        var bow = Math.min(dist * rand(0.06, 0.2), 56) * (Math.random() < 0.5 ? -1 : 1);
+        move = { from: from, to: to, t0: clock, dur: dur, skew: rand(0.75, 0.92), bow: bow, nx: -dy / dist, ny: dx / dist, done: done };
+      });
+    }
+
+    // Lands a pixel or two off each time; on long reaches it sometimes
+    // overshoots or falls short, then makes a small correction.
+    async function reach(to, opts) {
+      opts = opts || {};
+      var off = { x: rand(-2.5, 2.5), y: rand(-1.5, 1.5) };
+      var aim = opts.exact
+        ? to
+        : function () {
+            var t = to();
+            return { x: t.x + off.x, y: t.y + off.y };
+          };
+      var t = aim();
+      var dx = t.x - goal.x;
+      var dy = t.y - goal.y;
+      var dist = Math.hypot(dx, dy) || 1;
+      var dur = (opts.dur || clamp(220 + Math.sqrt(dist) * 24, 340, 980)) * rand(0.9, 1.12);
+      if (opts.exact || dist < 180 || Math.random() < 0.4) return glide(aim, dur);
+
+      var miss = clamp(dist * rand(0.025, 0.05), 5, 18) * (Math.random() < 0.6 ? 1 : -1);
+      var ox = (dx / dist) * miss;
+      var oy = (dy / dist) * miss;
+      await glide(function () {
+        var a = aim();
+        return { x: a.x + ox, y: a.y + oy };
+      }, dur);
+      await wait(rand(50, 110));
+      await glide(aim, rand(150, 230));
+    }
+
+    // ---- targets --------------------------------------------------------
+    function onScreen(el) {
+      var r = el.getBoundingClientRect();
+      return r.width > 0 && r.top >= 0 && r.bottom <= window.innerHeight;
+    }
+
+    // Rail links span the whole rail, so point at the end of the label instead.
+    function labelRight(el) {
+      var label = el.querySelector("span") || el;
+      var range = document.createRange();
+      range.selectNodeContents(label);
+      return range.getBoundingClientRect().right;
+    }
+
+    function anchor(el, at) {
+      return function () {
+        var r = el.getBoundingClientRect();
+        if (at === "above") return { x: r.left + 6, y: r.top - 22 };
+        if (at === "below") return { x: r.left + r.width / 2, y: r.bottom + 4 };
+        return { x: labelRight(el) + 8, y: r.top + r.height / 2 };
+      };
+    }
+
+    function openSpace() {
+      var left = rail ? rail.getBoundingClientRect().right : 0;
+      var point = { x: left + (window.innerWidth - left) * rand(0.42, 0.54), y: window.innerHeight * rand(0.38, 0.48) };
+      return function () {
+        return point;
+      };
+    }
+
+    function guide(el) {
+      if (guided) guided.classList.remove("is-guided");
+      guided = el || null;
+      if (guided) guided.classList.add("is-guided");
+    }
+
+    // ---- the bubble -------------------------------------------------------
+    // Lay the whole line out first (hidden), so the bubble grows with the
+    // typing and words never jump between lines.
+    function compose(line) {
+      var parts = segmenter
+        ? Array.from(segmenter.segment(line), function (s) {
+            return s.segment;
+          })
+        : Array.from(line);
+      var chars = parts.map(function (part) {
+        var span = document.createElement("span");
+        span.className = "guide-ch";
+        span.textContent = part;
+        return span;
+      });
+      measure.replaceChildren.apply(measure, chars);
+      return {
+        parts: parts,
+        chars: chars,
+        boxes: chars.map(function (s) {
+          return { right: s.offsetLeft + s.offsetWidth, top: s.offsetTop, bottom: s.offsetTop + s.offsetHeight };
+        }),
+        width: Math.ceil(measure.getBoundingClientRect().width),
+        height: measure.offsetHeight,
+      };
+    }
+
+    // Open the bubble above or to the left of the arrow near the edges. While
+    // it sweeps a group the bubble stays open, so it must fit at both ends.
+    function place(points, layout, prefer) {
+      var w = Math.max(nameTag.offsetWidth, layout.width) + 24;
+      var h = nameTag.offsetHeight + layout.height + 12;
+      var fitsBelow = points.every(function (p) {
+        return p.y + 20 + h + 12 <= window.innerHeight;
+      });
+      var fitsAbove = points.every(function (p) {
+        return p.y - h - 12 >= 0;
+      });
+      root.classList.toggle("is-up", fitsAbove && (prefer === "above" || !fitsBelow));
+      root.classList.toggle(
+        "is-left",
+        points.some(function (p) {
+          return p.x + 16 + w + 12 > window.innerWidth;
+        })
+      );
+    }
+
+    async function type(layout) {
+      text.style.width = layout.width + "px";
+      text.replaceChildren.apply(text, layout.chars.concat(caret));
+      tag.classList.add("is-talking", "is-typing");
+      typing = true;
+      var pace = rand(0.85, 1.2);
+      var width = 0;
+      for (var i = 0; i < layout.chars.length; i++) {
+        var box = layout.boxes[i];
+        var part = layout.parts[i];
+        layout.chars[i].classList.add("is-on");
+        width = Math.max(width, box.right);
+        clip.style.width = Math.ceil(width) + 2 + "px";
+        clip.style.height = box.bottom + "px";
+        caret.style.transform = "translate(" + box.right + "px," + box.top + "px)";
+        var ms = rand(8, 22) * pace;
+        if (/[.!?]/.test(part)) ms = rand(90, 160);
+        else if (/[,:]/.test(part)) ms = rand(50, 90);
+        else if (part === " " && Math.random() < 0.12) ms += rand(60, 140);
+        await wait(ms);
+        if (lost) break;
+      }
+      typing = false;
+      tag.classList.remove("is-typing");
+    }
+
+    function hush() {
+      clip.style.width = clip.style.height = "0px";
+      tag.classList.remove("is-talking", "is-typing");
+    }
+
+    async function say(step) {
+      var els = step.els ? step.els().filter(onScreen) : [];
+      if (!els.length && !step.free) return;
+      var points = els.length
+        ? els.map(function (el) {
+            return anchor(el, step.at);
+          })
+        : [openSpace()];
+      var layout = compose(step.text);
+      var prefer = els.length ? step.at : null;
+      talk = { layout: layout, prefer: prefer };
+      hush();
+      place([points[0]()], layout, prefer);
+      guide(els[0]);
+      await reach(points[0]);
+      if (!lost) await wait(rand(60, 140));
+      if (!lost) await type(layout);
+      if (!lost && points.length > 1) {
+        // let the line land, then sweep across the rest of the group
+        await wait(rand(500, 750));
+        for (var i = 1; i < points.length && !lost; i++) {
+          await wait(rand(90, 180));
+          place([goal, points[i]()], layout, prefer);
+          guide(els[i]);
+          await reach(points[i], { dur: rand(240, 340) });
+        }
+        if (!lost) await wait(rand(500, 700));
+      } else if (!lost) {
+        await wait((850 + layout.chars.length * 20) * rand(0.95, 1.1));
+      }
+      if (lost) hush();
+      lost = false;
+      talk = null;
+      guide(null);
+    }
+
+    // ---- start, finish, replay ------------------------------------------
+    async function tour() {
+      await wait(400);
+      root.classList.add("is-here");
+      store.set("tourSeen", "1");
+      for (var i = 0; i < steps.length; i++) await say(steps[i]);
+
+      // Done: drift off the right edge and offer a replay.
+      hush();
+      await wait(rand(300, 500));
+      var exit = { x: window.innerWidth + 90, y: window.innerHeight * rand(0.2, 0.4) };
+      await reach(
+        function () {
+          return exit;
+        },
+        { exact: true }
+      );
+      root.classList.remove("is-here");
+      await wait(450);
+      running = false;
+      offerReplay();
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      move = pin = null;
+      waits = [];
+      goal.x = pos.x = window.innerWidth + 40;
+      goal.y = pos.y = window.innerHeight * rand(0.5, 0.7);
+      pos.vx = pos.vy = 0;
+      root.classList.remove("is-up", "is-left");
+      root.style.transform = "translate3d(" + pos.x + "px," + pos.y + "px,0)";
+      var id = ++loop;
+      requestAnimationFrame(function (now) {
+        last = now;
+        frame(now, id);
+      });
+      tour();
+    }
+
+    function offerReplay() {
+      if (store.get("tourButton") !== "off") pill.hidden = false;
+    }
+
+    // Hiding the pill must not drop keyboard focus to <body>.
+    function hidePill() {
+      var main = document.getElementById("main");
+      if (main && pill.contains(document.activeElement)) {
+        main.setAttribute("tabindex", "-1");
+        main.focus({ preventScroll: true });
+      }
+      pill.hidden = true;
+    }
+
+    pill.querySelector("[data-guide-replay]").addEventListener("click", function () {
+      hidePill();
+      if (desk.matches) start();
+    });
+    pill.querySelector("[data-guide-dismiss]").addEventListener("click", function () {
+      hidePill();
+      store.set("tourButton", "off");
+    });
+
+    // Reduced motion turned on, or the window got small: no pill. Back to a
+    // desktop window between tours: offer it again.
+    desk.addEventListener("change", function () {
+      if (!desk.matches) hidePill();
+      else if (!running) offerReplay();
+    });
+
+    // A window resize mid-line can push the open bubble off an edge.
+    window.addEventListener("resize", function () {
+      if (talk && pin) place([pin()], talk.layout, talk.prefer);
+    });
+
+    // Once per browser session; ?tour plays it again on demand. Blocked
+    // storage counts as seen, so the tour never plays on every visit. It
+    // waits for the web font (bubbles are measured in it) and the page's
+    // own intro.
+    if (store.get("tourSeen") === null || new URLSearchParams(location.search).has("tour")) {
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () {
+        setTimeout(start, 700);
+      });
+    } else {
+      offerReplay();
+    }
+  })();
+</script>
