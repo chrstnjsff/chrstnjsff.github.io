@@ -125,21 +125,20 @@ export interface Role {
 }
 
 /**
- * Every role, newest first. The points follow the CV, except Nova: it is a
- * freelance client the CV leaves out on purpose, so its points come from the
- * CV's Nova client projects.
+ * Every role, newest first. The points follow the CV. Nova keeps the longer
+ * project detail that the CV condenses.
  */
 export const experience: Role[] = [
   {
     id: "nova",
     year: "2026",
-    period: "Apr 2026 - Present",
+    period: "Apr 2026 - Nov 2026",
     role: "Senior DevOps Engineer (Freelance)",
     org: "Nova Virtual Solutions",
     short: "Nova Virtual Solutions",
-    where: "Freelance client, remote",
+    where: "Freelance client, Indiana, USA (remote)",
     points: [
-      "Built a multi-tenant web portal for a US home care agency client: caregiver and client onboarding, admission documents with e-signing, dynamic custom forms, job acceptance, and electronic visit verification (EVV).",
+      "Hired as a B2B independent contractor to build a multi-tenant web portal for a US home care agency client, with a React 18 frontend and a Python Django backend API: caregiver and client onboarding, admission documents with e-signing, dynamic custom forms, job acceptance, and electronic visit verification (EVV).",
       "Deployed on AWS through GitLab CI with a pip-audit security gate, frozen-lockfile builds, and Sentry error tracking; staging scales down outside working hours to cut cost.",
       "Built a consent-based live screen-sharing and productivity monitoring platform for remote teams, with 5-second activity heartbeats, idle detection, shift summaries, admin dashboards with alerts, and hours-based exports.",
       "Added role-based access across organisations with Amazon Cognito and Microsoft Entra SSO, OpenTofu-managed AWS infrastructure, and unit and Playwright end-to-end test suites.",
